@@ -65,15 +65,23 @@ def d3_dictify(g, **kwargs):
 		d3_dict['links'].append({'source': e.source, 'target': e.target, 'weight': e['weight'], 'track': e['track']})
 	return d3_dict	
 
-def step(currentstep,neighbourhood):
+def step(currentstep,neighbourhood,genre):
 	nextstep = {}
 	for n,score in currentstep.items():
 		for t in r.zrange('artist.tracks:'+n, 0, -1):
 			for a in r.smembers('track.artists:'+t):
-				try:
-					nextstep[a] += score
-				except:
-					nextstep[a] = score
+				if genre != 'null':
+					if r.hget('artist.info:'+a, 'genre') == genre:
+						try:
+							nextstep[a] += score
+						except:
+							nextstep[a] = score
+				else:
+					try:
+						nextstep[a] += score
+					except:
+						nextstep[a] = score
+
 	return nextstep
 
 def year_filter(tracks, **kwargs):
@@ -172,7 +180,12 @@ def index():
 @app.route("/start")
 #@login_required
 def start():
-	return jsonify({'origin': random.choice(r.keys(pattern='artist.tracks*')).split(':')[1]})
+	genres = ['rock', 'pop', 'classical', 'hip hop', 'latin', 'reggae', 'electronic', 'country', 'jazz', 'funk']
+	genre = request.args['genre']
+	if genre == 'null':
+		genre = random.choice(genres)
+	origin = random.choice(r.zrevrange('term.artists:'+genre,0,200))
+	return jsonify({'origin': origin})
 		
 @app.route("/path")
 #@login_required
@@ -188,11 +201,12 @@ def path_finder():
 def get_neighbourhood():
 	origin = request.args['seed'].split(',')[0]
 	size = int(request.args['seed'].split(',')[1])
+	genre = request.args['seed'].split(',')[2]
 	currentstep = {origin:1}
 	neighbourhood = set([origin])
 	visited = set([origin])
 	while len(neighbourhood) < size:
-		currentstep = step(currentstep,neighbourhood)
+		currentstep = step(currentstep,neighbourhood,genre)
 		n = size - len(neighbourhood)
 		to_consider = {k:v for k,v in currentstep.items() if k not in visited}
 		print len(to_consider.keys())

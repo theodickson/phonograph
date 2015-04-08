@@ -188,7 +188,7 @@ function start_Vis(gms) { graph = gms[0]; route = gms[1]; seed = gms[2];
 			.on("dblclick", function(d) { 
 				d3.event.stopPropagation();
 				if (d.id != origin) {
-					get_graph(d.id+','+dataset.neighbourhoodSize, "neighbourhood");	
+					get_graph(d.id+','+dataset.neighbourhoodSize+','+dataset.genre, "neighbourhood");	
 				};
 			});
 			
@@ -270,6 +270,7 @@ dataset.customList = [];
 dataset.customListTable = [];
 dataset.currentGraph = 0;
 dataset.zoomLevel = 1;
+dataset.genre = null;
 dataset.currentSidebar = 0;
 dataset.artistList = [];
 dataset.pathOrder = [];
@@ -348,9 +349,9 @@ function init() {
 		//console.log("initFromURL with " + seed +" , "+route);
 		get_graph(seed, route);
 	} else {
-		d3.json('/start', function(error, response) {
+		d3.json('/start?genre='+dataset.genre, function(error, response) {
 			origin = response.origin;
-			get_graph(origin+','+dataset.neighbourhoodSize, "neighbourhood");
+			get_graph(origin+','+dataset.neighbourhoodSize+','+dataset.genre, "neighbourhood");
 		});
 	};
 };
@@ -846,7 +847,7 @@ $( "#artistSearch" ).autocomplete({
     select: function(event, ui) {
     	this.value = '';
     	origin = ui.item.value;
-    	get_graph(origin+','+dataset.neighbourhoodSize, "neighbourhood");
+    	get_graph(origin+','+dataset.neighbourhoodSize+','+dataset.genre, "neighbourhood");
     	event.preventDefault();
     },
     delay: 100,
@@ -1063,7 +1064,7 @@ $('.ns').click(function() {
 	dataset.neighbourhoodSizeBTN = "#"+this.id;
 	if ( (dataset.neighbourhoodSize!=this.id.substring(1))&&(dataset.clickable) ) {
 		dataset.neighbourhoodSize = this.id.substring(1);
-		get_graph(origin+','+dataset.neighbourhoodSize, "neighbourhood");
+		get_graph(origin+','+dataset.neighbourhoodSize+','+dataset.genre, "neighbourhood");
 	};
 });
 function highlightZoomLevel(){
@@ -1139,6 +1140,13 @@ $('.zo').click(function() {
 
 $('.zi').click(function() {
 	zoomIn();
+});
+
+$('.gs').click(function(){
+	if (dataset.genre != $(this).attr('id')) {
+		dataset.genre = $(this).attr('id');
+		init();
+	};
 });
 
 $('#urlShare').click(function(){
