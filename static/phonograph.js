@@ -1142,7 +1142,12 @@ $('.zL').click(function(){
 	var newZoomLevel = $(this).attr('id').replace("zoomL",""); //GET NEW ZOoM LEVEL FROM BUTTON
 	console.log("MOVING TO ZOOM LEVEL "+newZoomLevel);
 	dataset.zoomLevel = newZoomLevel;
-	get_graph(origin+','+dataset.neighbourhoodSize+','+dataset.zoomLevel, "zoom");
+	if(newZoomLevel==1){
+		get_graph(origin+','+dataset.neighbourhoodSize, "neighbourhood");
+	}
+	else{
+		get_graph(origin+','+dataset.neighbourhoodSize+','+dataset.zoomLevel, "zoom");
+	};
 	highlightZoomLevel();
 	disableZoom();
 
