@@ -8,27 +8,42 @@ from redis import Redis
 from os import environ
 import itertools
 
-def igrapher(vertices, **kwargs):
+def igrapher(vertices, path=False, **kwargs):
+
+	def artistNames(artists, nameMap):
+		names = []
+		for artist in artists:
+			try:
+				names.append(nameMap[artist])
+			except:
+				nameMap[artist] = r.hget('artist.info:'+artist, 'name')
+				names.append(nameMap[artist])
+		return names
+
+	print path
+	print kwargs
 	g = ig.Graph(len(vertices))
 	g.vs['name'] = vertices
 	edges = []
 	weights = []
+	tracks = []
+	nameMap = {}
 	for pair in itertools.combinations(vertices, 2):
 		r.zinterstore('pair', ['artist.tracks:'+pair[0], 'artist.tracks:'+pair[1]])
-		weight = len(r.zrange('pair',0,-1))
+		edgetracks = r.zrevrange('pair',0,-1)
+		weight = len(edgetracks)
 		if weight > 0:
 			edges.append(pair)
 			weights.append(weight)
+			tracks.append({
+						'id': edgetracks[0], 
+						'name': r.hget('track.info:'+edgetracks[0], 'name'),
+						'artists': artistNames( list(r.smembers('track.artists:'+edgetracks[0])), nameMap)
+						})
 	g.add_edges(edges)
 	g.es['weight'] = weights
-	try:
-		if kwargs['lc']:
-			components = g.components()
-			largest = max(enumerate(components), key = lambda x:len(x[1]))[1]
-			g = g.subgraph(largest)
-			return g
-	except:
-		return g
+	g.es['track'] = tracks
+	return g
 	
 def d3_dictify(g, **kwargs):
 	weights = []
@@ -47,23 +62,28 @@ def d3_dictify(g, **kwargs):
 			genre = None
 		d3_dict['nodes'].append({'id': v['name'], 'name': info['name'], 'popularity': int(info['popularity'])+1, 'genre': genre, 'pos': l[i]})
 	for e in g.es():
-		try:
-			if kwargs['mode'] == 'path':
-				d3_dict['links'].append({'source': e.source, 'target': e.target, 'weight': e['weight'], 'track': e['track']})
-		except:
-			d3_dict['links'].append({'source': e.source, 'target': e.target, 'weight': e['weight']})
+		d3_dict['links'].append({'source': e.source, 'target': e.target, 'weight': e['weight'], 'track': e['track']})
 	return d3_dict	
 
 def step(currentstep,neighbourhood):
 	nextstep = {}
 	for n,score in currentstep.items():
 		for t in r.zrange('artist.tracks:'+n, 0, -1):
-				for a in r.smembers('track.artists:'+t):
-					try:
-						nextstep[a] += score
-					except:
-						nextstep[a] = score
+			for a in r.smembers('track.artists:'+t):
+				try:
+					nextstep[a] += score
+				except:
+					nextstep[a] = score
 	return nextstep
+
+def year_filter(tracks, **kwargs):
+	if kwargs['min_year']:
+		if not kwargs['max_year']:
+			max_year = 9999
+	if kwargs['max_year']:
+		if not kwargs['min_year']:
+			min_year = 0
+		return set(track for track in tracks if min_year <= int(r.hget('track.info:'+track, 'year')) <= max_year)
 
 def extend(distances, visited, c):
 	distances[c+1] = {}
@@ -86,10 +106,11 @@ def find_paths(i,**kwargs):
 	try:
 		if kwargs['to']:
 			j = kwargs['to']
-			while j not in distances[c].keys():
+			while j not in distances[c].keys() and c < 7:
 				visited.update(distances[c].keys())
 				distances = extend(distances, visited, c)
 				c += 1
+				print c
 			paths = [[j,a] for a in distances[c][j]]
 			c -= 1
 			while c > 0:
@@ -159,27 +180,14 @@ def path_finder():
 	i = request.args['seed'].split(',')[0]
 	j = request.args['seed'].split(',')[1]
 	path = random.choice(find_paths(i,to=j))
-	g = ig.Graph(len(path))
-	g.vs['name'] = path
-	edges = [(path[x],path[x+1]) for x in xrange(0,len(path)-1)]
-	weights = []
-	tracks = []
-	for k,l in edges:
-		r.zinterstore('tracks', ['artist.tracks:'+k, 'artist.tracks:'+l])
-		edgetracks = r.zrevrange('tracks', 0, -1)
-		tracks.append({'id': edgetracks[0], 'name': r.hget('track.info:'+edgetracks[0], 'name'), 'artists': [r.hget('artist.info:'+artist, 'name') for artist in list(r.smembers('track.artists:'+edgetracks[0]))]})
-		weights.append(len(edgetracks))
-	g.add_edges(edges)
-	g.es['weight'] = weights
-	g.es['track'] = tracks
-	return jsonify(d3_dictify(g, mode='path'))
+	g = igrapher(path)
+	return jsonify(d3_dictify(g))
 		
 @app.route("/neighbourhood")
 #@login_required
 def get_neighbourhood():
 	origin = request.args['seed'].split(',')[0]
 	size = int(request.args['seed'].split(',')[1])
-	#level = int(request.args['seed'].split(',')[2])
 	currentstep = {origin:1}
 	neighbourhood = set([origin])
 	visited = set([origin])
