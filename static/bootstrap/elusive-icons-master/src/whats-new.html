@@ -1,0 +1,24 @@
+---
+layout: base
+title: What's New
+navbar_active: whats-new
+relative_path: ../
+---
+{% capture jumbotron_h1 %}<i class="el el-lightbulb-o"></i>&nbsp; What's New{% endcapture %}
+{% capture jumbotron_p %}What's New in the latest version &mdash; Elusive Icons {{ site.elusiveicons.minor_version }}{% endcapture %}
+
+{% include jumbotron.html %}
+{% include stripe-social.html %}
+
+<div class="container">
+  {% capture stripe_ad_content %}
+  <p class="lead">
+    Elusive Icons has been remade from the ground up. Every icon has been perfected and revised. Here are the new fonts in the latest version, Elusive Icons
+    {{ site.elusiveicons.minor_version }}. Have some ideas for new features?
+    <a href="{{ page.relative_path }}community/">Help contribute</a>.
+  </p>
+  {% endcapture %}
+
+  {% include icons/new.html %}
+  {% include new-upgrading.html %}
+</div>

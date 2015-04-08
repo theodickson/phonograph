@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<title>phonograph</title>
+
+<!-- Bootstrap -->
+<link href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}" rel="stylesheet"> 
+<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-table.css') }}">
+
+
+<!-- Jquery D3 Scripts-->
+<script src="{{ url_for('static', filename='d3.min.js') }}"></script>
+<script src="{{ url_for('static', filename='jquery-2.1.3.js') }}"></script>
+
+<!--Jquery-UI-->
+<link href="{{ url_for('static', filename='jquery/jquery-ui.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='jquery/jquery-ui.structure.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='jquery/jquery-ui.theme.css') }}" rel="stylesheet">
+<script src="{{ url_for('static', filename='jquery/jquery-ui.js') }}"></script>
+<link href="{{ url_for('static', filename='bootstrap/elusive-icons-master/css/elusive-icons.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='bootstrap/font-awesome-4.3.0/css/font-awesome.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='flat.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<body>
+
+
+<section id="app">
+	<div class="row">
+		<div id="map" class="col-xs-9">
+		<nav class="navbar navbar-default navbar-top">
+		  <div class="container-fluid">
+		    <!-- Brand and toggle get grouped for better mobile display -->
+		    <div class="navbar-header">
+		     <a class="navbar-brand" href="#"> <i id="logo" class="el el-network"></i> phonograph.fm </a>
+		    </div>
+		    <div class="navbar navbar-left" id="navbar-top-left">
+				<form class="navbar-form navbar-left" role="search" id="searchBar">
+					<div class="input-group">
+						<input href="#" class="form-control autocomplete" placeholder="Artist Name" id="artistSearch">
+						<div class="input-group-btn">
+							<button type="button" id="search-button" class="btn btn-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+						</div>
+					</div><!-- /input-group -->
+				</form>
+
+	            <ul class="nav navbar-nav navbar-left" style="padding-top: 8px;">
+	            	<li class="dropdown" id="searchDropdown">
+	            	  <button class="btn btn-default dropdown-toggle" href="#" data-toggle="dropdown" id="artistOptions"><span class="glyphicon glyphicon-road" aria-hidden="true"></span><span class="caret"></span></button>
+	            	  <div class="dropdown-menu dropdown-menu-right topDropdown">
+	            	    <form class="form"> 
+	            	    	<div class="form-group ui-widget">
+	            	    		<input href="#" class="form-control autocomplete" class="artistSearch" id="travelTo" placeholder="Enter Artist..." id="artistSearch">
+	            	    	</div>
+	            	    </form>
+	            	    <form class="form"> 
+	            	    	<div class="form-group ui-widget">
+	            	    		<input href="#" class="form-control autocomplete" class="artistSearch" id="genreSearch" placeholder="Enter Genre..." id="artistSearch">
+	            	    	</div>
+	            	    </form>
+	            	  </div>
+	            	</li>
+	            </ul>
+
+		    </div><!-- /.navbar-collapse -->
+		    <div class="navbar navbar-right">
+		    	<ul class="nav navbar-nav navbar-right">
+		    		<li class="dropdown" id="serviceChoice">
+			    			<a class="dropdown-toggle" href="#" data-toggle="dropdown" id="service-choice-displayed"><i class="fa fa-youtube fa-lg"></i></span><span class="caret"></span></a>
+			    			<ul class="dropdown-menu topDropdown" role="menu"> 			    
+								<li><a class="service-choice" id="service-choice-youtube"><i class="fa fa-youtube fa-lg"></i></a></li>
+								<li><a class="service-choice" id="service-choice-spotify"><i class="fa fa-spotify fa-lg"></i></a></li>
+								<li class="disabled" id="service-choice-soundcloud"><a class="service-choice"><i class="fa fa-soundcloud fa-lg"></i></a></li>
+			    			</ul>
+			    	</li>
+		    		<li class="dropdown" id="URLshare">
+			    			<a class="dropdown-toggle" href="#" data-toggle="dropdown" id="urlShare"><i class="el el-share"></i></span><span class="caret"></span></a>
+			    			<ul class="dropdown-menu topDropdown" role="menu"> 
+			    
+			    				<li>
+			    					<form class="form"> 
+			    						<input id="URL" class="form-control" type="text" placeholder="URL" value="fjdajdfsaljkdsf"></input>
+			    					</form>
+			    				</li>
+			    			</ul>
+			    	</li>
+			    		
+			    	<li><a id="subgraphButton" type="button" class="navbar"><i class="fa fa-magic"></i></i></a></li>
+			    	<li><a id="playlistButton" type="button" class="navbar"><i class="el el-list"></i></a></li>
+		    		<li class="dropdown" id="numArtists">
+		    			<a class="dropdown-toggle" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
+		    			<div class="dropdown-menu topDropdown" style="width:175px;">  
+		    			  <div class="btn-group pull-right"> 
+		    			  			<button id="b10" type="button" class="btn btn-default btn-sm ns">10</button>
+		    			  		 	<button id="b20" type="button" class="btn btn-default btn-sm ns">20</button>
+		    			  		  	<button id="b30" type="button" class="btn btn-primary btn-sm ns">30</button>
+		    			  		  	<button id="b40" type="button" class="btn btn-default btn-sm ns">40</button>
+		    			  		  	<button id="b50" type="button" class="btn btn-default btn-sm ns">50</button>
+		    			  </div>
+		    			</div>
+		    				
+		    		</li>
+
+		    	</ul>
+		    </div> 
+		</nav>
+<!--BACK BUTTONS COMMENTED FOR LATER THINKING -->
+			<!--<div class="btn-group graphArrows">
+					<button type="button" id="graphBack"class="btn btn-default btn-sm"><i class="el el-chevron-left"></i></button>
+					<button type="button" id="graphForward" class="btn btn-default btn-sm"><i class="el el-chevron-right"></i></button>
+			</div>-->
+			<div class="btn-group-vertical zoom">
+					<button id="zoomIn" type="button" disabled class="btn btn-disabled btn-sm zi"><span class="el el-plus"></span></button>
+					
+					<button id="zoomL1" type="button" class="btn btn-primary btn-sm zL"></button>
+					<button id="zoomL2" type="button" class="btn btn-default btn-sm zL"></button>
+					<button id="zoomL3" type="button" class="btn btn-default btn-sm zL"></button>
+					<button id="zoomL4" type="button" class="btn btn-default btn-sm zL"></button>
+	
+				 	<button id="zoomOut" type="button" class="btn btn-default btn-sm zo"><span class="el el-minus"></span></button>
+			</div>
+		</div>	
+		<!--Sidebar-->
+		<div id="sidebar" class="col-xs-3 sidebar">
+		<div id="info">
+			<!--Main tabs-->
+			<div style="display: none">
+			<ul class="nav nav-tabs sideBarTabs" id="sideBarTabs" role="tablist" data-tabs="tabs">
+				<li class="active" id="nodeTab"><a href="#nodePane" role="tab" data-toggle="tab"><i class="el el-adult el-sm"></i></a></li>
+				<li style="display: none" id="edgeTab"><a href="#edgePane" role="tab" data-toggle="tab"><i class="el el-link el-sm"></i></a></li>
+				<li style="display:none" id="pathTab"><a href="#pathPane" role="tab" data-toggle="tab"><i class="el el-road el-sm"></i></a></li>
+			</ul>
+			</div>
+
+			<!--Main content-->
+			<!-- TITLE WITH BACK BUTTONS -->
+			<!--
+			<table style="width:100%">
+			  <tr>
+			    <td align="left"><a href="#" id="sidebarBack" type="button" ><i class="el el-chevron-left sidebarNav"></i></a></td>
+			    <td align="center"><h3 id="sideBarTitle">Sample Title</h3></td>		
+			    <td align="right"><a href="#" id="sidebarForward" type="button"><i class="el el-chevron-right sidebarNav"></i></a></td>
+			  </tr>
+			</table>
+			-->
+			<h3 id="sideBarTitle">Sample Title</h3>
+			<div class="tab-content">
+
+				<!-- Node Tab-->
+				<div class="tab-pane active" id="nodePane">	
+					<ul class="nav nav-tabs nav-justified" role="tablist" data-tabs="tabs">
+					<li class="active" id="bioTab"><a href="#bio" role="tab" data-toggle="tab"> <i class="el el-book"></i></a></li>
+					<li id="nodeSpotifyTab" class="spotify"><a href="#nodeSpotify" role="tab" data-toggle="tab"><i class="el el-spotify"></i></a></li>
+					<li id="nodeYoutubeTab" class="youtube"><a href="#nodeYoutube" data-toggle="tab"><i class="el el-youtube"></i></a></li>
+					<li id="twitterTab"><a href="#twitter" role="tab" data-toggle="tab"><i class="el el-twitter"></i></a></li>
+					</ul>
+
+					<!-- Node tab panes -->
+					<div class="tab-content">
+				
+						<div id="bio" role="tabpanel" class="tab-pane active">
+							<div id="artistImage" style="padding: 12px"></div>
+							<p id="bioText"></p>
+						</div>
+				
+						<div role="tabpanel" class="tab-pane" id="twitter"></div>
+				
+						<div role="tabpanel" class="tab-pane spotify" id="nodeSpotify">
+							<div class = "spotify" id="nodeIframe" align="middle" style="margin-top:30px"></div>
+						</div>
+						
+						<!-- Youtube -->
+						<div class="tab-pane" id="nodeYoutube">
+							
+							<div class="tableWrapper noselect" align="middle" style="overflow:scroll"> 
+							<table id="nodeYoutubeTable" data-toggle="table" data-toolbar="#toolbar" 
+									data-height="300" pagination="true" sortable="true" data-show-header="false">
+								<thead>
+								<tr>
+									<th data-field="title" data-sortable="true">Title</th>
+									<th data-field="add"></th>
+									<th data-field="play"></th>
+								</tr>
+								</thead>
+				        	</table>
+				        	</div>
+				        
+						</div>
+
+					</div>
+				</div>
+
+				<!-- Edge Tab -->
+				<div class="tab-pane" id="edgePane">				
+					<!-- Edge nav tabs -->
+					<ul id="edgeTabs" class="nav nav-tabs nav-justified" data-tabs="tabs">
+					<li class="active spotify" id="edgeSpotifyTab"><a href="#edgeSpotify" role="tab" data-toggle="tab"> <i class="el el-spotify"></i></a></li>
+					<li id="edgeYoutubeTab" class="youtube"><a href="#edgeYoutube" data-toggle="tab"><i class="el el-youtube"></i></a></li>
+					</ul>
+
+					<!-- Edge tab panes -->
+					<div class="tab-content">
+
+						<!-- Spotify -->
+						<div class="tab-pane active spotify" id="edgeSpotify">
+						<div class="spotify" id="edgeIframe" align="middle" style="margin-top:30px"></div>
+						</div>
+						
+						<!-- Youtube -->
+						<div class="tab-pane" id="edgeYoutube">
+							<div class="tableWrapper noselect" align="middle" style="overflow:scroll"> 
+							<table id="edgeYoutubeTable" data-toggle="table" data-toolbar="#toolbar" 
+									data-height="300" pagination="true" sortable="true" data-show-header="false">
+								<thead>
+								<tr>
+									<th data-field="title" data-sortable="true">Title</th>
+									<th data-field="add"></th>
+									<th data-field="play"></th>
+								</tr>
+								</thead>
+				        	</table>
+				        	</div>				        
+						</div>
+
+					</div>
+				</div>
+
+				<!-- Path Tab -->
+				<div role="tabpanel" class="tab-pane" id="pathPane">
+
+					<!-- Path header-->
+					<div id="pathName" class="text-center"></div>
+				
+					<!-- Path nav tabs -->
+					<ul id="pathTabs" class="nav nav-tabs nav-justified" data-tabs="tabs">
+					<li class="active spotify" id="pathSpotifyTab"><a href="#pathSpotify" role="tab" data-toggle="tab"> <i class="el el-spotify"></i></a></li>
+					<li id="pathYoutubeTab" class="youtube"><a href="#pathYoutube" data-toggle="tab"><i class="el el-youtube"></i></a></li>
+					</ul>
+
+					<!-- Path tab panes -->
+					<div class="tab-content">
+
+						<!-- Spotify -->
+						<div class="tab-pane spotify" id="pathSpotify">
+						<div class="spotify" id="pathIframe" align="middle" style="margin-top:30px"></div>
+						</div>
+						
+						<!-- Youtube -->
+						<div class="tab-pane active" id="pathYoutube">
+							
+							<div class="tableWrapper noselect"> 
+							<table id="pathYoutubeTable" data-toggle="table" data-toolbar="#toolbar" 
+									data-height="300" pagination="true" sortable="true" data-show-header="false">
+								<thead>
+								<tr>
+									<th data-field="title" data-sortable="true">Title</th>
+									<th data-field="add"></th>
+									<th data-field="play"></th>
+								</tr>
+								</thead>
+				        	</table>
+				        	<div class="videoWrapper" align="middle"><div id="player" style="opacity: 0"></div></div>	
+				        	</div>
+				        
+						</div>
+
+					</div>
+				</div>
+
+
+		</div>
+
+
+
+		</div>
+			<!-- Playlist Pane -->
+			<div id="playlistPane">
+				<h3 style="text-align: center;">Playlist</h3>
+				<div class="tableWrapper noselect" > 
+	        	<table id="playlistTable" align="middle" data-show-header="true" data-striped="true" data-clickToSelect="true" data-height="300">
+	        	    <thead>
+	        	    <tr>
+	        	        <th data-field="track">Track</th>
+	        	        <th data-field="option"></th>
+	        	        <th data-field="remove"></th>
+	        	    </tr>
+	        	    </thead>
+	        	</table>
+	        	</div>
+			</div>
+
+			<!-- CUSTOM SUBGRAPH Pane -->
+			<div id="subgraphPane">
+				<h3 style="text-align: center;">Custom Subgraph</h3>
+				<div class="tableWrapper noselect" > 
+	        	<table id="subgraphTable" align="middle" data-show-header="true" data-striped="true" data-clickToSelect="true" data-height="300">
+	        		<thead>
+	        		<tr>
+	        		    <th data-align="left" data-field="name">Name</th>
+	        		    <th data-align="right" data-field="remove"></th>
+	        		</tr>
+	        		</thead>
+	        	</table>
+	        	<div class="input-group">
+	        		<input href="#" class="form-control autocomplete" placeholder="Artist Name" id="addtoSubgraph">
+	        		<div class="input-group-btn">
+	        			<button type="button" class="btn btn-default"><i class="fa fa-user-plus"></i></button>
+	        		</div>
+	        		      	
+	        	</div><!-- /input-group -->
+	        	<button type="button" id="generateSubgraph" class="btn btn-danger">GENERATE</button>	  
+	        	</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<nav class="navbar navbar-default navbar-fixed-bottom" id="bottomNav">
+  <div class="container-fluid youtube">
+    <div class="navbar-left" id="bottomLeftNav">
+      	<ul class="nav navbar-nav">
+    	  	<li id="consoleElement"><a id="previous" type="button" class="navbar"><span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span></a></li>
+    	  	<li><a id="play-pause" type="button" class="navbar"> <span id="playsong" class="glyphicon glyphicon-play" style="display: none;"aria-hidden="true"></span> <span id="pausesong" class="glyphicon glyphicon-pause" style="display: none;" aria-hidden="true"></span><span id="bufferingsong" style="display: inline-block;" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></a></li>
+    	  	<li><a id="next" type="button" class="navbar"><span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span></a></li>
+    	  	<li><p class="navbar-text" id="currentTime">0.00</p></li>
+    	  	<li><div id="scrubberSlider" class="nav-bar pull-left" style="margin:15px; margin-top:22px;"></div></li>
+    	  	<li><p class="navbar-text" id="duration">0.00</p></li>
+    	  	<li class="dropup">
+				<a href = "#" class="dropdown-toggle" data-toggle="dropdown" id="volumeButton" class="navbar"><i id="VolMute" class="el el-volume-off"></i><i id="VolDown" class="el el-volume-down"></i><i id="VolUp" class="el el-volume-up"></i></a>
+				<ul class="dropdown-menu" id="volumeMenu" role="menu">
+					<li>
+						<div id="volumeSlider"></div>
+					</li>
+				</ul>
+			</li>
+    	</ul>
+    </div>
+
+	    <div class="navbar-right" id="INFO">
+	      	<ul class="nav navbar-nav">
+	    	  	<li><div><p class="navbar-text ellipsis" id="playerTrackInfo">Artist - SongNAme</p></div></li>
+	    	</ul>
+	    </div>
+    </div>
+      <div class="container-fluid spotify">
+    	    <div class="navbar-right" id="INFO">
+    	      	<ul class="nav navbar-nav">
+    	    	  	<li><p class="navbar-text">Player Not Yet Available with Spotify</p></div></li>
+    	    	</ul>
+    	    </div>
+        </div>
+</nav> 
+
+
+
+<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}"></script>
+<script src="{{ url_for('static', filename='twttr.js') }}"></script>
+<script src="{{ url_for('static', filename='fuzzyset.js') }}"></script>
+<script src="{{ url_for('static', filename='MediawikiJS.js') }}"></script>
+<script src="{{ url_for('static', filename='bootstrap-table.js') }}"></script>
+<script src="{{ url_for('static', filename='bootstrap-table-en-US.js') }}"></script>
+<script src="{{ url_for('static', filename='phonograph.js') }}"></script>
+<script src="{{ url_for('static', filename='musicplaybar.js') }}"></script>	
+
+</body>
+</html>		
