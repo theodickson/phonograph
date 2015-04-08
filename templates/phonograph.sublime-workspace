@@ -4,12 +4,32 @@
 		"selected_items":
 		[
 			[
-				"sc",
-				"scrubberSlider"
+				"sub",
+				"subgraphTable"
 			],
 			[
-				"ui",
-				"ui-slider-handle"
+				"pau",
+				"pausesong"
+			],
+			[
+				"curr",
+				"currentService"
+			],
+			[
+				"well",
+				"wellWidth"
+			],
+			[
+				"new",
+				"newService"
+			],
+			[
+				"min",
+				"min-width"
+			],
+			[
+				"remove",
+				"removeClass"
 			],
 			[
 				"data",
@@ -30,10 +50,6 @@
 			[
 				"cu",
 				"customPlaylist"
-			],
-			[
-				"new",
-				"newPlaylist"
 			],
 			[
 				"curren",
@@ -156,18 +172,34 @@
 	"buffers":
 	[
 		{
-			"file": "/Users/Alex/Dropbox/Phonograph/Phonograph/static/musicplaybar.js",
+			"file": "/Users/Alex/Documents/phonograph/static/style.css",
 			"settings":
 			{
-				"buffer_size": 11560,
+				"buffer_size": 3530,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/Users/Alex/Dropbox/Phonograph/Phonograph/static/phonograph.js",
+			"file": "/Users/Alex/Documents/phonograph/static/musicplaybar.js",
 			"settings":
 			{
-				"buffer_size": 31445,
+				"buffer_size": 13415,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/Alex/Documents/phonograph/static/flat.css",
+			"settings":
+			{
+				"buffer_size": 1648,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/Alex/Documents/phonograph/static/phonograph.js",
+			"settings":
+			{
+				"buffer_size": 34977,
 				"line_ending": "Unix"
 			}
 		},
@@ -175,15 +207,7 @@
 			"file": "index.html",
 			"settings":
 			{
-				"buffer_size": 13569,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/Alex/Dropbox/Phonograph/Phonograph/static/style.css",
-			"settings":
-			{
-				"buffer_size": 3336,
+				"buffer_size": 16599,
 				"line_ending": "Unix"
 			}
 		}
@@ -248,15 +272,13 @@
 	},
 	"file_history":
 	[
-		"/Users/Alex/Dropbox/Phonograph/Phonograph/static/flat.css",
-		"/Users/Alex/Dropbox/Phonograph/Phonograph/phonograph.sublime-project",
 		"/Users/Alex/Dropbox/Phonograph/Phonograph/templates/flat.html",
+		"/Users/Alex/Dropbox/Phonograph/Phonograph/app.py",
 		"/Users/Alex/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
 		"/Users/Alex/Dropbox/Phonograph/Phonograph/templates/index.html",
 		"/Users/Alex/Dropbox/Phonograph/Phonograph/static/flat-style.css",
 		"/Users/Alex/Dropbox/Phonograph/Phonograph/static/bootstrap/css/bootstrap.css",
 		"/Users/Alex/Dropbox/Phonograph/Phonograph/static/phonograph.js",
-		"/Users/Alex/Dropbox/Phonograph/Phonograph/app.py",
 		"/Users/Alex/Dropbox/Phonograph/Phonograph/static/bootstrap/css/styles.css",
 		"/Users/Alex/Dropbox/Phonograph/Phonograph/static/style.css",
 		"/Users/Alex/Library/Application Support/Sublime Text 2/Packages/Emmet/Emmet.sublime-settings",
@@ -287,12 +309,35 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"var svg",
-			"create",
-			"volumeslider",
-			"slider",
-			"ui",
-			"plus",
+			"alerttest",
+			"find_paths",
+			"get_graph",
+			"sub",
+			"subgraph",
+			"remove",
+			"bootstraptab",
+			"generate",
+			"subgraph",
+			"search",
+			"subgraph",
+			"navbar-right",
+			"playlistPane",
+			"playlist",
+			"height",
+			"});\n",
+			"data-show-header=\"true\"",
+			"thead",
+			"nheight",
+			"wellwidth",
+			"spotify",
+			"service-choice",
+			"youtube",
+			"spotify",
+			"spotiy",
+			"spotify",
+			"'top",
+			"zoom",
+			"position",
 			"append",
 			"apppend",
 			"navbar-right",
@@ -391,30 +436,7 @@
 			"height",
 			"addTo",
 			"addto ",
-			"back",
-			"loadPathinfo",
-			"path",
-			"clickNode",
-			"addToSidebarHistory",
-			"dataset.currentSidebar",
-			"console.log",
-			"echonest",
-			"console.log",
-			"addtosidebar",
-			"loadPath",
-			"path",
-			"artistinfo",
-			"path",
-			"addtoSide",
-			"currentSidebar",
-			"clickNode",
-			"get_graph",
-			"path",
-			"get_graph",
-			"svg",
-			"height",
-			"spotifyWidt",
-			"spotifywidth"
+			"back"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -422,6 +444,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"data-show-header=\"false\"",
 			"data-show-header=\"true\"",
 			"center-pills",
 			"pills",
@@ -438,104 +461,23 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 4,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "/Users/Alex/Dropbox/Phonograph/Phonograph/static/musicplaybar.js",
+					"file": "/Users/Alex/Documents/phonograph/static/style.css",
 					"settings":
 					{
-						"buffer_size": 11560,
+						"buffer_size": 3530,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								10147,
-								10147
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 5370.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "/Users/Alex/Dropbox/Phonograph/Phonograph/static/phonograph.js",
-					"settings":
-					{
-						"buffer_size": 31445,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7942,
-								7942
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 3678.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "index.html",
-					"settings":
-					{
-						"buffer_size": 13569,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1381,
-								1381
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1400.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "/Users/Alex/Dropbox/Phonograph/Phonograph/static/style.css",
-					"settings":
-					{
-						"buffer_size": 3336,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								75,
-								75
+								0,
+								0
 							]
 						],
 						"settings":
@@ -543,6 +485,115 @@
 							"syntax": "Packages/CSS/CSS.tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/Users/Alex/Documents/phonograph/static/musicplaybar.js",
+					"settings":
+					{
+						"buffer_size": 13415,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/Users/Alex/Documents/phonograph/static/flat.css",
+					"settings":
+					{
+						"buffer_size": 1648,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/Users/Alex/Documents/phonograph/static/phonograph.js",
+					"settings":
+					{
+						"buffer_size": 34977,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "index.html",
+					"settings":
+					{
+						"buffer_size": 16599,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,

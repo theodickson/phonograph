@@ -164,7 +164,7 @@
 				
 						<div role="tabpanel" class="tab-pane" id="twitter"></div>
 				
-						<div role="tabpanel" class="tab-pane spotify" id="nodeSpotify">
+						<div role="tabpanel" class="tab-pane" id="nodeSpotify">
 							<div class = "spotify" id="nodeIframe" align="middle" style="margin-top:30px"></div>
 						</div>
 						
@@ -201,12 +201,12 @@
 					<div class="tab-content">
 
 						<!-- Spotify -->
-						<div class="tab-pane active spotify" id="edgeSpotify">
+						<div class="tab-pane" id="edgeSpotify">
 						<div class="spotify" id="edgeIframe" align="middle" style="margin-top:30px"></div>
 						</div>
 						
 						<!-- Youtube -->
-						<div class="tab-pane" id="edgeYoutube">
+						<div class="tab-pane active" id="edgeYoutube">
 							<div class="tableWrapper noselect" align="middle" style="overflow:scroll"> 
 							<table id="edgeYoutubeTable" data-toggle="table" data-toolbar="#toolbar" 
 									data-height="300" pagination="true" sortable="true" data-show-header="false">
@@ -232,16 +232,16 @@
 				
 					<!-- Path nav tabs -->
 					<ul id="pathTabs" class="nav nav-tabs nav-justified" data-tabs="tabs">
-					<li class="active spotify" id="pathSpotifyTab"><a href="#pathSpotify" role="tab" data-toggle="tab"> <i class="el el-spotify"></i></a></li>
-					<li id="pathYoutubeTab" class="youtube"><a href="#pathYoutube" data-toggle="tab"><i class="el el-youtube"></i></a></li>
+					<li class="spotify" id="pathSpotifyTab"><a href="#pathSpotify" role="tab" data-toggle="tab"> <i class="el el-spotify"></i></a></li>
+					<li id="pathYoutubeTab" class="active youtube"><a href="#pathYoutube" data-toggle="tab"><i class="el el-youtube"></i></a></li>
 					</ul>
 
 					<!-- Path tab panes -->
 					<div class="tab-content">
 
 						<!-- Spotify -->
-						<div class="tab-pane spotify" id="pathSpotify">
-						<div class="spotify" id="pathIframe" align="middle" style="margin-top:30px"></div>
+						<div class="tab-pane" id="pathSpotify">
+						<div id="pathIframe" align="middle" style="margin-top:30px"></div>
 						</div>
 						
 						<!-- Youtube -->

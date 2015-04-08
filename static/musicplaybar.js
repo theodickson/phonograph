@@ -461,11 +461,9 @@ $('.service-choice').on('click', function(){
 	var newIcon = $(this).children('i').clone();
 	$('#service-choice-displayed').children().first().replaceWith(newIcon);
 	$('.'+currentService).hide();
-	$('.'+newService).show();
-	$('.'+newService).each(function() {
-		$('#'+$( this ).attr("href")).tab('show');
-  		$( this ).tab('show');
-  	});
+	$('.'+newService).show().filter('li').each(function(){
+		$(this).find('a').tab('show');
+	});
   	//IF SWITCHING OUT OF YT THEN PAUSE THE YT MUSIC
   	if(newService!="youtube"){
   		player.pauseVideo();
@@ -480,4 +478,65 @@ $('.service-choice').on('click', function(){
   	dataset.currentService = newService;
   	currentService = newService;
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

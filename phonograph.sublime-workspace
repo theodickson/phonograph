@@ -192,34 +192,35 @@
 	"buffers":
 	[
 		{
+			"contents": "",
 			"file": "flat.css",
+			"file_size": -1,
+			"file_write_time": -1,
 			"settings":
 			{
-				"buffer_size": 1376,
+				"buffer_size": 0,
 				"line_ending": "Unix"
 			}
 		},
 		{
+			"contents": "",
 			"file": "musicplaybar.js",
+			"file_size": -1,
+			"file_write_time": -1,
 			"settings":
 			{
-				"buffer_size": 9516,
+				"buffer_size": 0,
 				"line_ending": "Unix"
 			}
 		},
 		{
+			"contents": "",
 			"file": "/Users/Alex/Dropbox/Phonograph/Phonograph/templates/flat.html",
+			"file_size": -1,
+			"file_write_time": -1,
 			"settings":
 			{
-				"buffer_size": 12944,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "style.css",
-			"settings":
-			{
-				"buffer_size": 3162,
+				"buffer_size": 0,
 				"line_ending": "Unix"
 			}
 		},
@@ -227,7 +228,7 @@
 			"file": "phonograph.js",
 			"settings":
 			{
-				"buffer_size": 30600,
+				"buffer_size": 31870,
 				"line_ending": "Unix"
 			}
 		},
@@ -235,7 +236,7 @@
 			"file": "bootstrap-table.js",
 			"settings":
 			{
-				"buffer_size": 77982,
+				"buffer_size": 0,
 				"line_ending": "Unix"
 			}
 		}
@@ -300,6 +301,7 @@
 	},
 	"file_history":
 	[
+		"/Users/Alex/Documents/phonograph/style.css",
 		"/Users/Alex/Documents/scrollTo.html",
 		"/Users/Alex/Dropbox/Phonograph/Phonograph/static/phonograph.js",
 		"/Users/Alex/Dropbox/Phonograph/Phonograph/static/bootstrap-table.js",
@@ -494,7 +496,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -502,15 +504,15 @@
 					"file": "flat.css",
 					"settings":
 					{
-						"buffer_size": 1376,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								258,
-								259
+								0,
+								0
 							]
 						],
 						"settings":
@@ -530,15 +532,15 @@
 					"file": "musicplaybar.js",
 					"settings":
 					{
-						"buffer_size": 9516,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3240,
-								3240
+								0,
+								0
 							]
 						],
 						"settings":
@@ -546,8 +548,8 @@
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
-						"translation.x": 2.0,
-						"translation.y": 1401.0,
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -557,15 +559,15 @@
 					"file": "/Users/Alex/Dropbox/Phonograph/Phonograph/templates/flat.html",
 					"settings":
 					{
-						"buffer_size": 12944,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1603,
-								1609
+								0,
+								0
 							]
 						],
 						"settings":
@@ -574,53 +576,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 252.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "style.css",
-					"settings":
-					{
-						"buffer_size": 3162,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2781,
-								2781
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2383.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
 					"file": "phonograph.js",
 					"settings":
 					{
-						"buffer_size": 30600,
+						"buffer_size": 31870,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								23982,
-								23982
+								0,
+								0
 							]
 						],
 						"settings":
@@ -635,19 +609,19 @@
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 4,
 					"file": "bootstrap-table.js",
 					"settings":
 					{
-						"buffer_size": 77982,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3709,
-								3709
+								0,
+								0
 							]
 						],
 						"settings":
