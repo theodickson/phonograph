@@ -101,6 +101,10 @@
     min-width: 0px;
 }
 
+#urlMenu{
+    width:200px;
+}
+
 #service-choice.dropdown-menu > li > a {
     padding-left:0px;
     padding-right:0px;

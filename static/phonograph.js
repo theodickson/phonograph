@@ -411,12 +411,25 @@ function loadArtistInfo(o) {
 	tabSwitch("node");
 	d3.select('#sideBarTitle').text(o.name);
 	d3.json("http://developer.echonest.com/api/v4/artist/biographies?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+o.id+"&format=json&results=1&start=0&license=cc-by-sa", function(error, response) {
-		var bio = response.response.biographies[0].text;
-		d3.select('#bioText').text(bio);
+		console.log(response);
+		if(error){
+			d3.select('#bioText').text("Biography not found in database");
+		}
+		else{
+			var bio = response.response.biographies[0].text;
+			console.log(bio);
+			d3.select('#bioText').text(bio);
+		}
 	});
 	d3.json("http://developer.echonest.com/api/v4/artist/images?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+o.id+"&format=json&results=1&start=0", function(error, response) {
-		var image = response.response.images[0].url;
-		d3.select('#artistImage').html( function() { return '<img src="'+image+'" style="max-width: 180px; max-height: 240p" class="img-thumbnail center-block"/>'; });
+		if(error){
+			d3.select('#artistImage').html( function() { return '<img src="static/images/default.jpg" style="max-width: 180px; max-height: 240p" class="img-thumbnail center-block"/>'; });
+		}
+		else{
+			var image = response.response.images[0].url;
+			d3.select('#artistImage').html( function() { return '<img src="'+image+'" style="max-width: 180px; max-height: 240p" class="img-thumbnail center-block"/>'; });
+
+		};
 	});
 	if(dataset.currentService=="spotify"){
 		d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+o.id+'&theme=white" width="'+wellWidth+'" height="'+wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
