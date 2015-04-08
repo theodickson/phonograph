@@ -29,7 +29,55 @@
 
 .ncircle {
 	fill: white;
-	stroke: rgba(188, 206, 226, 1);
+	/*stroke: rgba(188, 206, 226, 1);*/
+}
+
+.hip {
+    stroke: ;
+}
+
+.pop {
+    stroke: ;
+}
+
+.rock {
+    stroke: ;
+}
+
+.electronic {
+    stroke: ;
+}
+
+.classical {
+    stroke: ;
+}
+
+.country {
+    stroke: ;
+}
+
+.funk {
+    stroke: ;
+}
+
+.jazz {
+    stroke: ;
+}
+
+.latin {
+    stroke: ;
+}
+
+.reggae {
+    stroke: ;
+}
+
+.null {
+    stroke: ;
+}
+
+.None {
+    stroke: ;
 }
 
 .navbar-top{

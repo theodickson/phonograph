@@ -69,13 +69,15 @@ function start_Vis(gms) { graph = gms[0]; route = gms[1]; seed = gms[2];
 	maxWidthScale = d3.scale.linear().domain([50,400]).range([0,2]);
 	widthScale = d3.scale.log()
 						.domain([d3.min(weights), d3.max(weights)])	
-						.range([0.6, 3 - maxWidthScale(linkCount)]);			
+						.range([0.6, 3 - maxWidthScale(linkCount)]);	
+
 	newNodes = [];
 	newIds = [];
 	for (n of graph.nodes) {
 		newNodes.push(n);
 		newIds.push(n.id);
 	};
+
 	dataset.currentIds = newIds;
 	oldNodes = [];
 	oldIds = [];
@@ -206,7 +208,7 @@ function start_Vis(gms) { graph = gms[0]; route = gms[1]; seed = gms[2];
 		.attr("stroke-width", function(d) { 
 			if (clicked != null) {
 				if ('a'+d.id == clicked.id) {
-					return 3;
+					return 4;
 				};
 			};
 			return strokeScale(d.popularity);
@@ -364,7 +366,8 @@ function clickNode(n, o, hl) {
 	d3.select(clicked).select(".secondLabel").transition().duration(500)
 		.style("font-size", "18px")
 		.attr("dy", "0.91em");
-	d3.select(clicked).select("circle").transition().duration(500)
+	if (hl) {clickedDuration = 500;} else {clickedDuration = 0;}
+	d3.select(clicked).select("circle").transition().duration(clickedDuration)
 		.attr("r", 30)
 		.attr("stroke-width", 4); 
 	if (hl) { highlightLinks(); }
