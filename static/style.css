@@ -33,51 +33,51 @@
 }
 
 .hip {
-    stroke: ;
+    stroke: rgb(204, 153, 153);
 }
 
 .pop {
-    stroke: ;
+    stroke: rgb(194, 153, 194);
 }
 
 .rock {
-    stroke: ;
+    stroke: rgb(153, 173, 194);
 }
 
 .electronic {
-    stroke: ;
+    stroke: rgb(153, 173, 153);
 }
 
 .classical {
-    stroke: ;
+    stroke: rgb(128, 153, 204);
 }
 
 .country {
-    stroke: ;
+    stroke: rgb(204, 153, 128);
 }
 
 .funk {
-    stroke: ;
+    stroke: rgb(153, 153, 194) ;
 }
 
 .jazz {
-    stroke: ;
+    stroke: rgb(194, 153, 235);
 }
 
 .latin {
-    stroke: ;
+    stroke: rgb(204, 153, 178);
 }
 
 .reggae {
-    stroke: ;
+    stroke: rgb(173, 214, 194) ;
 }
 
 .null {
-    stroke: ;
+    stroke: lightgrey;
 }
 
 .None {
-    stroke: ;
+    stroke: lightgrey;
 }
 
 .navbar-top{
