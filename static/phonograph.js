@@ -297,17 +297,18 @@ dataset.FadeIn = 800;
 var SidebarTitleHeight = $('#sideBarTitle').outerHeight(true) + $('.navbar').outerHeight();
 var width = $('#map').width();
 	nheight = $('#navbar').height();
-	height = window.innerHeight - nheight-100;
+	height = window.innerHeight;
 var wellHeight = window.innerHeight - nheight-170;
 var wellWidth = $('#sidebar').width()-40;
 $('#bio').css('max-height', wellHeight+"px");
-$('.fixed-table-container').attr("data-height", wellHeight+"px");
-$('#svg').css({top: -$('.zoom').outerHeight() + 'px'});
 
-$('.zoom').css({ top: height-120 +'px', left: -0.3*width});
+$('.fixed-table-container').attr("data-height", wellHeight+"px");
+
 
 $('#sidebar').css('min-height', window.innerHeight+"px");
-$('#bio').css('max-height', wellHeight+'px');
+var heightOfZoom = $('#zoom').height();
+
+$('#zoom').css({'left': '20px', 'top': height - heightOfZoom - 55 +'px'});
 
 $('#subgraphTable').bootstrapTable({
         data: ""
@@ -319,7 +320,7 @@ $('#nodeYoutubeTable').bootstrapTable('resetView');
 $('#edgeYoutubeTable').attr("data-height", wellHeight);
 $('#edgeYoutubeTable').bootstrapTable('resetView');
 $('#pathYoutubeTable').attr("data-height", wellHeight);
-$('#pathYoutubeTable').bootstrapTable('resetView');
+$('#pathYoutubeTable').bootstrapTable('resetView')
 $('#playlistTable').attr("data-height", wellHeight);
 $('#playlistTable').bootstrapTable('resetView');
 $('#subgraphTable').attr("data-height", wellHeight-nheight-nheight);

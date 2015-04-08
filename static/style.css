@@ -3,11 +3,15 @@
 	stroke-opacity: .6;
 }
 
-.zoom{
-    position:relative;
+#zoom{
+    position:absolute;
+    float:right;
     z-index: 100;
 }
 
+.row{
+    position:relative;
+}
 .linkWrapper {
 	stroke: #999;
 	stroke-opacity: .6;
