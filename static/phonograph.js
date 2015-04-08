@@ -1066,13 +1066,28 @@ function highlightZoomLevel(){
 	$('.zL').each(function(){
 		if($(this).attr('id').replace("zoomL","") == dataset.zoomLevel){
 			$(this).addClass("btn-primary");
-			$(this).removeClass("btn-disabled");
+			$(this).removeClass("btn-default");
 		}
 		else{
-			$(this).addClass("btn-disabled");
+			$(this).addClass("btn-default");
 			$(this).removeClass("btn-primary");
 		};
 	});
+};
+
+function disableZoom(){
+	if(dataset.zoomLevel == 1){
+		$('.zo').addClass('btn-default').removeClass('btn-disabled').prop("disabled", false);
+		$('.zi').addClass('btn-disabled').removeClass('btn-default').prop("disabled", true);
+	}
+	else if(dataset.zoomLevel ==4){
+		$('.zi').addClass('btn-default').removeClass('btn-disabled').prop("disabled", false);
+		$('.zo').addClass('btn-disabled').removeClass('btn-default').prop("disabled", true);
+	}
+	else{
+		$('.zi').addClass('btn-default').removeClass('btn-disabled').prop("disabled", false);
+		$('.zo').addClass('btn-default').removeClass('btn-disabled').prop("disabled", false);
+	}
 };
 
 function zoomOut(){
@@ -1082,31 +1097,38 @@ function zoomOut(){
 		dataset.zoomLevel += 1;
 		console.log("Zooming to "+dataset.zoomLevel);
 		get_graph(origin+','+dataset.neighbourhoodSize+','+dataset.zoomLevel, "zoom");
-		if(dataset.zoomLevel == 4){
-			$('.zo').addClass('btn-disabled').prop("disabled", true).removeClass('btn-default');
-		};
 	}
 	else{
 		console.log('cant zoom any further');
 	};
 	highlightZoomLevel();
+	disableZoom();
 };
 
 function zoomIn(){
-	$('.zo').addClass('btn-default').removeClass('btn-disabled').prop("disabled", false);
 	if ( (dataset.zoomLevel > 1)&&(dataset.clickable) ) {
 		dataset.zoomLevel -=1 ;
 		if (dataset.zoomLevel > 1) {
 			get_graph(origin+','+dataset.neighbourhoodSize+','+dataset.zoomLevel, "zoom");
 		} else {
 			get_graph(origin+','+dataset.neighbourhoodSize, "neighbourhood");
-			$('.zi').addClass('btn-disabled').prop("disabled", true);
 
 		};
 	};
 	highlightZoomLevel();
+	disableZoom();
 };
 
+//ON CLICK OF ZOOM LEVEL MOVE TO THAT LEVEL
+$('.zL').click(function(){
+	var newZoomLevel = $(this).attr('id').replace("zoomL",""); //GET NEW ZOoM LEVEL FROM BUTTON
+	console.log("MOVING TO ZOOM LEVEL "+newZoomLevel);
+	dataset.zoomLevel = newZoomLevel;
+	get_graph(origin+','+dataset.neighbourhoodSize+','+dataset.zoomLevel, "zoom");
+	highlightZoomLevel();
+	disableZoom();
+
+})
 $('.zo').click(function() { 
 	zoomOut();
 });
@@ -1127,4 +1149,79 @@ $('#urlShare').click(function(){
 $('#artistOptions').on('click', function(){
 	var totalWidth = $('#searchBar').width() + $('#artistOptions').width();
 	$('#travelTo').width(totalWidth);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 });
