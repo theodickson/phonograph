@@ -104,7 +104,9 @@ def find_paths(i,j):
 	distances = {0: { i: []} }
 	visited = set([])
 	c = 0
-	while j not in distances[c].keys() and c < 7:
+	while j not in distances[c].keys():
+		if c == 8:
+			return None
 		visited.update(distances[c].keys())
 		distances = extend(distances, visited, c)
 		c += 1
@@ -223,9 +225,13 @@ def index():
 def path_finder():
 	i = request.args['source']
 	j = request.args['destination']
-	path = random.choice(find_paths(i,j))
-	g = igrapher(path)
-	return jsonify(d3_dictify(g))
+	paths = find_paths(i,j)
+	if paths:
+		path = random.choice(find_paths(i,j))
+		g = igrapher(path)
+		return jsonify(d3_dictify(g))
+	else:
+		return jsonify({"error": "No path found."})
 		
 @app.route("/neighbourhood")
 #@login_required
