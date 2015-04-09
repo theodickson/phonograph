@@ -22,8 +22,8 @@ function start_Vis(graph) {
 		nheight = $('#navbar').height();
 		height = window.innerHeight - nheight-105;
 
-	var wellHeight = window.innerHeight - nheight-170+"px";
-	$('#bio').css('height', wellHeight);
+	gv.wellHeight = window.innerHeight - nheight-170+"px";
+	$('#bio').css('height', gv.wellHeight);
 	$('.fixed-table-container').attr({"data-height": "100%", "data-width": "100%"});
 	var radius = Math.min(width, height)/2;
 		
@@ -177,6 +177,7 @@ function start_Vis(graph) {
 				d3.event.stopPropagation();
 				if ((d.id != gv.origin)&&(gv.clickable)) {
 					gv.origin = d.id;
+					gv.route = "neighbourhood"
 					resetZoomLevel();
 					reload();	
 				};
@@ -302,11 +303,11 @@ gv.FadeIn = 500;
 var width = $('#map').width();
 	nheight = $('#navbar').height();
 	height = window.innerHeight;
-var wellHeight = window.innerHeight - nheight-170;
-var wellWidth = $('#sidebar').width()-40;
-$('#bio').css('max-height', wellHeight+"px");
+gv.wellHeight = window.innerHeight - nheight-170;
+gv.wellWidth = $('#sidebar').width()-40;
+$('#bio').css('max-height', gv.wellHeight+"px");
 
-$('.fixed-table-container').attr("data-height", wellHeight+"px");
+$('.fixed-table-container').attr("data-height", gv.wellHeight+"px");
 
 
 $('#sidebar').css('min-height', window.innerHeight+"px");
@@ -318,14 +319,14 @@ $('#subgraphTable').bootstrapTable({
         data: ""
 });
 
-$('#nodetable').attr("data-height", wellHeight);
-$('#nodeYoutubeTable').attr("data-height", wellHeight);
+$('#nodetable').attr("data-height", gv.wellHeight);
+$('#nodeYoutubeTable').attr("data-height", gv.wellHeight);
 $('#nodeYoutubeTable').bootstrapTable('resetView');
-$('#edgeYoutubeTable').attr("data-height", wellHeight);
+$('#edgeYoutubeTable').attr("data-height", gv.wellHeight);
 $('#edgeYoutubeTable').bootstrapTable('resetView');
-$('#radioYoutubeTable').attr("data-height", wellHeight);
+$('#radioYoutubeTable').attr("data-height", gv.wellHeight);
 $('#radioYoutubeTable').bootstrapTable('resetView')
-$('#subgraphTable').attr("data-height", wellHeight-nheight-nheight);
+$('#subgraphTable').attr("data-height", gv.wellHeight-nheight-nheight);
 $('#subgraphTable').bootstrapTable('resetView');
 
 $('#artistOptions').on('click', function(){
@@ -384,7 +385,7 @@ function loadPathInfo(names){
 
 	if(gv.currentService=="spotify"){
 		d3.select('#pathIframe').html( function() { 
-			return '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+ gv.playlist.join(',') +'&theme=white" width="'+wellWidth+'" height="'+wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; 
+			return '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+ gv.playlist.join(',') +'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; 
 		});
 	};
 	gv.requestCounter = 0; gv.tableData = [];
@@ -417,15 +418,17 @@ function loadArtistInfo(o) {
 
 		};
 	});
+
 	if(gv.currentService=="spotify"){
-		d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+o.id+'&theme=white" width="'+wellWidth+'" height="'+wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
+		d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+o.id+'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
 	};
-	d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+o.id+'&theme=white" width="'+wellWidth+'" height="'+wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
+
+	d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+o.id+'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
 
 	d3.json("http://developer.echonest.com/api/v4/artist/twitter?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+o.id+"&format=json", function(error, response) {
 		var twttrId = response.response.artist.twitter;
 		if (typeof(twttrId)!= "undefined") {
-			d3.select('#twitter').html('<a id="twitterTimeline" height="'+wellHeight+'" class="twitter-timeline" href="https://twitter.com/'+twttrId+'" data-widget-id="574576262469009409" text="HAHAHAHAH" data-screen-name="'+twttrId+'">Loading Tweets by @'+twttrId+'</a>');
+			d3.select('#twitter').html('<a id="twitterTimeline" height="'+gv.wellHeight+'" class="twitter-timeline" href="https://twitter.com/'+twttrId+'" data-widget-id="574576262469009409" text="HAHAHAHAH" data-screen-name="'+twttrId+'">Loading Tweets by @'+twttrId+'</a>');
 			twttr.widgets.load();
 		} else {
 			d3.select('#twitter').html('<p><em>Twitter Data Not Found</em></p><p><a href="#">Click here to update Phonograph</a></p>');
@@ -539,14 +542,9 @@ function getLinkInfo(d){
 				trackIds.push(track.id);
 			};
 			spotifyUrl = '"https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+trackIds +'&theme=white"'
+			d3.select('#edgeIframe').html( function() { return '<iframe src='+spotifyUrl+' width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
 		};
 		$('#edge-title').text(names);
-		if(gv.currentService=="spotify"){
-			spotifyUrl = '"https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+tracks +'&theme=white"'
-			//console.log(spotifyUrl);
-			d3.select('#edgeIframe').html( function() { return '<iframe src='+spotifyUrl+' width="'+wellWidth+'" height="'+wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
-		};
-
 		if(gv.currentService == "youtube") {
 			gv.edgeTracks = response.tracks;
 			gv.requestCounter = 0; gv.tableData = [];
@@ -815,10 +813,15 @@ function loadRadio() {
 		for (track of gv.radioList) {
 			trackIds.push(track.id);
 		};
-		loadEdgeSpotify(trackIds);
+		loadSpotify(trackIds);
 	};
 };
 
+function loadSpotify(tracks) {
+	spotifyUrl = '"https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+trackIds.join(',')+'&theme=white"'
+	d3.select('#radioIframe').html( function() { return '<iframe src='+spotifyUrl+' width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
+
+}
 function makeRadioList() {
 	////console.log(graph.links);
 	originTracks = [];
