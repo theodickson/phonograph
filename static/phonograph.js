@@ -1,7 +1,7 @@
 //Main function:
 function reload() {
 	gv.clickable = false;
-	svg.transition().duration(4000).style("opacity", 0.5)
+	svg.transition().delay(1000).duration(1000).style("opacity", 0.3)
 	d3.json(flaskURL(), function(error, graph) {
 		start_Vis(graph);
 	});
@@ -14,7 +14,7 @@ function flaskURL() {
 }
 
 function start_Vis(graph) {
-	svg.transition().duration(2000).style("opacity", 1)
+	svg.transition().duration(1000).style("opacity", 1)
 	var width = $('#map').width();
 		nheight = $('#navbar').height();
 		height = window.innerHeight - nheight-100;
@@ -178,10 +178,7 @@ function start_Vis(graph) {
 				d3.event.stopPropagation();
 				if ((d.id != gv.origin)&&(gv.clickable)) {
 					gv.origin = d.id;
-					gv.zoomLevel = 1;
-					gv.route = "neighbourhood";
-					disableZoom();
-					highlightZoomLevel();
+					resetZoomLevel();
 					reload();	
 				};
 			});
@@ -874,7 +871,7 @@ function setAutocomplete(){
 	    	gv.origin = ui.item.value;
 	    	gv.route = "neighbourhood"
 	    	gv.genre = null;
-	    	gv.zoomLevel = 1;
+	    	resetZoomLevel();
 	    	reload();
 	    	event.preventDefault();
 	    },
@@ -898,7 +895,7 @@ function setAutocomplete(){
 	    	gv.route = "termsubgraph"
 	    	gv.origin = null;
 	    	gv.genre = null;
-	    	gv.zoomLevel = 1;
+	    	resetZoomLevel();
 	    	reload();
 	    	event.preventDefault();
 	    },
@@ -941,7 +938,7 @@ function setAutocomplete(){
 	    	gv.destination = ui.item.value;
 	    	gv.route = "path"
 	    	gv.genre = null;
-	    	gv.zoomLevel = 1;
+	    	resetZoomLevel();
 	    	event.preventDefault();
 	    },
 	    delay: 100,
@@ -1038,9 +1035,7 @@ $('#generateSubgraph').on('click', function() {
 	gv.core = (gv.customList.join(','));
 	gv.genre = null;
 	gv.origin = null;
-	gv.zoomLevel = 1;
-	highlightZoomLevel();
-	disableZoom();
+	resetZoomLevel();
 	reload();
 });
 
@@ -1153,6 +1148,11 @@ function zoom(){
 	reload();
 };
 
+function resetZoomLevel() {
+	gv.zoomLevel = 1;
+	disableZoom();
+	highlightZoomLevel();
+}
 //ON CLICK OF ZOOM LEVEL MOVE TO THAT LEVEL
 $('.zL').click(function(){
 	var newZoomLevel = $(this).attr('id').replace("zoomL",""); //GET NEW ZOoM LEVEL FROM BUTTON
@@ -1184,7 +1184,7 @@ $('#genre').change(function(){
 		gv.genre = newGenre;
 		gv.route = "neighbourhood"
 		gv.origin = null;
-		gv.zoomLevel = 1;
+		resetZoomLevel();
 		reload();
 	};
 });
