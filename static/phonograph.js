@@ -94,12 +94,15 @@ function start_Vis(graph) {
 	if (!(gv.route=="path")) { 
 		graph = optimiseRotation(oldPos, newPos, graph);
 	} else {
-		gv.playlist = [];
 		graph = pathPositions(graph, newIds, width, height);
-		names = graph.nodes[newIds.indexOf(gv.source)].name+' to '+graph.nodes[newIds.indexOf(gv.destination)].name;
-		addToSidebarHistory(2, names);
-		loadPathInfo(names);
 	};
+	
+	if (gv.route == "path") {
+		names = graph.nodes[newIds.indexOf(gv.source)].name+' to '+graph.nodes[newIds.indexOf(gv.destination)].name;
+		loadPathInfo(names);
+	} else {
+		loadRadio();
+	}
 	
 	gv.newGraph = graph;
 	
@@ -278,6 +281,7 @@ gv.artistList = [];
 gv.pathOrder = [];
 gv.currentService = "youtube";
 gv.playlist = [];
+gv.radio = [];
 gv.size = 30;
 gv.sizeBTN = "#b30";
 gv.clickable = true
