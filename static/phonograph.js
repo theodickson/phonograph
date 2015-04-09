@@ -244,9 +244,9 @@ function start_Vis(graph) {
 			if (gv.origin != null) {
 				if (d.id == gv.origin) {
 					if (gv.route == "zoom") {
-						//clickNode(this, d, false);
+						clickNode(this, d, false);
 					} else {
-						//clickNode(this, d, true);
+						clickNode(this, d, true);
 					};
 				};
 			} else {
@@ -794,7 +794,7 @@ function loadRadio(graph) { console.log('loading radio')
 	}
 	c = 0; gv.tableData = [];
 	console.log(gv.trackNames); console.log(gv.artistNames);
-	tabSwitch('path');
+	//tabSwitch('path');
 	performRequests(c, 'path')
 }
 
