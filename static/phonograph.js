@@ -296,7 +296,6 @@ gv.NodeSlide = 0;
 gv.FadeIn = 500;
 
 
-var SidebarTitleHeight = $('#sideBarTitle').outerHeight(true) + $('.navbar').outerHeight();
 var width = $('#map').width();
 	nheight = $('#navbar').height();
 	height = window.innerHeight;
@@ -377,7 +376,7 @@ function unclick(d) {
 function loadPathInfo(names){
 	tabSwitch("path");
 	//console.log(names);
-	d3.select('#sideBarTitle').text(names);
+	$('#path-title').text(names);
 
 	if(gv.currentService=="spotify"){
 		d3.select('#pathIframe').html( function() { 
@@ -392,7 +391,7 @@ function loadArtistInfo(o) {
 	gv.currentArtistName = o.name;
 	gv.currentArtist = o.id;
 	tabSwitch("node");
-	d3.select('#sideBarTitle').text(o.name);
+	$('#node-title').text(o.name);
 	d3.json("http://developer.echonest.com/api/v4/artist/biographies?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+o.id+"&format=json&results=1&start=0&license=cc-by-sa", function(error, response) {
 		//console.log(response);
 		if(error){
@@ -522,14 +521,15 @@ function getLinkInfo(d){
 	d3.json("/edgeLookup?seed="+pairIds, function(error, response) {
 		console.log(response);
 		tabSwitch("edge");
-		d3.select('#sideBarTitle').text(names);
-
 		if(gv.currentService=="spotify") {
 			trackIds = [];
 			for (track of response.tracks) {
 				trackIds.push(track.id);
 			};
 			spotifyUrl = '"https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+trackIds +'&theme=white"'
+		$('#edge-title').text(names);
+		if(gv.currentService=="spotify"){
+			spotifyUrl = '"https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+tracks +'&theme=white"'
 			console.log(spotifyUrl);
 			d3.select('#edgeIframe').html( function() { return '<iframe src='+spotifyUrl+' width="'+wellWidth+'" height="'+wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
 		};
@@ -819,14 +819,11 @@ function tabSwitch(pane) {
 	$('#subgraphPane').toggle(false);
 
 	console.log("switching to "+pane);
-	if (pane !== "playlist"){
-		$('.sidebarNav').removeClass('hide');
-	};
 	if (pane == "edge") {
 		for (elt of ["nodeTab", "nodePane", "pathTab", "pathPane"]) {
 			d3.select('#'+elt).classed("active", false);
 		};
-		for (elt of ["nodeTab", "pathTab"]){
+		for (elt of ["nodeTab"]){
 			$('#'+elt).hide();
 		}	
 		for (elt of ["edgeTab", "edgePane"]) {
@@ -839,7 +836,7 @@ function tabSwitch(pane) {
 		for (elt of ["edgeTab", "edgePane", "pathTab", "pathPane"]) {
 			d3.select('#'+elt).classed("active", false);
 		};
-		for (elt of ["edgeTab", "pathTab"]){
+		for (elt of ["edgeTab"]){
 			$('#'+elt).hide();
 		}
 		for (elt of ["nodeTab", "nodePane"]) {
@@ -853,9 +850,6 @@ function tabSwitch(pane) {
 			d3.select('#'+elt).classed("active", false);
 		};
 
-		for (elt of ["nodeTab", "edgeTab"]){
-			$('#'+elt).hide();
-		}
 		for (elt of ["pathTab", "pathPane"]) {
 			d3.select('#'+elt).classed("active", true);
 			$('#'+elt).show();
@@ -867,11 +861,6 @@ function tabSwitch(pane) {
 	};
 
 };
-
-//Switch to Playlist Tab on Click
-$('#playlistTab').on('click', function(){
-	tabSwitch("playlist");
-});
 
 function setAutocomplete(){
 	//Search bar.

@@ -136,11 +136,11 @@
 		<div id="sidebar" class="col-xs-3 sidebar">
 		<div id="info">
 			<!--Main tabs-->
-			<div style="display: none">
-			<ul class="nav nav-tabs sideBarTabs" id="sideBarTabs" role="tablist" data-tabs="tabs">
-				<li class="active" id="nodeTab"><a href="#nodePane" role="tab" data-toggle="tab"><i class="el el-adult el-sm"></i></a></li>
-				<li style="display: none" id="edgeTab"><a href="#edgePane" role="tab" data-toggle="tab"><i class="el el-link el-sm"></i></a></li>
-				<li style="display:none" id="pathTab"><a href="#pathPane" role="tab" data-toggle="tab"><i class="el el-road el-sm"></i></a></li>
+			<div>
+			<ul class="nav nav-pills sideBarTabs" id="sideBarTabs" role="tablist" data-tabs="tabs">
+				<li class="active" id="nodeTab"><a class="sidebar-icon" href="#nodePane" role="tab" data-toggle="tab"><i class="fa fa-info"></i></a></li>
+				<li style="display: none" id="edgeTab"><a class="sidebar-icon" href="#edgePane" role="tab" data-toggle="tab"><i class="fa fa-info"></i></a></li>
+				<li id="pathTab"><a class="sidebar-icon" href="#pathPane" role="tab" data-toggle="tab"><i class="fa fa-music"></i></a></li>
 			</ul>
 			</div>
 
@@ -155,11 +155,12 @@
 			  </tr>
 			</table>
 			-->
-			<h3 id="sideBarTitle"></h3>
+			
 			<div class="tab-content">
 
 				<!-- Node Tab-->
-				<div class="tab-pane active" id="nodePane">	
+				<div class="tab-pane active" id="nodePane">
+					<h3 class="sidebar-title" id="node-title"></h3>
 					<ul class="nav nav-tabs nav-justified" role="tablist" data-tabs="tabs">
 					<li class="active" id="bioTab"><a href="#bio" role="tab" data-toggle="tab"> <i class="el el-book"></i></a></li>
 					<li id="nodeSpotifyTab" class="spotify"><a href="#nodeSpotify" role="tab" data-toggle="tab"><i class="el el-spotify"></i></a></li>
@@ -203,7 +204,8 @@
 				</div>
 
 				<!-- Edge Tab -->
-				<div class="tab-pane" id="edgePane">				
+				<div class="tab-pane" id="edgePane">
+					<h3 class="sidebar-title" id="edge-title"></h3>				
 					<!-- Edge nav tabs -->
 					<ul id="edgeTabs" class="nav nav-tabs nav-justified" data-tabs="tabs">
 					<li class="active spotify" id="edgeSpotifyTab"><a href="#edgeSpotify" role="tab" data-toggle="tab"> <i class="el el-spotify"></i></a></li>
@@ -241,7 +243,7 @@
 				<div role="tabpanel" class="tab-pane" id="pathPane">
 
 					<!-- Path header-->
-					<div id="pathName" class="text-center"></div>
+					<h3 class="sidebar-title" id="path-title"></h3>
 				
 					<!-- Path nav tabs -->
 					<ul id="pathTabs" class="nav nav-tabs nav-justified" data-tabs="tabs">
@@ -318,7 +320,7 @@
     		<li class="dropup" id="playlistDropdown">
     			<a class="dropdown-toggle" id="playlistICON" href="#" data-toggle="dropdown"><i class="el el-list"></i></a>
     			<div class='dropdown-menu top-dropdown-right' id='playlistDD'>
-    				<form>
+    				<form onsubmit="return false">
 					<h4 style="text-align: center;">Playlist</h4>
 					<div class="tableWrapper noselect" > 
 			        	<table id="playlistTable" align="middle" data-show-header="false" data-striped="true" data-clickToSelect="true" data-height="300">
