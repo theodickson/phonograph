@@ -1,6 +1,7 @@
 //Main function:
 function reload() {
 	gv.clickable = false;
+	svg.transition().duration(500).style("opacity", 0.5)
 	d3.json(flaskURL(), function(error, graph) {
 		start_Vis(graph);
 	});
@@ -13,6 +14,7 @@ function flaskURL() {
 }
 
 function start_Vis(graph) {
+	svg.transition().duration(500).style("opacity", 1)
 	var width = $('#map').width();
 		nheight = $('#navbar').height();
 		height = window.innerHeight - nheight-100;
@@ -253,6 +255,7 @@ function start_Vis(graph) {
 				gv.currentArtist = gv.currentIds[Math.floor(gv.currentIds.length * Math.random())];
 				dehighlightLinks();
 			};
+			svg.transition().duration(250).style("opacity", 1)
 			gv.clickable = true;
 		});
 	
