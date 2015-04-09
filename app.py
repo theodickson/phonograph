@@ -359,30 +359,13 @@ def custom_subgraph():
 #@login_required
 def edge_lookup():
 	ids = request.args['seed'].split(',')
-	r.zinterstore(ids[0]+ids[1], ['artist.tracks:'+ids[0], 'artist.tracks:'+ids[1]])
-	r.expire(ids[0]+ids[1], 1)
-	trackIds = r.zrevrange(ids[0]+ids[1], 0, -1)
-	trackInfo = [r.hgetall('track.info:'+t) for t in trackIds]
-	print trackInfo
-	trackNames = [t['name'] for t in trackInfo]
-	artistIds = [r.smembers('track.artists:'+t) for t in trackIds]
-	print artistIds
-	artists = {}
-	artistNames = []
-	for t in artistIds:
-		tnames = []
-		for a in t:
-			try:
-				tnames.append(artists[a])
-			except:
-				name = r.hget('artist.info:'+a, 'name')
-				if name != None:
-					tnames.append(name)
-					artists[a] = name
-		artistNames.append(tnames)
-	print trackNames
-	print artistNames
-	return jsonify({"trackIds": trackIds, "trackNames": trackNames, "artistNames": artistNames})
+	r.zinterstore('edgelookup', ['artist.tracks:'+ids[0], 'artist.tracks:'+ids[1]])
+	trackIds = r.zrevrange('edgelookup', 0, -1)
+	response = []
+	for track in trackIds:
+		trackInfo = r.hgetall('track.info:'+track)
+		trackArtists = [r.hget('artist.info:'+a, 'name') for a in r.smembers('track.artists:'+track)]
+	return jsonify({"tracks": response})
 
 @app.route("/autocomplete")
 def autocomplete():

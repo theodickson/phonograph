@@ -99,10 +99,10 @@ function start_Vis(graph) {
 		graph = pathPositions(graph, newIds, width, height);
 	};
 	
-	loadRadio(graph);
-	
 	gv.newGraph = graph;
 	
+	loadRadio();
+
 	if ( !(gv.route == "path") ) {
 		$('.numArtists').show();
 		var wScale = d3.scale.linear().domain(graph.xrange).range(wrange);
@@ -430,18 +430,8 @@ function loadArtistInfo(o) {
 	});
 	
 	d3.json("https://api.spotify.com/v1/artists/"+o.id+"/top-tracks?country=GB", function (error, response) {
-		gv.trackNames = [];
-		gv.artistNames = [];
-		for (track of response.tracks) {
-			gv.trackNames.push(track.name);
-			artists = [];
-			for (artist of track.artists) {
-				artists.push(artist.name);
-			};
-			gv.artistNames.push(artists);
-		};
+		gv.nodeTracks = response.tracks;
 		c = 0; gv.tableData = [];
-		//console.log(gv.trackNames, gv.artistNames);
 		performRequests(c, 'node');
 	});
 };
@@ -456,12 +446,18 @@ function get_url(relations, type) {
 
 function performRequests(c, mode) {
 	//console.log(gv.trackNames); console.log(gv.artistNames);
+	/*if (mode == 'radio') {
+		thisTrack = gv.radioList[c];
+	}
+	if (mode == 'node') {
+		thisTrack = 
+	}
 	stNames = [];
-	for (n of gv.artistNames[c]) {
+	for (n of gv.radioList[c].artists) {
 		stNames.push(standardise(n));
 	};
 
-	stTrack = standardise(gv.trackNames[c]);
+	stTrack = standardise(gv.radioList[c].name);
 
 	yt = yt_requestString(removeNames(stNames, stTrack), stNames.join(' '))
 
@@ -476,7 +472,7 @@ function performRequests(c, mode) {
 		if (score > 0.3) {
 			gv.tableData.push( {"artistNames": '<div class="disabled" style="color:grey; font-style: italic;">'+gv.artistNames[c]+'</div>', "title": gv.trackNames[c], "add": "<button class='btn-sm btn-sidebar addToPlaylist' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-plus-sign'></i></button>", "play": "<button class='btn-sm btn-sidebar playNowButton' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-play'></i></button>"} );
 		} else {
-			gv.tableData.push( {"artistNames": gv.artistNames[c], "title": gv.trackNames[c], "add": "<button disabled class='btn-sm btn-sidebar disabled addToPlaylist' type='button'><i class='el el-plus-sign'></i></button>", "play": "<button disabled class='btn-sm btn-sidebar disabled playNowButton' type='button'><i class='el el-play'></i></button>"} );
+			gv.tableData.push( {"artistNames": gv.radioList[c], "title": gv.trackNames[c], "add": "<button disabled class='btn-sm btn-sidebar disabled addToPlaylist' type='button'><i class='el el-plus-sign'></i></button>", "play": "<button disabled class='btn-sm btn-sidebar disabled playNowButton' type='button'><i class='el el-play'></i></button>"} );
 		};
 
 		c += 1;
@@ -508,7 +504,7 @@ function performRequests(c, mode) {
 				};
 			});
 		};
-	});
+	});*/
 };
 
 function getLinkInfo(d){
@@ -516,7 +512,7 @@ function getLinkInfo(d){
 	var pairIds = [gv.newGraph.nodes[d.source].id, gv.newGraph.nodes[d.target].id].sort().join(',');
 	var names = gv.newGraph.nodes[d.source].name +" & "+gv.newGraph.nodes[d.target].name;
 	d3.json("/edgeLookup?seed="+pairIds, function(error, response) {
-		//console.log(response);
+		console.log(response);
 		tracks = response.trackIds.join(',');
 		console.log(tracks);
 		tabSwitch("edge");
@@ -526,8 +522,9 @@ function getLinkInfo(d){
 			console.log(spotifyUrl);
 			d3.select('#edgeIframe').html( function() { return '<iframe src='+spotifyUrl+' width="'+wellWidth+'" height="'+wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
 		};
-		c = 0; gv.tableData = []; gv.trackNames = response.trackNames; gv.artistNames = response.artistNames;
-		//performRequests(c, 'edge');
+		gv.linkTracks = response.tracks;
+		c = 0; gv.tableData = [];
+		performRequests(c, 'edge');
 	});	
 }
 
@@ -754,13 +751,31 @@ function compare(a,b) {
   return 0;
 }
 
-function loadRadio(graph) { console.log('loading radio')
-	/*console.log(graph.links);
+function loadRadio() {
+	if (gv.route != 'path') {
+		makeRadioList();
+	};
+	if (gv.currentService == 'youtube') {
+		gv.tableData = [];
+		gv.requestCounter = 0;
+		performRequests(gv.requestCounter, 'radio');
+	};
+	if (gv.currentService == 'spotify') {
+		trackIds = [];
+		for (track of gv.radioList) {
+			trackIds.push(track.id);
+		};
+		loadEdgeSpotify(trackIds);
+	};
+};
+
+function makeRadioList() {
+	//console.log(graph.links);
 	originTracks = [];
 	otherTracks = [];
 	originIndex = newIds.indexOf(gv.origin);
-	console.log(originIndex);
-	for (l of graph.links) {
+	//console.log(originIndex);
+	for (l of gv.newGraph.links) {
 		if ((l.source==originIndex)||(l.target==originIndex)) {
 			originTracks.push(l.track)
 		} else {
@@ -782,16 +797,6 @@ function loadRadio(graph) { console.log('loading radio')
 		radioTracks.push(toAdd[i])
 	};
 	console.log(radioTracks);
-	gv.trackNames = [];
-	gv.artistNames = [];
-	for (track of radioTracks) {
-		gv.trackNames.push(track.name);
-		gv.artistNames.push(track.artists);
-	}
-	c = 0; gv.tableData = [];
-	console.log(gv.trackNames); console.log(gv.artistNames);
-	//tabSwitch('path');*/
-	//performRequests(c, 'path')
 }
 
 function tabSwitch(pane) {
