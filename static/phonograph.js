@@ -256,7 +256,7 @@ function start_Vis(graph) {
 			gv.clickable = true;
 		});
 	
-	//setTimeout( function() {dehighlightLinks();}, gv.FadeOut+gv.FadeIn+gv.NodeSlide) };
+	setTimeout( function() {dehighlightLinks();}, gv.FadeOut+gv.FadeIn+gv.NodeSlide);
 	gv.FadeOut = 600;
 	gv.NodeSlide = 1000;
 };	
