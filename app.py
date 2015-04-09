@@ -93,12 +93,16 @@ def year_filter(tracks, **kwargs):
 			min_year = 0
 		return set(track for track in tracks if min_year <= int(r.hget('track.info:'+track, 'year')) <= max_year)
 
-def extend(distances, visited, c):
+def extend(distances, visited, c, **kwargs):
 	distances[c+1] = {}
 	for node in distances[c].keys():
 		to_check = r.smembers('artist.neighbours:'+node) - visited
 		for neighbour in to_check:
-			distances[c+1].setdefault(neighbour, []).append(node)
+			if not genre:
+				if r.hget('artist.info:'+neighbour, 'genre') == genre:
+					distances[c+1].setdefault(neighbour, []).append(node)
+			else:
+				distances[c+1].setdefault(neighbour, []).append(node)
 	return distances
 
 def pathfork(path, distances, c):
@@ -107,7 +111,7 @@ def pathfork(path, distances, c):
 		forks.append(path+[n])
 	return forks
 					
-def find_paths(i,**kwargs):
+def find_paths(i, genre=None, **kwargs):
 	distances = {0: { i: []} }
 	visited = set([])
 	c = 0
@@ -116,7 +120,7 @@ def find_paths(i,**kwargs):
 			j = kwargs['to']
 			while j not in distances[c].keys() and c < 7:
 				visited.update(distances[c].keys())
-				distances = extend(distances, visited, c)
+				distances = extend(distances, visited, c, genre=genre)
 				c += 1
 				print c
 			paths = [[j,a] for a in distances[c][j]]
@@ -231,7 +235,8 @@ def zoom():
 	origin = seed[0]
 	size = int(seed[1])
 	level = int(seed[2])
-	distances = find_paths(origin, level=level)
+	genre = seed[3]
+	distances = find_paths(origin, level=level, genre=genre)
 	chosen = set([origin])
 	c = max(distances.keys())
 	k = 1

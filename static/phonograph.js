@@ -12,7 +12,7 @@ function get_graph(seed, route) {
 function start_Vis(gms) { graph = gms[0]; route = gms[1]; seed = gms[2];
 	if ( (route == "neighbourhood")||(route=="zoom") ) {
 		origin = seed.split(',')[0];
-		clicked = 'a'+origin;
+		//clicked = 'a'+origin;
 	};
 	if (route == "path") {
 		start = seed.split(',')[0];
@@ -198,35 +198,33 @@ function start_Vis(gms) { graph = gms[0]; route = gms[1]; seed = gms[2];
 			return "ncircle "+d.genre;
 		})
 		.attr("r", function(d) {//console.log(d.popularity);
-			if (clicked != null) {
-				if ('a'+d.id == clicked.id) {
+			if ((origin != null)&&(clicked)) {
+				if (d.id == origin) {
 					return 30;
 				};
 			};
 			return nodeScale(d3.max([1,d.popularity]));
 		})
 		.attr("stroke-width", function(d) { 
-			if (clicked != null) {
-				if ('a'+d.id == clicked.id) {
+			if (origin != null) {
+				if (d.id == origin) {
 					return 4;
 				};
 			};
 			return strokeScale(d.popularity);
 		});
 	
-	if (clicked != null) { 
-		node.each(function(d) {
-			if ('a'+d.id == clicked.id) {
-				clicked = this;
-			};
-		});
-	};
-
 	node.append("text")
 		.attr("class", "firstLabel")
-		.attr("dy", function(d) { return firstLabelHeight(d); })
+		.attr("dy", function(d) {return firstLabelHeight(d); })
 		.attr("text-anchor", "middle")
-		.style("font-size", function(d) { return firstLabelFont(d); })
+		.style("font-size", function(d) {
+			if (origin != null) {
+				if (d.id == origin) {
+					return "18px";
+				};
+			};
+			return firstLabelFont(d); })
 		.text(function(d) {
 			return firstLabel(d);
 		});	
@@ -235,7 +233,13 @@ function start_Vis(gms) { graph = gms[0]; route = gms[1]; seed = gms[2];
 		.attr("class", "secondLabel")
 		.attr("dy", function(d) { return "0.9em"; })
 		.attr("text-anchor", "middle")
-		.style("font-size", function(d) { return secondLabelFont(d); })
+		.style("font-size", function(d) {
+			if (origin != null) {
+				if (d.id == origin) {
+					return "18px";
+				};
+			};
+			return secondLabelFont(d); })
 		.text(function(d) {
 			return secondLabel(d);
 		});	
@@ -247,7 +251,11 @@ function start_Vis(gms) { graph = gms[0]; route = gms[1]; seed = gms[2];
 		.each("end", function(d) {
 			if (origin != null) {
 				if (d.id == origin) {
-					clickNode(this, d, false);
+					if (route == "zoom") {
+						clickNode(this, d, false);
+					} else {
+						clickNode(this, d, true);
+					};
 				};
 			} else { dehighlightLinks(); };
 			
@@ -255,8 +263,8 @@ function start_Vis(gms) { graph = gms[0]; route = gms[1]; seed = gms[2];
 		});
 	
 	//setTimeout( function() {dehighlightLinks();}, dataset.FadeOut+dataset.FadeIn+dataset.NodeSlide) };
-	dataset.FadeOut = 600;
-	dataset.NodeSlide = 1000;
+	dataset.FadeOut = 400;
+	dataset.NodeSlide = 800;
 };	
 
 //Initialise variables:
@@ -294,7 +302,7 @@ var svg = d3.select("#map").append("svg")
 //Animation variables.
 dataset.FadeOut = 0;
 dataset.NodeSlide = 0;
-dataset.FadeIn = 800;
+dataset.FadeIn = 500;
 
 
 var SidebarTitleHeight = $('#sideBarTitle').outerHeight(true) + $('.navbar').outerHeight();
@@ -367,8 +375,7 @@ function clickNode(n, o, hl) {
 	d3.select(clicked).select(".secondLabel").transition().duration(500)
 		.style("font-size", "18px")
 		.attr("dy", "0.91em");
-	if (hl) {clickedDuration = 500;} else {clickedDuration = 0;}
-	d3.select(clicked).select("circle").transition().duration(clickedDuration)
+	d3.select(clicked).select("circle").transition().duration(500)
 		.attr("r", 30)
 		.attr("stroke-width", 4); 
 	if (hl) { highlightLinks(); }
