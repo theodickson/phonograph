@@ -8,6 +8,7 @@
     float:right;
     z-index: 100;
 }
+
 .row{
     position:relative;
 }
@@ -281,8 +282,5 @@ text {
 }
 #bottomLeftNav{
     width:70vw;
-}
-.navbar-form .input-group > .form-control {
-    max-width: 160px;
 }
 
