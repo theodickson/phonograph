@@ -1101,7 +1101,8 @@ function zoom(){
 		gv.origin = clicked.id.substring(1);
 	} else {
 		if (!gv.origin) {
-			gv.origin = gv.currentIds[Math.floor(currentIds.length * Math.random())];
+			gv.origin = gv.currentIds[Math.floor(gv.currentIds.length * Math.random())];
+			console.log(gv.origin)
 		}
 	};
 	highlightZoomLevel();

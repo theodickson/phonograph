@@ -107,35 +107,35 @@ def pathfork(path, distances, c):
 		forks.append(path+[n])
 	return forks
 					
-def dijkstra(i,**kwargs):
+def find_paths(i,j):
 	distances = {0: { i: []} }
 	visited = set([])
 	c = 0
-	try:
-		if kwargs['to']:
-			j = kwargs['to']
-			while j not in distances[c].keys() and c < 7:
-				visited.update(distances[c].keys())
-				distances = extend(distances, visited, c)
-				c += 1
-				print c
-			paths = [[j,a] for a in distances[c][j]]
-			c -= 1
-			while c > 0:
-				newpaths = []
-				for path in paths:
-					newpaths += pathfork(path, distances, c)
-				paths = newpaths
-				c -= 1	
-			return paths
-	except:
-		while c < kwargs['level']:
-			visited.update(distances[c].keys())
-			distances = extend(distances, visited, c)
-			c += 1
-			#print c
-			#print kwargs['level']
-		return distances
+	while j not in distances[c].keys() and c < 7:
+		visited.update(distances[c].keys())
+		distances = extend(distances, visited, c)
+		c += 1
+		print c
+	paths = [[j,a] for a in distances[c][j]]
+	c -= 1
+	while c > 0:
+		newpaths = []
+		for path in paths:
+			newpaths += pathfork(path, distances, c)
+		paths = newpaths
+		c -= 1	
+	return paths
+		
+
+def dijkstra(i,level):
+	distances = {0: { i: []} }
+	visited = set([])
+	c = 0
+	while c < level:
+		visited.update(distances[c].keys())
+		distances = extend(distances, visited, c)
+		c += 1
+	return distances
 
 def pop_sorted(nodes):
 	return sorted(nodes, key = lambda x:r.hget('artist.info:'+x, 'popularity'), reverse=True)
@@ -213,7 +213,7 @@ def index():
 def path_finder():
 	i = request.args['source']
 	j = request.args['destination']
-	path = random.choice(dijkstra(i,to=j))
+	path = random.choice(find_paths(i,j))
 	g = igrapher(path)
 	return jsonify(d3_dictify(g))
 		
@@ -256,7 +256,7 @@ def zoom():
 	origin = request.args['origin']
 	size = int(request.args['size'])
 	level = int(request.args['level'])
-	distances = dijkstra(origin, level=level)
+	distances = dijkstra(origin, level)
 	chosen = set([origin])
 	c = max(distances.keys())
 	k = 1
@@ -308,7 +308,7 @@ def custom_subgraph():
 	skeleton = []
 	paths_dict = {}
 	for pair in startPairs:
-		paths = dijkstra(pair[0],to=pair[1])
+		paths = find_paths(pair[0],pair[1])
 		paths_dict[pair] = {'paths': paths, 'distance': len(paths[0])}
 		skeleton+=paths[0]
 		for path in paths:
@@ -385,8 +385,8 @@ def genre_search():
 	response = {'response': [{'value': value, 'label': capitalise(value)} for value in values]}
 	return jsonify(response)
 
-@app.route("/genresubgraph")
-def genre_subgraph():
+@app.route("/termsubgraph")
+def term_subgraph():
 	term = request.args['term']
 	size = int(request.args['size'])
 	results = r.zrevrange('term.artists:'+term, 0, size*3)
