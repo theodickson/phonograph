@@ -299,3 +299,7 @@ text {
     padding-right: 5px;
 
 }
+
+.youtube-table > thead{
+    display: none;
+}

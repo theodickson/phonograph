@@ -186,13 +186,18 @@
 						<div class="tab-pane" id="nodeYoutube">
 							
 							<div class="tableWrapper noselect" align="middle" style="overflow:scroll"> 
-							<table id="nodeYoutubeTable" data-toggle="table" data-toolbar="#toolbar" 
-									data-height="300" pagination="true" sortable="true" data-show-header="false">
+							<table id="nodeYoutubeTable" 								
+								data-show-header="true"
+								data-toggle="table"
+								data-striped="true"
+								data-click-to-select="true"
+							>
+
 								<thead>
 								<tr>
+									<th data-field="state" data-checkbox="true"></th>
 									<th data-field="artist">Artist</th>
 									<th data-field="title" data-sortable="true">Title</th>
-									<th data-field="add"></th>
 									<th data-field="play"></th>
 								</tr>
 								</thead>
@@ -216,13 +221,19 @@
 					<!-- Youtube -->
 					<div class="content-youtube" id="edgeYoutube">
 						<div class="tableWrapper noselect" align="middle" style="overflow:scroll"> 
-						<table id="edgeYoutubeTable" data-toggle="table" data-toolbar="#toolbar" 
-								data-height="300" pagination="true" sortable="true" data-show-header="false">
+						<table 
+							class="youtube-table"
+							id="edgeYoutubeTable"
+							data-show-header="true"
+							data-toggle="table"
+							data-striped="true"
+							data-click-to-select="true"
+						>
 							<thead>
 							<tr>
-								<th data-field="artist" data-sortable="true">Artist</th>
+								<th data-field="state" data-checkbox="true"></th>
+								<th data-field="artist">Artist</th>
 								<th data-field="title" data-sortable="true">Title</th>
-								<th data-field="add"></th>
 								<th data-field="play"></th>
 							</tr>
 							</thead>
@@ -246,12 +257,18 @@
 						<!-- Youtube -->
 						<div class="content-youtube" id="radioYoutube">
 							<div class="tableWrapper noselect"> 
-							<table id="radioYoutubeTable" data-toggle="table" data-show-header="false">
+							<table 
+								id="radioYoutubeTable"
+								data-show-header="true"
+								data-toggle="table"
+								data-striped="true"
+								data-click-to-select="true"
+							>
 								<thead>
 								<tr>
+									<th data-field="state" data-checkbox="true"></th>
 									<th data-field="artist">Artist</th>
 									<th data-field="title" data-sortable="true">Title</th>
-									<th data-field="add"></th>
 									<th data-field="play"></th>
 								</tr>
 								</thead>
@@ -308,13 +325,18 @@
     				<form onsubmit="return false">
 					<h4 style="text-align: center;">Playlist</h4>
 					<div class="tableWrapper noselect" > 
-			        	<table id="playlistTable" align="middle" data-show-header="false" data-striped="true" data-clickToSelect="true" data-height="300">
+			        	<table id="playlistTable" 								
+			        			data-show-header="true"
+								data-toggle="table"
+								data-striped="true"
+								data-click-to-select="true"
+							>
 			        	    <thead>
 			        	    <tr>
+			        	    	<th data-field="state" data-checkbox="true"></th>
 			        	    	<th data-field="artist">Artist</th>
-			        	        <th data-field="track">Track</th>
-			        	        <th data-field="option"></th>
-			        	        <th data-field="remove"></th>
+			        	    	<th data-field="title" data-sortable="true">Title</th>
+			        	    	<th data-field="play"></th>
 			        	    </tr>
 			        	    </thead>
 			        	</table>
