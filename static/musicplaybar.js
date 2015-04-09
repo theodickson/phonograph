@@ -22,6 +22,11 @@ function onYouTubeIframeAPIReady() {
 
 	});
 }
+
+function playlistAlert(){
+	$('#playlistICON').effect("highlight", {} , 500);
+};
+
 function secondsToString(s){
 	var minutes = Math.floor(s / 60);
 	var seconds = Math.floor(s - (minutes * 60));
@@ -86,6 +91,7 @@ function onPlayerStateChange(event) {
 }
 
 function playNextTrack(){
+	playlistAlert();
 	$( "#scrubberSlider" ).slider( "option", "value", 0);
 	if(customPlaylist.length == 0){
 		refreshPlaylist(customPlaylist);
@@ -105,6 +111,7 @@ function playNextTrack(){
 }
 
 function playPreviousTrack(){
+	playlistAlert();
 	$( "#scrubberSlider" ).slider( "option", "value", 0);
 	if(currentTrack>0) {
 		currentTrack -=1;
@@ -118,6 +125,7 @@ function playPreviousTrack(){
 };
 
 function playNow(e){
+	playlistAlert();
 	console.log(e);
 	$( "#scrubberSlider" ).slider( "option", "value", 0);	
 	var ID = e.currentTarget.value;
@@ -138,6 +146,7 @@ function playNow(e){
 };
 
 function addTrackToPlaylist(e){
+	playlistAlert();
 	var ID = e.currentTarget.value;
 	var artist = $('#sideBarTitle').text();
 	var trackName = $(e.currentTarget).parent().parent().find(">:first-child")[0].textContent;
@@ -277,7 +286,9 @@ function refreshPlaylist(customPlaylist){
 	//REMOVE FROM PLAYLIST ON CLICK OF 'X'
 	$('.removeFromPlaylist').on('click', function(){
 		var index = $(this).closest('tr').attr("data-index");
-		//IF TRACK FOUND ON PLAYLIST AND IN CUSTOMPLAYLIST ARRAY THEN
+		console.log("DELETING TRACK " +index);
+		console.log("CURRENT SONG "+currentTrack);
+		console.log(customPlaylist);
 
 		//IF DELETING THE ONLY SONG ON THE PLAYLIST
 		if (index = 0 && customPlaylist.length == 1){

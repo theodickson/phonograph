@@ -330,8 +330,6 @@ $('#edgeYoutubeTable').attr("data-height", wellHeight);
 $('#edgeYoutubeTable').bootstrapTable('resetView');
 $('#pathYoutubeTable').attr("data-height", wellHeight);
 $('#pathYoutubeTable').bootstrapTable('resetView')
-$('#playlistTable').attr("data-height", wellHeight);
-$('#playlistTable').bootstrapTable('resetView');
 $('#subgraphTable').attr("data-height", wellHeight-nheight-nheight);
 $('#subgraphTable').bootstrapTable('resetView');
 

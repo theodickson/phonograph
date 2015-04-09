@@ -85,7 +85,25 @@
 			    	</li>
 			    		
 			    	<li><a id="subgraphButton" type="button" class="navbar"><i class="fa fa-magic"></i></i></a></li>
-			    	<li><a id="playlistButton" type="button" class="navbar"><i class="el el-list"></i></a></li>
+    	    		<li class="dropdown" id="playlistDropdown">
+    	    			<a class="dropdown-toggle" id="playlistICON" href="#" data-toggle="dropdown"><i class="el el-list"></i></a>
+    	    			<div class='dropdown-menu top-dropdown-right' id='playlistDD'>
+    	    				<form>
+    						<h4 style="text-align: center;">Playlist</h4>
+    						<div class="tableWrapper noselect" > 
+	    			        	<table id="playlistTable" align="middle" data-show-header="false" data-striped="true" data-clickToSelect="true" data-height="300">
+	    			        	    <thead>
+	    			        	    <tr>
+	    			        	        <th data-field="track">Track</th>
+	    			        	        <th data-field="option"></th>
+	    			        	        <th data-field="remove"></th>
+	    			        	    </tr>
+	    			        	    </thead>
+	    			        	</table>
+    			        	</form>
+    			        	</div>
+    	    			</div> 
+    	    		</li>
 		    		<li class="dropdown" id="numArtists">
 		    			<a class="dropdown-toggle" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
 		    			<div class='dropdown-menu top-dropdown-right' id='settings'>
@@ -293,22 +311,6 @@
 
 
 		</div>
-			<!-- Playlist Pane -->
-			<div id="playlistPane">
-				<h3 style="text-align: center;">Playlist</h3>
-				<div class="tableWrapper noselect" > 
-	        	<table id="playlistTable" align="middle" data-show-header="true" data-striped="true" data-clickToSelect="true" data-height="300">
-	        	    <thead>
-	        	    <tr>
-	        	        <th data-field="track">Track</th>
-	        	        <th data-field="option"></th>
-	        	        <th data-field="remove"></th>
-	        	    </tr>
-	        	    </thead>
-	        	</table>
-	        	</div>
-			</div>
-
 			<!-- CUSTOM SUBGRAPH Pane -->
 			<div id="subgraphPane">
 				<h3 style="text-align: center;">Custom Subgraph</h3>
