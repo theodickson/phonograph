@@ -228,8 +228,9 @@ text {
     padding-right: 15px;
 }
 
-#sideBarTitle{
+.sidebar-title{
     text-align: center;
+    margin-top:-10px;
 }
 
 .tableWrapper{
@@ -281,10 +282,20 @@ text {
 
 }
 #bottomLeftNav{
-    width:70vw;
+    width:80vw;
 }
 
 .navbar-form .input-group > .form-control {
     max-width: 160px;
 }
 
+.nav-pills > li {
+  float: right;
+}
+
+#sideBarTabs > li > a {
+    color: lightgrey;
+    background-color:transparent;
+    padding: none;
+
+}

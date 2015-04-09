@@ -7,7 +7,7 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 // 3. This function creates an <iframe> (and YouTube player)
 //    after the API code downloads.
 var player;
-var customPlaylist = [] //NOTHING IN PLAYLIST TO STARTONTENTS OF STARTING GRAPH
+gv.customPlaylist = [] //NOTHING IN PLAYLIST TO STARTONTENTS OF STARTING GRAPH
 var currentTrack = null;
 
 function onYouTubeIframeAPIReady() {
@@ -41,7 +41,7 @@ function secondsToString(s){
 
 // 4. The API will call this function when the video player is ready.
 function onPlayerReady(event) {
-	player.cueVideoById(customPlaylist[0][0]);
+	player.cueVideoById(gv.customPlaylist[0][0]);
 }
 
 // 5. The API calls this function when the player's state changes.
@@ -65,8 +65,8 @@ function onPlayerStateChange(event) {
 	else if(event.data == 5){
 		$('#play-pause').children().hide();
 		$('#bufferingsong').show();
-		var artist = customPlaylist[currentTrack][1];
-		var songName = customPlaylist[currentTrack][2];
+		var artist = gv.customPlaylist[currentTrack][1];
+		var songName = gv.customPlaylist[currentTrack][2];
 		var playerTrackInfo = artist + ' - '+ songName;
 		$('#playerTrackInfo').text(playerTrackInfo);
 		player.playVideo();
@@ -94,20 +94,20 @@ function playNextTrack(){
 	playlistAlert();
 	refreshPlaylist();
 	$( "#scrubberSlider" ).slider( "option", "value", 0);
-	if(customPlaylist.length == 0){
-		refreshPlaylist(customPlaylist);
+	if(gv.customPlaylist.length == 0){
+		refreshPlaylist();
 		player.stopVideo();
 		$('#playerTrackInfo').text("");
 	}
 	else{
-		if(currentTrack+1<customPlaylist.length ){
+		if(currentTrack+1<gv.customPlaylist.length ){
 			currentTrack +=1;
 		}
 		else{
 			currentTrack=0;
 		};
-		refreshPlaylist(customPlaylist);
-		player.cueVideoById(customPlaylist[currentTrack][0]);
+		refreshPlaylist();
+		player.cueVideoById(gv.customPlaylist[currentTrack][0]);
 	};
 }
 
@@ -117,7 +117,7 @@ function playPreviousTrack(){
 	$( "#scrubberSlider" ).slider( "option", "value", 0);
 	if(currentTrack>0) {
 		currentTrack -=1;
-		refreshPlaylist(customPlaylist);
+		refreshPlaylist();
 		player.cueVideoById(customPlaylist[currentTrack][0]);
 		return true;
 	}
@@ -138,14 +138,14 @@ function playNow(e){
 	var trackName = $(e.currentTarget).parent().parent().find(">:first-child")[0].textContent;
 	if (currentTrack == null){
 		currentTrack = 0;
-		customPlaylist.push([ID, artist, trackName]);
+		gv.customPlaylist.push([ID, artist, trackName]);
 	}
 	else{
 		currentTrack+=1;
-		customPlaylist.splice(currentTrack, 0, [ID, artist, trackName]);
-		refreshPlaylist(customPlaylist);
+		gv.customPlaylist.splice(currentTrack, 0, [ID, artist, trackName]);
+		refreshPlaylist();
 	}
-	player.cueVideoById(customPlaylist[currentTrack][0]);
+	player.cueVideoById(gv.customPlaylist[currentTrack][0]);
 };
 
 function addTrackToPlaylist(e){
@@ -154,27 +154,27 @@ function addTrackToPlaylist(e){
 	var artist = $('#sideBarTitle').text();
 	var trackName = $(e.currentTarget).parent().parent().find(">:first-child")[0].textContent;
 	console.log(trackName);
-	customPlaylist.push([ID, artist, trackName]);
+	gv.customPlaylist.push([ID, artist, trackName]);
 	refreshPlaylist();
 }
 
 addPlaySymboltoPlayingTrack=function(i, currentTrack){
 	if(i==currentTrack){
-		return '<i class="el el-play"></i>'+customPlaylist[i][1] + ' - ' + customPlaylist[i][2];
+		return '<i class="el el-play"></i>'+gv.customPlaylist[i][1] + ' - ' + gv.customPlaylist[i][2];
 	}
 	else{
-		return customPlaylist[i][1] + ' - ' + customPlaylist[i][2];
+		return gv.customPlaylist[i][1] + ' - ' + gv.customPlaylist[i][2];
 	};
 };
 
 getPlaylist = function(){
 	var playlistData = [];
-	for(i in customPlaylist){
+	for(i in gv.customPlaylist){
 		playlistData.push({
 			track: addPlaySymboltoPlayingTrack(i, currentTrack),
-			option: '<button class="btn-sm btn-sidebar optionPlaylist" id="option'+customPlaylist[i][0]+'"><span class="glyphicon glyphicon-option-horizontal"></span></button>',
-			remove: '<button href="#" class="btn-sm btn-sidebar removeFromPlaylist" id="remove'+customPlaylist[i][0]+'"><i class="el el-remove-sign"></i></button>',
-			info: customPlaylist[i]
+			option: '<button class="btn-sm btn-sidebar optionPlaylist" id="option'+gv.customPlaylist[i][0]+'"><span class="glyphicon glyphicon-option-horizontal"></span></button>',
+			remove: '<button class="btn-sm btn-sidebar removeFromPlaylist" id="remove'+gv.customPlaylist[i][0]+'"><i class="el el-remove-sign"></i></button>',
+			info: gv.customPlaylist[i]
 			
 		});
 	};
@@ -200,7 +200,7 @@ $('#playlistButton').on("click", function(){
 	        $('#subgraphPane').hide();
 	        $('#info').show();
 	    }
-	refreshPlaylist(customPlaylist);
+	refreshPlaylist();
 });
 
 $('#subgraphButton').on("click", function(){
@@ -216,14 +216,14 @@ $('#subgraphButton').on("click", function(){
 	        $('#subgraphPane').hide();
 	        $('#info').show();
 	    }
-	refreshPlaylist(customPlaylist);
+	refreshPlaylist();
 });
 /*
 $('#subgraphButton').on("click", function(){
 	$(this).toggleClass("selected");
 	$('#info').toggle();
 	$('#playlistPane').toggle();
-	refreshPlaylist(customPlaylist);
+	refreshPlaylist();
 })
 */
 $('td, th', '#playlistTable').each(function () {
@@ -257,50 +257,52 @@ function makePlaylistSortable(){
 	        	var rows = $('#playlistTable').find('tr[data-index]');
 	        	var newPlaylist = [];
 	        	console.log("BEFORE SLIDE CURRENT TRACK = "+currentTrack);
-	        	var currentID = customPlaylist[currentTrack][0];
+	        	var currentID = gv.customPlaylist[currentTrack][0];
 	        	for(i=0; i<rows.length;i++){
 	        		oldPos = $(rows[i]).attr("data-index");
-	        		if(customPlaylist[oldPos][0]==currentID){
+	        		if(gv.customPlaylist[oldPos][0]==currentID){
 	        			currentTrack = i;
 	        		};
-	        		newPlaylist[i] = customPlaylist[oldPos];
+	        		newPlaylist[i] = gv.customPlaylist[oldPos];
 	        	};
 	        	console.log("CURRENT TRACK = " + currentTrack);
-	        	customPlaylist = newPlaylist;
-	        	console.log(customPlaylist);
+	        	gv.customPlaylist = newPlaylist;
+	        	console.log(gv.customPlaylist);
 	        	refreshPlaylist();
 
 	        }
 	    }).disableSelection();
 }
 
-function refreshPlaylist(customPlaylist){
+function refreshPlaylist(){
 	console.log("refreshing playlist");
 	$playlistTable = $('#playlistTable');
 	$playlistTable.bootstrapTable('load', getPlaylist())
 	$playlistTable.bootstrapTable('resetView');
 	makePlaylistSortable();
+	console.log(gv.customPlaylist);
 
 	//PLAY FROM PLAYLIST ON DOUBLE CLICK OF ROW
 	$('#playlistTable').find('tr').dblclick(function(){
 		currentTrack=$(this).attr("data-index");
-		refreshPlaylist(customPlaylist);
-		player.cueVideoById(customPlaylist[currentTrack][0]);
+		refreshPlaylist();
+		player.cueVideoById(gv.customPlaylist[currentTrack][0]);
 	});
 	//REMOVE FROM PLAYLIST ON CLICK OF 'X'
 	$('.removeFromPlaylist').on('click', function(){
 		var index = $(this).closest('tr').attr("data-index");
 		console.log("DELETING TRACK " +index);
 		console.log("CURRENT SONG "+currentTrack);
-		console.log(customPlaylist);
+		console.log(gv.customPlaylist);
 
 		//IF DELETING THE ONLY SONG ON THE PLAYLIST
-		if (index = 0 && customPlaylist.length == 1){
+		if (index = 0 && gv.customPlaylist.length == 1){
 			currentTrack = null; //NO CURRENT TRACK PLAYING
-			while (customPlaylist.length) { customPlaylist.pop(); }; //DESTROY THE PLAYLIST TO BE SURE OF REMOVING ALL ERRORS
+			while (gv.customPlaylist.length) { gv.customPlaylist.pop(); }; //DESTROY THE PLAYLIST TO BE SURE OF REMOVING ALL ERRORS
+			gv.customPlaylist = [];
 		}
 		else if(index > -1){
-			customPlaylist.splice(index, 1);
+			gv.customPlaylist.splice(index, 1);
 			//IF DELETING THE FIRST TRACK WHICH IS ALSO PLAYING
 			if(index==0 && index == currentTrack){
 				console.log("deleting current track which is 1st");
@@ -328,7 +330,7 @@ function refreshPlaylist(customPlaylist){
 		};
 
 		//REFRESH THE PLAYLIST TO REFLECT THE CHANGED ARRAY
-		refreshPlaylist(customPlaylist);
+		refreshPlaylist();
 	});
 }
 
@@ -473,7 +475,7 @@ $("#INFO").hover(function () {
 
 var navBarElementWidth = $('#consoleElement').width();
 var bottomLeftNavWidth = $('#bottomLeftNav').width();
-var scrubberSliderWidth = bottomLeftNavWidth - (8*navBarElementWidth);
+var scrubberSliderWidth = bottomLeftNavWidth - (10*navBarElementWidth);
 var totalWidth = $( window ).width();
 var playerInfoWidth = totalWidth - bottomLeftNavWidth - 2*navBarElementWidth;
 $('#scrubberSlider').width(scrubberSliderWidth);
@@ -516,7 +518,12 @@ $('.service-choice').on('click', function(){
   	};
   	gv.currentService = newService;
   	currentService = newService;
-})
+});
+
+//REFRESH PLAYLIST ON OPEN
+$('#playlistDropdown').on('click', function(){
+	refreshPlaylist();
+});
 
 
 
