@@ -38,7 +38,7 @@ function start_Vis(graph) {
 	//console.log(d3.min(popvals));
 	nodeScale = d3.scale.log(1.5)
 						.domain([d3.min(popvals), d3.max(popvals)])
-						.range([6, 20]);
+						.range([10, 20]);
 						
 	labelScale = d3.scale.log(1.5)
 						.domain([d3.min(popvals), d3.max(popvals)])
@@ -174,6 +174,9 @@ function start_Vis(graph) {
 				d3.event.stopPropagation();
 				if ((d.id != gv.origin)&&(gv.clickable)) {
 					gv.origin = d.id;
+					gv.zoomLevel = 1;
+					disableZoom();
+					highlightZoomLevel();
 					reload();	
 				};
 			});
@@ -847,6 +850,8 @@ $( "#artistSearch" ).autocomplete({
     	gv.route = "neighbourhood"
     	gv.genre = null;
     	gv.zoomLevel = 1;
+		disableZoom();
+		highlightZoomLevel();
     	reload();
     	event.preventDefault();
     },
@@ -871,6 +876,8 @@ $( "#genreSearch" ).autocomplete({
     	gv.origin = null;
     	gv.genre = null;
     	gv.zoomLevel = 1;
+    	highlightZoomLevel();
+    	disableZoom();
     	reload();
     	event.preventDefault();
     },
@@ -895,6 +902,7 @@ $( "#travelTo" ).autocomplete({
     	gv.route = "path"
     	gv.genre = null;
     	gv.zoomLevel = 1;
+		highlightZoomLevel();
     	reload();
     	event.preventDefault();
     },
@@ -984,6 +992,8 @@ $('#generateSubgraph').on('click', function() {
 	gv.genre = null;
 	gv.origin = null;
 	gv.zoomLevel = 1;
+	highlightZoomLevel();
+	disableZoom();
 	reload();
 });
 
@@ -1073,7 +1083,7 @@ function disableZoom(){
 		$('.zo').addClass('btn-default').removeClass('btn-disabled').prop("disabled", false);
 		$('.zi').addClass('btn-disabled').removeClass('btn-default').prop("disabled", true);
 	}
-	else if(gv.zoomLevel ==4){
+	else if(gv.zoomLevel == 4){
 		$('.zi').addClass('btn-default').removeClass('btn-disabled').prop("disabled", false);
 		$('.zo').addClass('btn-disabled').removeClass('btn-default').prop("disabled", true);
 	}
@@ -1087,7 +1097,7 @@ function zoom(){
 	gv.route = "zoom";
 	gv.genre = null;
 	if (gv.currentArtist) {
-		gv.origin = gv.currentArtist
+		gv.origin = gv.currentArtist;
 	} else {
 		gv.origin = gv.currentIds[Math.floor(gv.currentIds.length * Math.random())];
 	};
