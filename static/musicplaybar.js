@@ -92,6 +92,7 @@ function onPlayerStateChange(event) {
 
 function playNextTrack(){
 	playlistAlert();
+	refreshPlaylist();
 	$( "#scrubberSlider" ).slider( "option", "value", 0);
 	if(customPlaylist.length == 0){
 		refreshPlaylist(customPlaylist);
@@ -111,6 +112,7 @@ function playNextTrack(){
 }
 
 function playPreviousTrack(){
+	refreshPlaylist();
 	playlistAlert();
 	$( "#scrubberSlider" ).slider( "option", "value", 0);
 	if(currentTrack>0) {
@@ -125,6 +127,7 @@ function playPreviousTrack(){
 };
 
 function playNow(e){
+	refreshPlaylist();
 	playlistAlert();
 	console.log(e);
 	$( "#scrubberSlider" ).slider( "option", "value", 0);	
@@ -152,6 +155,7 @@ function addTrackToPlaylist(e){
 	var trackName = $(e.currentTarget).parent().parent().find(">:first-child")[0].textContent;
 	console.log(trackName);
 	customPlaylist.push([ID, artist, trackName]);
+	refreshPlaylist();
 }
 
 addPlaySymboltoPlayingTrack=function(i, currentTrack){
@@ -169,7 +173,7 @@ getPlaylist = function(){
 		playlistData.push({
 			track: addPlaySymboltoPlayingTrack(i, currentTrack),
 			option: '<button class="btn-sm btn-sidebar optionPlaylist" id="option'+customPlaylist[i][0]+'"><span class="glyphicon glyphicon-option-horizontal"></span></button>',
-			remove: '<button class="btn-sm btn-sidebar removeFromPlaylist" id="remove'+customPlaylist[i][0]+'"><i class="el el-remove-sign"></i></button>',
+			remove: '<button href="#" class="btn-sm btn-sidebar removeFromPlaylist" id="remove'+customPlaylist[i][0]+'"><i class="el el-remove-sign"></i></button>',
 			info: customPlaylist[i]
 			
 		});

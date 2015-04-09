@@ -282,8 +282,7 @@ gv.pathOrder = [];
 gv.currentService = "youtube";
 gv.playlist = [];
 gv.radio = [];
-gv.size = 30;
-gv.sizeBTN = "#b30";
+gv.size = 20;
 gv.clickable = true
 var clicked = null;
 var width, height;

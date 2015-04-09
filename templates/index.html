@@ -85,25 +85,6 @@
 			    	</li>
 			    		
 			    	<li><a id="subgraphButton" type="button" class="navbar"><i class="fa fa-magic"></i></i></a></li>
-    	    		<li class="dropdown" id="playlistDropdown">
-    	    			<a class="dropdown-toggle" id="playlistICON" href="#" data-toggle="dropdown"><i class="el el-list"></i></a>
-    	    			<div class='dropdown-menu top-dropdown-right' id='playlistDD'>
-    	    				<form>
-    						<h4 style="text-align: center;">Playlist</h4>
-    						<div class="tableWrapper noselect" > 
-	    			        	<table id="playlistTable" align="middle" data-show-header="false" data-striped="true" data-clickToSelect="true" data-height="300">
-	    			        	    <thead>
-	    			        	    <tr>
-	    			        	        <th data-field="track">Track</th>
-	    			        	        <th data-field="option"></th>
-	    			        	        <th data-field="remove"></th>
-	    			        	    </tr>
-	    			        	    </thead>
-	    			        	</table>
-    			        	</form>
-    			        	</div>
-    	    			</div> 
-    	    		</li>
 		    		<li class="dropdown" id="numArtists">
 		    			<a class="dropdown-toggle" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
 		    			<div class='dropdown-menu top-dropdown-right' id='settings'>
@@ -113,7 +94,7 @@
 		    						<div class="col-sm-8">
 		    							<select id="ns" class="form-control">
 		    								<option value="10">10</option>
-		    								<option value="20">20</option>
+		    								<option selected="selected" value="20">20</option>
 											<option value="30">30</option>
 											<option value="40">40</option>
 											<option value="50">50</option>	
@@ -137,13 +118,6 @@
 		    								<option value="funk">R&B, Funk & Soul</option>
 		    							</select>
 		    						</div>
-		    					</div>
-		    					<div class="form-group ui-widget" id="termSearch">
-		    						<label class="col-sm-4 control-label">Term</label>
-		    						<div class="col-sm-8">
-		    							<input href="#" class="form-control autocomplete" id="genreSearch" placeholder="Search by Term...">
-		    						</div>
-		    						
 		    					</div>
 		    				</form>
 		    			</div> 
@@ -341,6 +315,25 @@
   <div class="container-fluid youtube">
     <div class="navbar-left" id="bottomLeftNav">
       	<ul class="nav navbar-nav">
+    		<li class="dropup" id="playlistDropdown">
+    			<a class="dropdown-toggle" id="playlistICON" href="#" data-toggle="dropdown"><i class="el el-list"></i></a>
+    			<div class='dropdown-menu top-dropdown-right' id='playlistDD'>
+    				<form>
+					<h4 style="text-align: center;">Playlist</h4>
+					<div class="tableWrapper noselect" > 
+			        	<table id="playlistTable" align="middle" data-show-header="false" data-striped="true" data-clickToSelect="true" data-height="300">
+			        	    <thead>
+			        	    <tr>
+			        	        <th data-field="track">Track</th>
+			        	        <th data-field="option"></th>
+			        	        <th data-field="remove"></th>
+			        	    </tr>
+			        	    </thead>
+			        	</table>
+		        	</form>
+		        	</div>
+    			</div> 
+    		</li>
     	  	<li id="consoleElement"><a id="previous" type="button" class="navbar"><span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span></a></li>
     	  	<li><a id="play-pause" type="button" class="navbar"> <span id="playsong" class="glyphicon glyphicon-play" style="display: none;"aria-hidden="true"></span> <span id="pausesong" class="glyphicon glyphicon-pause" style="display: none;" aria-hidden="true"></span><span id="bufferingsong" style="display: inline-block;" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></a></li>
     	  	<li><a id="next" type="button" class="navbar"><span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span></a></li>
