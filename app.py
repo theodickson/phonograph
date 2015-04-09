@@ -161,11 +161,11 @@ def genre_origin(genre):
 	top_artists = r.zrevrange('term.artists:'+genre,0,500)
 	origin = random.choice(top_artists)
 	gn = genre_neighbours(origin, genre)
-	while len(gn) < 10 and r.hget('artist.info:'+origin, 'genre') != genre:
+	while True:
+		if len(gn) >= 10 and r.hget('artist.info:'+origin, 'genre') == genre:
+			break
 		origin = random.choice(top_artists)
 		gn = genre_neighbours(origin, genre)
-	print origin
-	print gn
 	return origin
 
 def genre_neighbours(origin, genre):
