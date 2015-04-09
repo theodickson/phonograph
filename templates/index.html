@@ -62,11 +62,6 @@
 	            	    		<input href="#" class="form-control autocomplete" class="artistSearch" id="travelTo" placeholder="Enter Artist..." id="artistSearch">
 	            	    	</div>
 	            	    </form>
-	            	    <form class="form"> 
-	            	    	<div class="form-group ui-widget">
-	            	    		<input href="#" class="form-control autocomplete" class="artistSearch" id="genreSearch" placeholder="Enter Genre..." id="artistSearch">
-	            	    	</div>
-	            	    </form>
 	            	  </div>
 	            	</li>
 	            </ul>
@@ -97,29 +92,123 @@
 			    	<li><a id="playlistButton" type="button" class="navbar"><i class="el el-list"></i></a></li>
 		    		<li class="dropdown" id="numArtists">
 		    			<a class="dropdown-toggle" href="#" data-toggle="dropdown"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
-		    			<div class="dropdown-menu topDropdown" style="width:175px;">  
-		    			  <div class="btn-group pull-right"> 
-		    			  			<button id="b10" type="button" class="btn btn-default btn-sm ns">10</button>
-		    			  		 	<button id="b20" type="button" class="btn btn-default btn-sm ns">20</button>
-		    			  		  	<button id="b30" type="button" class="btn btn-primary btn-sm ns">30</button>
-		    			  		  	<button id="b40" type="button" class="btn btn-default btn-sm ns">40</button>
-		    			  		  	<button id="b50" type="button" class="btn btn-default btn-sm ns">50</button>
-		    			  </div>
-		    			 <div class="btn-group pull-right"> 
-		    			 			<button id="null" type="button" class="btn btn-primary btn-sm gs">All Genres</button>
-		    			  			<button id="pop" type="button" class="btn btn-default btn-sm gs">Pop/Club</button>
-		    			  		 	<button id="rock" type="button" class="btn btn-default btn-sm gs">Rock & Alternative</button>
-		    			  		  	<button id="classical" type="button" class="btn btn-default btn-sm gs">Classical</button>
-		    			  		  	<button id="hip hop" type="button" class="btn btn-default btn-sm gs">Hip Hop</button>
-		    			  		  	<button id="jazz" type="button" class="btn btn-default btn-sm gs">Jazz & Blues</button>
-		    			  		  	<button id="electronic" type="button" class="btn btn-default btn-sm gs">Electronic</button>
-		    			  		 	<button id="country" type="button" class="btn btn-default btn-sm gs">Country</button>
-		    			  		  	<button id="reggae" type="button" class="btn btn-default btn-sm gs">Reggae & Ska</button>
-		    			  		  	<button id="latin" type="button" class="btn btn-default btn-sm gs">Latin</button>
-		    			  		  	<button id="funk" type="button" class="btn btn-default btn-sm gs">R&B, Funk & Soul</button>
-		    			  </div>
+		    			<div class='dropdown-menu top-dropdown-right' id='settings'>
+		    				<form class="form-horizontal">
+		    					<div class="form-group">
+		    						<label class="col-sm-4 control-label">Artists</label>
+		    						<div class="col-sm-8">
+		    							<select id="ns" class="form-control">
+		    								<option value="10">10</option>
+		    								<option value="20">20</option>
+											<option value="30">30</option>
+											<option value="40">40</option>
+											<option value="50">50</option>	
+		    							</select>
+		    						</div>
+		    					</div>
+		    					<div class="form-group">
+		    						<label class="col-sm-4 control-label">Genre</label>
+		    						<div class="col-sm-8">
+		    							<select id="genre" class="form-control">
+		    								<option value="null">All Genres</option>
+		    								<option value="pop">Pop/Club</option>
+		    								<option value="rock">Rock</option>
+		    								<option value="classical">Classical</option>
+		    								<option value="hip hop">Hip Hop</option>
+		    								<option value="jazz">Jazz & Blues</option>
+		    								<option value="electronic">Electronic</option>
+		    								<option value="country">Country</option>
+		    								<option value="reggae">Reggae & Ska</option>
+		    								<option value="latin">Latin</option>
+		    								<option value="funk">R&B, Funk & Soul</option>
+		    							</select>
+		    						</div>
+		    					</div>
+		    					<div class="form-group ui-widget" id="termSearch">
+		    						<label class="col-sm-4 control-label">Term</label>
+		    						<div class="col-sm-8">
+		    							<input href="#" class="form-control autocomplete" id="genreSearch" placeholder="Search by Term...">
+		    						</div>
+		    						
+		    					</div>
+		    				</form>
 		    			</div>
-		    				
+		    			<!--
+		    			<ul role="menu" class="dropdown-menu top-dropdown-right" style="width:175px;">  
+		    			  	<li role="presentation">
+								<div class="btn-group pull-right"> 
+									<button id="b10" type="button" class="btn btn-default btn-sm ns">10</button>
+								 	<button id="b20" type="button" class="btn btn-default btn-sm ns">20</button>
+								  	<button id="b30" type="button" class="btn btn-primary btn-sm ns">30</button>
+								  	<button id="b40" type="button" class="btn btn-default btn-sm ns">40</button>
+								  	<button id="b50" type="button" class="btn btn-default btn-sm ns">50</button>
+								</div>
+		    				</li>
+		    				<li role="presentation">
+								 <div class="btn-group btn-group-justified">
+								 	<div class="btn-group" role="group">
+								 	  <button id="null" type="button" class="btn btn-primary btn-sm gs">All Genres</button>
+								 	</div> 
+								  </div>
+							</li>
+		    				<li role="presentation">
+								 <div class="btn-group btn-group-genre">
+									<div class="btn-group" role="group">
+									  	<button id="pop" type="button" class="btn btn-default btn-sm gs">Pop/Club</button>
+									</div>
+									<div class="btn-group" role="group">
+										<button id="rock" type="button" class="btn btn-default btn-sm gs">Rock</button>
+									</div>   	 
+								 </div>
+							</li>
+		    				<li role="presentation">
+								 <div class="btn-group">
+									<div class="btn-group" role="group">
+									  	<button id="classical" type="button" class="btn btn-default btn-sm gs">Classical</button>
+									</div>
+									<div class="btn-group" role="group">
+										<button id="hip hop" type="button" class="btn btn-default btn-sm gs">Hip Hop</button>
+									</div>   	 
+								 </div>
+							</li>
+							<li role="presentation">
+								 <div class="btn-group">
+									<div class="btn-group" role="group">
+									  	<button id="jazz" type="button" class="btn btn-default btn-sm gs">Jazz & Blues</button>
+									</div>
+									<div class="btn-group" role="group">
+										<button id="electronic" type="button" class="btn btn-default btn-sm gs">Electronic</button>
+									</div>   	 
+								 </div>
+							</li>
+							<li role="presentation">
+								 <div class="btn-group">
+									<div class="btn-group" role="group">
+									  	<button id="country" type="button" class="btn btn-default btn-sm gs">Country</button>
+									</div>
+									<div class="btn-group" role="group">
+										<button id="reggae" type="button" class="btn btn-default btn-sm gs">Reggae & Ska</button>
+									</div>   	 
+								 </div>
+							</li>
+							<li role="presentation">
+								 <div class="btn-group">
+									<div class="btn-group" role="group">
+									  	<button id="latin" type="button" class="btn btn-default btn-sm gs">Latin</button>
+									</div>
+									<div class="btn-group" role="group">
+										<button id="funk" type="button" class="btn btn-default btn-sm gs">R&B, Funk & Soul</button>
+									</div>   	 
+								 </div>
+							</li>													
+		    				<li role="presentation">	
+								<form class="form"> 
+									<div class="form-group ui-widget">
+										<input href="#" class="form-control autocomplete" class="artistSearch" id="genreSearch" placeholder="Search for Genre..." id="artistSearch">
+									</div>
+								</form>
+							</li>
+		    			</ul>-->
 		    		</li>
 
 		    	</ul>

@@ -4,6 +4,38 @@
 		"selected_items":
 		[
 			[
+				"newN",
+				"newNeighbourhoodSize"
+			],
+			[
+				"cur",
+				"currentTrack"
+			],
+			[
+				"current",
+				"currentTrack"
+			],
+			[
+				"heig",
+				"height"
+			],
+			[
+				"height",
+				"heightOfZoom"
+			],
+			[
+				"heigh",
+				"heightOfZoom"
+			],
+			[
+				"disab",
+				"disableZoom"
+			],
+			[
+				"zoom",
+				"zoomLevel"
+			],
+			[
 				"sub",
 				"subgraphTable"
 			],
@@ -34,10 +66,6 @@
 			[
 				"data",
 				"data-index"
-			],
-			[
-				"cur",
-				"currentID"
 			],
 			[
 				"refr",
@@ -156,10 +184,6 @@
 				"clickLink"
 			],
 			[
-				"current",
-				"currentSidebar"
-			],
-			[
 				"name",
 				"nameLength"
 			],
@@ -175,7 +199,15 @@
 			"file": "/Users/Alex/Documents/phonograph/static/style.css",
 			"settings":
 			{
-				"buffer_size": 3530,
+				"buffer_size": 4233,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/Alex/Documents/phonograph/static/phonograph.js",
+			"settings":
+			{
+				"buffer_size": 36416,
 				"line_ending": "Unix"
 			}
 		},
@@ -183,7 +215,7 @@
 			"file": "/Users/Alex/Documents/phonograph/static/musicplaybar.js",
 			"settings":
 			{
-				"buffer_size": 13415,
+				"buffer_size": 13851,
 				"line_ending": "Unix"
 			}
 		},
@@ -196,18 +228,10 @@
 			}
 		},
 		{
-			"file": "/Users/Alex/Documents/phonograph/static/phonograph.js",
-			"settings":
-			{
-				"buffer_size": 34977,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "index.html",
 			"settings":
 			{
-				"buffer_size": 16599,
+				"buffer_size": 20780,
 				"line_ending": "Unix"
 			}
 		}
@@ -272,6 +296,8 @@
 	},
 	"file_history":
 	[
+		"/Users/Alex/Library/Application Support/Sublime Text 2/Packages/Default/Default (OSX).sublime-keymap",
+		"/Users/Alex/Library/Application Support/Sublime Text 2/Packages/User/Default (OSX).sublime-keymap",
 		"/Users/Alex/Dropbox/Phonograph/Phonograph/templates/flat.html",
 		"/Users/Alex/Dropbox/Phonograph/Phonograph/app.py",
 		"/Users/Alex/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
@@ -309,6 +335,23 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"ns",
+			"numartists",
+			"travelTo",
+			"width",
+			"genresearch",
+			"dropdown",
+			"info",
+			"remove",
+			"zi",
+			"bio",
+			"song Name",
+			"artist NaME",
+			"player",
+			"height",
+			"player",
+			"zoom",
+			" spotify",
 			"alerttest",
 			"find_paths",
 			"get_graph",
@@ -419,24 +462,7 @@
 			"neighbourhoodSize",
 			"height",
 			"twitter",
-			".nav-tabs>li>a {\n.nav-tabs",
-			"tab",
-			"tab ",
-			"tab",
-			"loadPathinfo",
-			"path",
-			"json",
-			"get_graph(seed, ",
-			"get_graph",
-			"bio",
-			"wellHeight",
-			"twitter",
-			"spotifyWidth",
-			"spotifyHeight",
-			"height",
-			"addTo",
-			"addto ",
-			"back"
+			".nav-tabs>li>a {\n.nav-tabs"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -461,7 +487,7 @@
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -469,15 +495,15 @@
 					"file": "/Users/Alex/Documents/phonograph/static/style.css",
 					"settings":
 					{
-						"buffer_size": 3530,
+						"buffer_size": 4233,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								4233,
+								4233
 							]
 						],
 						"settings":
@@ -487,25 +513,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 3000.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "/Users/Alex/Documents/phonograph/static/musicplaybar.js",
+					"file": "/Users/Alex/Documents/phonograph/static/phonograph.js",
 					"settings":
 					{
-						"buffer_size": 13415,
+						"buffer_size": 36416,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								33599,
+								33599
 							]
 						],
 						"settings":
@@ -514,13 +540,40 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 15800.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
+					"file": "/Users/Alex/Documents/phonograph/static/musicplaybar.js",
+					"settings":
+					{
+						"buffer_size": 13851,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6068,
+								6073
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2618.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
 					"file": "/Users/Alex/Documents/phonograph/static/flat.css",
 					"settings":
 					{
@@ -546,48 +599,27 @@
 						"zoom_level": 1.0
 					},
 					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "/Users/Alex/Documents/phonograph/static/phonograph.js",
-					"settings":
-					{
-						"buffer_size": 34977,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
 				{
 					"buffer": 4,
 					"file": "index.html",
 					"settings":
 					{
-						"buffer_size": 16599,
+						"buffer_size": 20780,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								6282,
+								6282
 							]
 						],
 						"settings":
@@ -596,7 +628,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1380.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -621,11 +653,18 @@
 				0,
 				1,
 				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.5,
 			1.0
 		],
 		"rows":

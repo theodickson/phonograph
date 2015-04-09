@@ -1070,16 +1070,24 @@ $('a[href="#sampleNetwork"]').click(function() {
 	};
 });
 
-$('.ns').click(function() {
-	////console.log(dataset.neighbourhoodSizeBTN);
-	d3.select(dataset.neighbourhoodSizeBTN).classed({'btn-default':true, 'btn-primary':false})
-	d3.select(this).classed({'btn-default':false, 'btn-primary':true});
-	dataset.neighbourhoodSizeBTN = "#"+this.id;
-	if ( (dataset.neighbourhoodSize!=this.id.substring(1))&&(dataset.clickable) ) {
-		dataset.neighbourhoodSize = this.id.substring(1);
+$('#ns').change(function() {
+	var newNeighbourhoodSize = $('#ns option:selected')[0].value;
+	console.log(newNeighbourhoodSize);
+	if ( (dataset.neighbourhoodSize!= newNeighbourhoodSize )&&(dataset.clickable) ) {
+		dataset.neighbourhoodSize = newNeighbourhoodSize;
 		get_graph(origin+','+dataset.neighbourhoodSize+','+dataset.genre, "neighbourhood");
 	};
 });
+
+
+$('#gs').change(function(){
+	var newGenre = $('#gs option:selected')[0].value;
+	if (dataset.genre != newGenre) {
+		dataset.genre = newGenre;
+		init();
+	};
+});
+
 function highlightZoomLevel(){
 	$('.zL').each(function(){
 		if($(this).attr('id').replace("zoomL","") == dataset.zoomLevel){
@@ -1158,13 +1166,6 @@ $('.zo').click(function() {
 
 $('.zi').click(function() {
 	zoomIn();
-});
-
-$('.gs').click(function(){
-	if (dataset.genre != $(this).attr('id')) {
-		dataset.genre = $(this).attr('id');
-		init();
-	};
 });
 
 $('#urlShare').click(function(){

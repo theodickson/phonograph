@@ -117,7 +117,6 @@
     z-index: 1000;
     float: left;
     display: none;
-    max-width: 200px;
     height: 200px;
     overflow-y: scroll;   
     padding: 4px 0;
@@ -270,9 +269,18 @@ text {
     margin:0;
 }
 
+.top-dropdown-right{
+    background-color:#e7e7e7;
+    border:none;
+    box-shadow:none;
+    padding:3px;
+    width:300px;
+}
+
 #bottomNav{
 
 }
 #bottomLeftNav{
     width:70vw;
 }
+
