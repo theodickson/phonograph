@@ -300,6 +300,6 @@ text {
 
 }
 
-.youtube-table > thead{
-    display: none;
+.fixed-table-body thead th .th-inner {
+    display:none;
 }

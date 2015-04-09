@@ -496,7 +496,7 @@ function performRequests(mode) {
 				"artist": thisTrack.artists.join(", "), 
 				"title": thisTrack.name, 
 				"id": ytresponse.items[0].id.videoId, 
-				"play": "<button class='btn-sm btn-sidebar playNowButton' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-play'></i></button>"
+				"play": "<button class='btn-sm btn-sidebar playNowButton' type='button' value='"+ytresponse.items[0].id.videoId+","+thisTrack.name+"," +thisTrack.artists.join(",")+"'><i class='el el-play'></i></button>"
 			});
 		} else {
 			gv.tableData.push( {

@@ -41,8 +41,10 @@ function secondsToString(s){
 
 // 4. The API will call this function when the video player is ready.
 function onPlayerReady(event) {
-	player.cueVideoById(gv.customPlaylist[0][0]);
-}
+	if(gv.customPlaylist.length !=0){
+		player.cueVideoById(gv.customPlaylist[0][0]);
+	};
+};
 
 // 5. The API calls this function when the player's state changes.
 //    The function indicates that when playing a video (state=1),
@@ -65,9 +67,25 @@ function onPlayerStateChange(event) {
 	else if(event.data == 5){
 		$('#play-pause').children().hide();
 		$('#bufferingsong').show();
-		var artist = gv.customPlaylist[currentTrack][1];
-		var songName = gv.customPlaylist[currentTrack][2];
-		var playerTrackInfo = artist + ' - '+ songName;
+		var track = gv.customPlaylist[currentTrack];
+		console.log(track);
+		var songName = track[1];
+		var artists = "";
+		var i;
+		artists = track[2];
+		console.log(artists);
+		for(i=3; i < track.length-1;i++){
+			console.log(i);
+			artists = artists.concat(", ", track[i]);
+			console.log(artists);
+		};
+		console.log(i);
+		if(i+1 == track.length){
+			console.log(i);
+			artists = artists.concat(" and ", track[i]);
+		};
+		console.log(artists);
+		var playerTrackInfo = artists + ' - '+ songName;
 		$('#playerTrackInfo').text(playerTrackInfo);
 		player.playVideo();
 	}
@@ -129,20 +147,16 @@ function playPreviousTrack(){
 function playNow(e){
 	refreshPlaylist();
 	playlistAlert();
-	console.log(e);
 	$( "#scrubberSlider" ).slider( "option", "value", 0);	
-	var ID = e.currentTarget.value;
-	console.log(ID);
-	var artist = $('#sideBarTitle').text();
-	console.log(artist);
-	var trackName = $(e.currentTarget).parent().parent().find(">:first-child")[0].textContent;
+	var trackData = e.currentTarget.value.split(",");
+	console.log(trackData);
 	if (currentTrack == null){
 		currentTrack = 0;
-		gv.customPlaylist.push([ID, artist, trackName]);
+		gv.customPlaylist.push(trackData);
 	}
 	else{
 		currentTrack+=1;
-		gv.customPlaylist.splice(currentTrack, 0, [ID, artist, trackName]);
+		gv.customPlaylist.splice(currentTrack, 0, trackData);
 		refreshPlaylist();
 	}
 	player.cueVideoById(gv.customPlaylist[currentTrack][0]);
