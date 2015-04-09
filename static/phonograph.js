@@ -9,7 +9,7 @@ function reload() {
 
 function flaskURL() {
 	url = "/"+gv.route+"?origin="+gv.origin+"&size="+gv.size+"&genre="+gv.genre+"&level="+gv.zoomLevel+"&source="+gv.source+"&destination="+gv.destination+"&core="+gv.core+"&term="+gv.term;
-	console.log(url);
+	//console.log(url);
 	return(url);
 }
 
@@ -36,8 +36,8 @@ function start_Vis(graph) {
 
 	var popvals = [];
 	for (d of graph.nodes) { popvals.push(d3.max([parseInt(d.popularity,10),1])) };
-	//console.log(popvals);
-	//console.log(d3.min(popvals));
+	////console.log(popvals);
+	////console.log(d3.min(popvals));
 	nodeScale = d3.scale.log(1.5)
 						.domain([d3.min(popvals), d3.max(popvals)])
 						.range([10, 20]);
@@ -184,7 +184,7 @@ function start_Vis(graph) {
 		.attr("class", function(d) {
 			return "ncircle "+d.genre;
 		})
-		.attr("r", function(d) {//console.log(d.popularity);
+		.attr("r", function(d) {////console.log(d.popularity);
 			if ((gv.origin != null)&&(clicked)) {
 				if (d.id == gv.origin) {
 					return 30;
@@ -376,7 +376,7 @@ function unclick(d) {
 /* WE THINK THIS DOESNT EXIST ANY MORE
 function loadPathInfo(names){
 	tabSwitch("path");
-	//console.log(names);
+	////console.log(names);
 	$('#radio-title').text(names);
 
 	if(gv.currentService=="spotify"){
@@ -394,13 +394,13 @@ function loadArtistInfo(o) {
 	tabSwitch("node");
 	$('#node-title').text(o.name);
 	d3.json("http://developer.echonest.com/api/v4/artist/biographies?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+o.id+"&format=json&results=1&start=0&license=cc-by-sa", function(error, response) {
-		//console.log(response);
+		////console.log(response);
 		if(error){
 			d3.select('#bioText').text("Biography not found in database");
 		}
 		else{
 			var bio = response.response.biographies[0].text;
-			//console.log(bio);
+			////console.log(bio);
 			d3.select('#bioText').text(bio);
 		}
 	});
@@ -453,7 +453,7 @@ function get_url(relations, type) {
 };
 
 function performRequests(mode) {
-	console.log(mode);
+	//console.log(mode);
 	if (mode == 'radio') {
 		thisTrack = gv.radioList[gv.requestCounter];
 		requestLength = gv.radioList.length
@@ -466,7 +466,7 @@ function performRequests(mode) {
 		thisTrack = gv.edgeTracks[gv.requestCounter];
 		requestLength = gv.edgeTracks.length
 	}
-	console.log(thisTrack);
+	//console.log(thisTrack);
 	stNames = [];
 	for (n of thisTrack.artists) {
 		stNames.push(standardise(n));
@@ -492,7 +492,7 @@ function performRequests(mode) {
 		gv.requestCounter += 1;
 		$('#'+mode+'YoutubeTable').bootstrapTable('load', gv.tableData);
 		$('#'+mode+'YoutubeTable').bootstrapTable('hideLoading');
-		console.log(gv.tableData)
+		//console.log(gv.tableData)
 
 		if (gv.requestCounter < requestLength) { 
 			performRequests(mode); 
@@ -504,16 +504,16 @@ function performRequests(mode) {
 					"play":""
 				}
 			)};
-			console.log(gv.tableData);
+			//console.log(gv.tableData);
 			$('#'+mode+'YoutubeTable').bootstrapTable('load', gv.tableData);
 			$('#'+mode+'YoutubeTable').bootstrapTable('hideLoading');
 			$('#'+mode+'YoutubeTable').bootstrapTable('load', gv.tableData);
 			//Play tracks on double click
 			$('tr').dblclick(function(){
 				var playNowButton = $(this).find('.playNowButton');
-				//console.log(playNowButton);
+				////console.log(playNowButton);
 				if(playNowButton.attr("disabled")){
-					console.log("Can't play track");
+					//console.log("Can't play track");
 				}
 				else{
 					playNowButton.trigger("click");
@@ -524,11 +524,11 @@ function performRequests(mode) {
 };
 
 function getLinkInfo(d){
-	console.log(d);
+	//console.log(d);
 	var pairIds = [gv.newGraph.nodes[d.source].id, gv.newGraph.nodes[d.target].id].sort().join(',');
 	var names = gv.newGraph.nodes[d.source].name +" & "+gv.newGraph.nodes[d.target].name;
 	d3.json("/edgeLookup?seed="+pairIds, function(error, response) {
-		console.log(response);
+		//console.log(response);
 		tabSwitch("edge");
 		if(gv.currentService=="spotify") {
 			trackIds = [];
@@ -540,7 +540,7 @@ function getLinkInfo(d){
 		$('#edge-title').text(names);
 		if(gv.currentService=="spotify"){
 			spotifyUrl = '"https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+tracks +'&theme=white"'
-			console.log(spotifyUrl);
+			//console.log(spotifyUrl);
 			d3.select('#edgeIframe').html( function() { return '<iframe src='+spotifyUrl+' width="'+wellWidth+'" height="'+wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
 		};
 
@@ -775,9 +775,26 @@ function compare(a,b) {
 }
 
 function fillRadioTitle(){
-	var title = "";
-	if(gv.route == "zoom" || gv.route== "neighbourhood"){
+	gv.radioTitle = "";
+	if (gv.route == "zoom" || gv.route == "neighbourhood"){
+		gv.radioTitle = getName(gv.origin) + ' Radio';
 	};
+	if (gv.route == "path") {
+		gv.radioTitle = 'Directions from '+getName(gv.source)+' to '+getName(gv.destination);
+	}
+	if (gv.route == 'termsubgraph') {
+		gv.radioTitle = gv.termLabel + ' Radio'
+	};
+	console.log(gv.radioTitle);
+	$('#radio-title').text(gv.radioTitle);
+};
+
+function getName(id) {
+	for (d of gv.newGraph.nodes) {
+		if (d.id == id) {
+			return d.name;
+		}
+	}
 };
 
 function loadRadio() {
@@ -800,11 +817,11 @@ function loadRadio() {
 };
 
 function makeRadioList() {
-	//console.log(graph.links);
+	////console.log(graph.links);
 	originTracks = [];
 	otherTracks = [];
 	originIndex = newIds.indexOf(gv.origin);
-	//console.log(originIndex);
+	////console.log(originIndex);
 	for (l of gv.newGraph.links) {
 		if ((l.source==originIndex)||(l.target==originIndex)) {
 			originTracks.push(l.track)
@@ -812,21 +829,21 @@ function makeRadioList() {
 			otherTracks.push(l.track)
 		};
 	};
-	console.log(originTracks);
-	console.log(otherTracks);
-	originTracks.sort(compare)
-	otherTracks.sort(compare)
 	//console.log(originTracks);
 	//console.log(otherTracks);
+	originTracks.sort(compare)
+	otherTracks.sort(compare)
+	////console.log(originTracks);
+	////console.log(otherTracks);
 	gv.radioList = [otherTracks[0]];
 	otherTracks.splice(0,1);
 	toAdd = originTracks.concat(otherTracks);
-	//console.log(toAdd);
+	////console.log(toAdd);
 	toAdd.sort(compare);
 	for (i=0; i < 5; i++) {
 		gv.radioList.push(toAdd[i])
 	};
-	//console.log(radioTracks);
+	////console.log(radioTracks);
 }
 
 function tabSwitch(pane) {
@@ -835,7 +852,7 @@ function tabSwitch(pane) {
 	$('#playlistPane').toggle(false);
 	$('#subgraphPane').toggle(false);
 
-	console.log("switching to "+pane);
+	//console.log("switching to "+pane);
 	if (pane == "edge") {
 		for (elt of ["nodeTab", "nodePane", "radioTab", "radioPane"]) {
 			d3.select('#'+elt).classed("active", false);
@@ -874,7 +891,7 @@ function tabSwitch(pane) {
 	}
 
 	else{
-		console.log("ERROR IN TAB SWITCHING FUNCTION");
+		//console.log("ERROR IN TAB SWITCHING FUNCTION");
 	};
 
 };
@@ -913,6 +930,7 @@ function setAutocomplete(){
 	    select: function(event, ui) {
 	    	this.value = '';
 	    	gv.term = ui.item.value
+	    	gv.termLabel = ui.item.label;
 	    	gv.route = "termsubgraph"
 	    	gv.origin = null;
 	    	gv.genre = null;
@@ -935,7 +953,7 @@ function setAutocomplete(){
 			});
 		},
 	    select: function(event, ui) {
-	    	console.log("PATH SELECT");
+	    	//console.log("PATH SELECT");
 	    	event.preventDefault();
 	    	this.value = ui.item.label;
 	    	gv.source = ui.item.value;
@@ -1061,13 +1079,13 @@ $('#generateSubgraph').on('click', function() {
 });
 /*
 function sideBarBack(){
-	console.log(gv.currentSidebar);
-	console.log(gv.sidebars);
+	//console.log(gv.currentSidebar);
+	//console.log(gv.sidebars);
 	if (gv.currentSidebar < gv.sidebars.length && gv.currentSidebar > 0) {
-		console.log("Going Back"); 
+		//console.log("Going Back"); 
 		gv.currentSidebar -= 1;
 		var previousSidebar = gv.sidebars[gv.currentSidebar];
-		//console.log(previousSidebar);
+		////console.log(previousSidebar);
 		if(previousSidebar[0]===0){
 			loadArtistInfo(previousSidebar[1]);
 		}
@@ -1082,7 +1100,7 @@ function sideBarBack(){
 		};
 	}
 	else{
-		console.log("Cannot go Back");
+		//console.log("Cannot go Back");
 	};
 
 };
@@ -1093,7 +1111,7 @@ $('#sidebarBack').on('click', function() {
 
 $('#sidebarForward').on('click', function() {
 	if (gv.currentSidebar  < gv.sidebars.length-1) {
-		console.log("Going Forward");
+		//console.log("Going Forward");
 		gv.currentSidebar += 1;
 		var nextSidebar = gv.sidebars[gv.currentSidebar]
 		if(nextSidebar[0]===0){
@@ -1110,7 +1128,7 @@ $('#sidebarForward').on('click', function() {
 		}
 	}
 	else{
-		console.log("Cannot go Forward");
+		//console.log("Cannot go Forward");
 	}
 });
 
@@ -1164,7 +1182,7 @@ function resetZoomLevel() {
 //ON CLICK OF ZOOM LEVEL MOVE TO THAT LEVEL
 $('.zL').click(function(){
 	var newZoomLevel = $(this).attr('id').replace("zoomL",""); //GET NEW ZOoM LEVEL FROM BUTTON
-	//console.log("MOVING TO ZOOM LEVEL "+newZoomLevel);
+	////console.log("MOVING TO ZOOM LEVEL "+newZoomLevel);
 	if (newZoomLevel != gv.zoomLevel) {
 		gv.zoomLevel = newZoomLevel;
 		zoom();
@@ -1187,7 +1205,7 @@ $('.zi').click(function() {
 
 $('#genre').change(function(){
 	var newGenre = $('#genre option:selected')[0].value;
-	console.log(newGenre);
+	//console.log(newGenre);
 	if (gv.genre != newGenre) {
 		gv.genre = newGenre;
 		gv.route = "neighbourhood"
@@ -1208,7 +1226,7 @@ $('#urlShare').click(function(){
 	if (typeof location.gv.origin === 'undefined'){
     	location.gv.origin = location.protocol + '//' + location.host;
 	}
-	console.log(location.gv.origin);
+	//console.log(location.gv.origin);
 
 	d3.select('#URL').property({'value': location.gv.origin+'/?gv.route='+gv.route+'&seed='+seed});
 });
