@@ -44,29 +44,24 @@
 		     <a class="navbar-brand" href="#"> <i id="logo" class="el el-network"></i> phonograph.fm <sup>&beta;</sup> </a>
 		    </div>
 		    <div class="navbar navbar-left" id="navbar-top-left">
-				<form class="navbar-form navbar-left" role="search" id="searchBar">
-					<div class="input-group">
-						<input href="#" class="form-control autocomplete" placeholder="Artist Name" id="artistSearch">
-						<div class="input-group-btn">
-							<button type="button" id="search-button" class="btn btn-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-						</div>
-					</div><!-- /input-group -->
-				</form>
-
-	            <ul class="nav navbar-nav navbar-left" style="padding-top: 8px;">
-	            	<li class="dropdown" id="searchDropdown">
-	            	  <button class="btn btn-default dropdown-toggle" href="#" data-toggle="dropdown" id="artistOptions"><span class="glyphicon glyphicon-road" aria-hidden="true"></span><span class="caret"></span></button>
-	            	  <div class="dropdown-menu dropdown-menu-right topDropdown">
-	            	    <form class="form"> 
-	            	    	<div class="form-group ui-widget">
-	            	    		<input href="#" class="form-control autocomplete" class="artistSearch" id="travelTo" placeholder="Enter Artist..." id="artistSearch">
-	            	    	</div>
-	            	    </form>
-	            	  </div>
-	            	</li>
-	            </ul>
-
-		    </div><!-- /.navbar-collapse -->
+		    	<form class="navbar-form navbar-left" role="search" id="searchBar">
+		    		<div class="input-group">
+		    			<div class="input-group-btn">
+		    				<button class="dropdown-toggle btn btn-default" href="#" data-toggle="dropdown" id="searchType"><i class="fa fa-user"></i></span><span class="caret"></span></button>
+		    				<ul class="dropdown-menu topDropdown" role="menu"> 			    
+		    					<li><a class="search-choice" id="search-choice-artist"><i class="fa fa-user"></i></a></li>
+		    					<li><a class="search-choice" id="search-choice-path"><i class="fa fa-road"></i></a></li>
+		    					<li><a class="search-choice" id="search-choice-term"><i class="fa fa-users"></i></a></li>
+		    				</ul>
+		    			</div>
+		    			<input href="#" class="form-control autocomplete artist" placeholder="Search by Artist" id="searchAutoComplete">
+		    			<input href="#" class="form-control autocomplete" style="display: none;" placeholder="Destination..." id="destination">
+		    			<div class="input-group-btn">
+		    				<button type="button" id="search-button" class="btn btn-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+		    			</div>
+		    		</div>
+		    	</form>
+		    </div>
 		    <div class="navbar navbar-right">
 		    	<ul class="nav navbar-nav navbar-right">
 		    		<li class="dropdown" id="serviceChoice">
@@ -133,82 +128,6 @@
 		    					</div>
 		    				</form>
 		    			</div>
-		    			<!--
-		    			<ul role="menu" class="dropdown-menu top-dropdown-right" style="width:175px;">  
-		    			  	<li role="presentation">
-								<div class="btn-group pull-right"> 
-									<button id="b10" type="button" class="btn btn-default btn-sm ns">10</button>
-								 	<button id="b20" type="button" class="btn btn-default btn-sm ns">20</button>
-								  	<button id="b30" type="button" class="btn btn-primary btn-sm ns">30</button>
-								  	<button id="b40" type="button" class="btn btn-default btn-sm ns">40</button>
-								  	<button id="b50" type="button" class="btn btn-default btn-sm ns">50</button>
-								</div>
-		    				</li>
-		    				<li role="presentation">
-								 <div class="btn-group btn-group-justified">
-								 	<div class="btn-group" role="group">
-								 	  <button id="null" type="button" class="btn btn-primary btn-sm gs">All Genres</button>
-								 	</div> 
-								  </div>
-							</li>
-		    				<li role="presentation">
-								 <div class="btn-group btn-group-genre">
-									<div class="btn-group" role="group">
-									  	<button id="pop" type="button" class="btn btn-default btn-sm gs">Pop/Club</button>
-									</div>
-									<div class="btn-group" role="group">
-										<button id="rock" type="button" class="btn btn-default btn-sm gs">Rock</button>
-									</div>   	 
-								 </div>
-							</li>
-		    				<li role="presentation">
-								 <div class="btn-group">
-									<div class="btn-group" role="group">
-									  	<button id="classical" type="button" class="btn btn-default btn-sm gs">Classical</button>
-									</div>
-									<div class="btn-group" role="group">
-										<button id="hip hop" type="button" class="btn btn-default btn-sm gs">Hip Hop</button>
-									</div>   	 
-								 </div>
-							</li>
-							<li role="presentation">
-								 <div class="btn-group">
-									<div class="btn-group" role="group">
-									  	<button id="jazz" type="button" class="btn btn-default btn-sm gs">Jazz & Blues</button>
-									</div>
-									<div class="btn-group" role="group">
-										<button id="electronic" type="button" class="btn btn-default btn-sm gs">Electronic</button>
-									</div>   	 
-								 </div>
-							</li>
-							<li role="presentation">
-								 <div class="btn-group">
-									<div class="btn-group" role="group">
-									  	<button id="country" type="button" class="btn btn-default btn-sm gs">Country</button>
-									</div>
-									<div class="btn-group" role="group">
-										<button id="reggae" type="button" class="btn btn-default btn-sm gs">Reggae & Ska</button>
-									</div>   	 
-								 </div>
-							</li>
-							<li role="presentation">
-								 <div class="btn-group">
-									<div class="btn-group" role="group">
-									  	<button id="latin" type="button" class="btn btn-default btn-sm gs">Latin</button>
-									</div>
-									<div class="btn-group" role="group">
-										<button id="funk" type="button" class="btn btn-default btn-sm gs">R&B, Funk & Soul</button>
-									</div>   	 
-								 </div>
-							</li>													
-		    				<li role="presentation">	
-								<form class="form"> 
-									<div class="form-group ui-widget">
-										<input href="#" class="form-control autocomplete" class="artistSearch" id="genreSearch" placeholder="Search for Genre..." id="artistSearch">
-									</div>
-								</form>
-							</li>
-		    			</ul>-->
 		    		</li>
 
 		    	</ul>
