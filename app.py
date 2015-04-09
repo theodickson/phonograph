@@ -158,7 +158,7 @@ def capitalise(phrase):
 		capitalised.append(word[0].upper()+word[1:])
 	return (' ').join(capitalised)
 					
-def get_origin():
+def random_origin():
 	genres = ['rock', 'pop', 'classical', 'hip hop', 'latin', 'reggae', 'electronic', 'country', 'jazz', 'funk']
 	tempgenre = random.choice(genres)
 	origin = random.choice(r.zrevrange('term.artists:'+tempgenre,0,500))
@@ -166,6 +166,15 @@ def get_origin():
 		origin = random.choice(r.zrevrange('term.artists:'+tempgenre,0,500))
 	return origin
 
+def genre_origin(genre):
+	origin = random.choice(r.zrevrange('term.artists:'+genre,0,100))
+	while genre_neighbours(origin, genre) < 3:
+		origin = random.choice(r.zrevrange('term.artists:'+genre,0,100))
+	return origin
+
+def genre_neighbours(origin, genre):
+	return sum(1 for n in r.smembers('artist.neighbours'+origin) if r.hget('artist.info:'+n, 'genre') == genre)
+	
 def pop_sorted(nodes):
 	return sorted(nodes, key = lambda x:r.hget('artist.info:'+x, 'popularity'), reverse=True)
 
@@ -220,14 +229,15 @@ def path_finder():
 @app.route("/neighbourhood")
 #@login_required
 def neighbourhood():
-	print request.args
-	origin = request.args['origin']
-	if origin == 'null':
-		origin = get_origin();
 	size = int(request.args['size'])
 	genre = request.args['genre']
+	origin = request.args['origin']
 	if genre == 'null':
 		genre = None
+		if origin == 'null':
+			origin = random_origin()
+	else:
+		origin = genre_origin(genre)
 	currentstep = {origin:1}
 	neighbourhood = set([origin])
 	visited = set([origin])

@@ -1055,6 +1055,17 @@ $('a[href="#sampleNetwork"]').click(function() {
 	};
 });
 
+$('.ns').click(function() {
+	////console.log(gv.sizeBTN);
+	d3.select(gv.sizeBTN).classed({'btn-default':true, 'btn-primary':false})
+	d3.select(this).classed({'btn-default':false, 'btn-primary':true});
+	gv.sizeBTN = "#"+this.id;
+	if ( (gv.size!=this.id.substring(1))&&(gv.clickable) ) {
+		gv.size = this.id.substring(1);
+		reload();
+	};
+});
+
 function highlightZoomLevel(){
 	$('.zL').each(function(){
 		if($(this).attr('id').replace("zoomL","") == gv.zoomLevel){
@@ -1086,13 +1097,10 @@ function disableZoom(){
 function zoom(){
 	gv.route = "zoom";
 	gv.genre = null;
-	if (clicked) {
-		gv.origin = clicked.id.substring(1);
+	if (gv.currentArtist) {
+		gv.origin - gv.currentArtist
 	} else {
-		if (!gv.origin) {
-			gv.origin = gv.currentIds[Math.floor(gv.currentIds.length * Math.random())];
-			console.log(gv.origin)
-		}
+		gv.origin = gv.currentIds[Math.floor(gv.currentIds.length * Math.random())];
 	};
 	highlightZoomLevel();
 	disableZoom();
@@ -1123,21 +1131,13 @@ $('.zi').click(function() {
 	}
 });
 
-$('#genre').change(function(){
-	var newGenre = $('#genre option:selected')[0].value;
-	if (gv.genre != newGenre) {
-		gv.genre = newGenre;
+$('.gs').click(function(){
+	console.log('click')
+	if (gv.genre != $(this).attr('id')) {
+		gv.genre = $(this).attr('id');
 		gv.route = "neighbourhood"
 		gv.origin = null;
 		gv.zoomLevel = 1;
-		reload();
-	};
-});
-
-$('#ns').change(function(){
-	var newSize = $('#ns option:selected')[0].value;
-	if ( (gv.size!=newSize && (gv.clickable) ) ) {
-		gv.size = newSize;
 		reload();
 	};
 });
