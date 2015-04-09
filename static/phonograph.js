@@ -490,7 +490,6 @@ function performRequests(mode) {
 		};
 
 		gv.requestCounter += 1;
-
 		$('#'+mode+'YoutubeTable').bootstrapTable('load', gv.tableData);
 		$('#'+mode+'YoutubeTable').bootstrapTable('hideLoading');
 		console.log(gv.tableData)
@@ -775,7 +774,14 @@ function compare(a,b) {
   return 0;
 }
 
+function fillRadioTitle(){
+	var title = "";
+	if(gv.route == "zoom" || gv.route== "neighbourhood"){
+	};
+};
+
 function loadRadio() {
+	fillRadioTitle();
 	if (gv.route != 'path') {
 		makeRadioList();
 	};
