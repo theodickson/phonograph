@@ -525,6 +525,8 @@ $('#playlistDropdown').on('click', function(){
 	refreshPlaylist();
 });
 
+//HIDE YOUTUBE
+$('.videoWrapper').hide();
 
 
 

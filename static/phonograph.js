@@ -17,11 +17,11 @@ function start_Vis(graph) {
 	svg.transition().duration(1000).style("opacity", 1)
 	var width = $('#map').width();
 		nheight = $('#navbar').height();
-		height = window.innerHeight - nheight-100;
+		height = window.innerHeight - nheight-105;
 
 	var wellHeight = window.innerHeight - nheight-170+"px";
-	$('#bio').css('max-height', wellHeight);
-	$('.fixed-table-container').attr("data-height", wellHeight);
+	$('#bio').css('height', wellHeight);
+	$('.fixed-table-container').attr({"data-height": "100%", "data-width": "100%"});
 	var radius = Math.min(width, height)/2;
 		
 	svg.attr("width", width).attr("height", height);

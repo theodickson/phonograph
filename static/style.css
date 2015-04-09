@@ -216,7 +216,7 @@ text {
 
 #bio{
     overflow: scroll;
-    margin:15px;
+    margin:5px;
 }
 #sidebar{
     border-left-style:solid;
@@ -224,8 +224,7 @@ text {
     border-color:#e7e7e7;
     display:block;
     overflow:scroll;
-    padding-left: 0;
-    padding-right: 15px;
+    padding: 0;
 }
 
 .sidebar-title{
@@ -296,6 +295,7 @@ text {
 #sideBarTabs > li > a {
     color: lightgrey;
     background-color:transparent;
-    padding: none;
+    padding-bottom: 15px;
+    padding-right: 5px;
 
 }

@@ -190,6 +190,7 @@
 									data-height="300" pagination="true" sortable="true" data-show-header="false">
 								<thead>
 								<tr>
+									<th data-field="artist">Artist</th>
 									<th data-field="title" data-sortable="true">Title</th>
 									<th data-field="add"></th>
 									<th data-field="play"></th>
@@ -206,37 +207,29 @@
 				<!-- Edge Tab -->
 				<div class="tab-pane" id="edgePane">
 					<h3 class="sidebar-title" id="edge-title"></h3>				
-					<!-- Edge nav tabs -->
-					<ul id="edgeTabs" class="nav nav-tabs nav-justified" data-tabs="tabs">
-					<li class="active spotify" id="edgeSpotifyTab"><a href="#edgeSpotify" role="tab" data-toggle="tab"> <i class="el el-spotify"></i></a></li>
-					<li id="edgeYoutubeTab" class="youtube"><a href="#edgeYoutube" data-toggle="tab"><i class="el el-youtube"></i></a></li>
-					</ul>
 
-					<!-- Edge tab panes -->
-					<div class="tab-content">
-
-						<!-- Spotify -->
-						<div class="tab-pane" id="edgeSpotify">
-						<div class="spotify" id="edgeIframe" align="middle" style="margin-top:30px"></div>
-						</div>
-						
-						<!-- Youtube -->
-						<div class="tab-pane active" id="edgeYoutube">
-							<div class="tableWrapper noselect" align="middle" style="overflow:scroll"> 
-							<table id="edgeYoutubeTable" data-toggle="table" data-toolbar="#toolbar" 
-									data-height="300" pagination="true" sortable="true" data-show-header="false">
-								<thead>
-								<tr>
-									<th data-field="title" data-sortable="true">Title</th>
-									<th data-field="add"></th>
-									<th data-field="play"></th>
-								</tr>
-								</thead>
-				        	</table>
-				        	</div>				        
-						</div>
-
+					<!-- Spotify -->
+					<div style="display:none;" class="content-spotify" id="edgeSpotify">
+					<div class="spotify" id="edgeIframe" align="middle" style="margin-top:30px"></div>
 					</div>
+					
+					<!-- Youtube -->
+					<div class="content-youtube" id="edgeYoutube">
+						<div class="tableWrapper noselect" align="middle" style="overflow:scroll"> 
+						<table id="edgeYoutubeTable" data-toggle="table" data-toolbar="#toolbar" 
+								data-height="300" pagination="true" sortable="true" data-show-header="false">
+							<thead>
+							<tr>
+								<th data-field="artist" data-sortable="true">Artist</th>
+								<th data-field="title" data-sortable="true">Title</th>
+								<th data-field="add"></th>
+								<th data-field="play"></th>
+							</tr>
+							</thead>
+			        	</table>
+			        	</div>				        
+					</div>
+
 				</div>
 
 				<!-- Path Tab -->
@@ -244,36 +237,27 @@
 
 					<!-- Path header-->
 					<h3 class="sidebar-title" id="path-title"></h3>
-				
-					<!-- Path nav tabs -->
-					<ul id="pathTabs" class="nav nav-tabs nav-justified" data-tabs="tabs">
-					<li class="spotify" id="pathSpotifyTab"><a href="#pathSpotify" role="tab" data-toggle="tab"> <i class="el el-spotify"></i></a></li>
-					<li id="pathYoutubeTab" class="active youtube"><a href="#pathYoutube" data-toggle="tab"><i class="el el-youtube"></i></a></li>
-					</ul>
-
-					<!-- Path tab panes -->
-					<div class="tab-content">
 
 						<!-- Spotify -->
-						<div class="tab-pane" id="pathSpotify">
+						<div style="display:none;" class="content-spotify" id="pathSpotify">
 						<div id="pathIframe" align="middle" style="margin-top:30px"></div>
 						</div>
 						
 						<!-- Youtube -->
-						<div class="tab-pane active" id="pathYoutube">
-							
+						<div class="content-youtube" id="pathYoutube">
 							<div class="tableWrapper noselect"> 
 							<table id="pathYoutubeTable" data-toggle="table" data-toolbar="#toolbar" 
 									data-height="300" pagination="true" sortable="true" data-show-header="false">
 								<thead>
 								<tr>
+									<th data-field="artist">Artist</th>
 									<th data-field="title" data-sortable="true">Title</th>
 									<th data-field="add"></th>
 									<th data-field="play"></th>
 								</tr>
 								</thead>
 				        	</table>
-				        	<div class="videoWrapper" align="middle"><div id="player" style="opacity: 0"></div></div>	
+				        	<div class="videoWrapper" align="middle"><div id="player" style="height:1px;"></div></div>	
 				        	</div>
 				        
 						</div>
@@ -288,6 +272,7 @@
 
 		</div>
 			<!-- CUSTOM SUBGRAPH Pane -->
+			<!--
 			<div id="subgraphPane">
 				<h3 style="text-align: center;">Custom Subgraph</h3>
 				<div class="tableWrapper noselect" > 
@@ -305,10 +290,11 @@
 	        			<button type="button" class="btn btn-default"><i class="fa fa-user-plus"></i></button>
 	        		</div>
 	        		      	
-	        	</div><!-- /input-group -->
+	        	</div>
+
 	        	<button type="button" id="generateSubgraph" class="btn btn-danger">GENERATE</button>	  
 	        	</div>
-			</div>
+			</div>-->
 		</div>
 	</div>
 </section>
@@ -326,6 +312,7 @@
 			        	<table id="playlistTable" align="middle" data-show-header="false" data-striped="true" data-clickToSelect="true" data-height="300">
 			        	    <thead>
 			        	    <tr>
+			        	    	<th data-field="artist">Artist</th>
 			        	        <th data-field="track">Track</th>
 			        	        <th data-field="option"></th>
 			        	        <th data-field="remove"></th>
