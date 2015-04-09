@@ -101,7 +101,7 @@ function start_Vis(graph) {
 		names = graph.nodes[newIds.indexOf(gv.source)].name+' to '+graph.nodes[newIds.indexOf(gv.destination)].name;
 		loadPathInfo(names);
 	} else {
-		loadRadio();
+		/*loadRadio();*/
 	}
 	
 	gv.newGraph = graph;
@@ -747,6 +747,27 @@ function nextNode(graph, pathOrder) {
 	};
 };
 
+function compare(a,b) {
+  if (parseInt(a.popularity,10) < parseInt(b.popularity,10))
+     return -1;
+  if (parseInt(a.popularity,10) > parseInt(b.popularity,10))
+    return 1;
+  return 0;
+}
+
+/*function loadRadio() {
+	tracks = [];
+	for (l of graph.links) {
+		tracks.push(l)
+	};
+	tracks = tracks.sort(compare)
+	if (gv.origin) {
+		while (c = 0) {
+			for (track of tracks) {
+				if (track.artists.indexOf())
+		}
+	}
+}*/
 function tabSwitch(pane) {
 	$('#artistSearch').val("");
 	$('#info').toggle(true);

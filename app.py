@@ -37,11 +37,11 @@ def igrapher(vertices, path=False, **kwargs):
 			weights.append(weight)
 			trackinfo = r.hgetall('track.info:'+edgetracks[0])
 			tracks.append({
-						'id': edgetracks[0], 
-						'name': trackinfo['name'],
-						'popularity': trackinfo['popularity'],
-						'artists': artistNames( list(r.smembers('track.artists:'+edgetracks[0])), nameMap)
-						})
+					'id': edgetracks[0], 
+					'name': trackinfo['name'],
+					'popularity': trackinfo['popularity'],
+					'artists': artistNames( list(r.smembers('track.artists:'+edgetracks[0])), nameMap)
+				})
 	g.add_edges(edges)
 	g.es['weight'] = weights
 	g.es['track'] = tracks
