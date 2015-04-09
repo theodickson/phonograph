@@ -320,8 +320,8 @@ $('#nodeYoutubeTable').attr("data-height", wellHeight);
 $('#nodeYoutubeTable').bootstrapTable('resetView');
 $('#edgeYoutubeTable').attr("data-height", wellHeight);
 $('#edgeYoutubeTable').bootstrapTable('resetView');
-$('#pathYoutubeTable').attr("data-height", wellHeight);
-$('#pathYoutubeTable').bootstrapTable('resetView')
+$('#radioYoutubeTable').attr("data-height", wellHeight);
+$('#radioYoutubeTable').bootstrapTable('resetView')
 $('#subgraphTable').attr("data-height", wellHeight-nheight-nheight);
 $('#subgraphTable').bootstrapTable('resetView');
 
@@ -373,10 +373,11 @@ function unclick(d) {
 	clicked = null;
 };
 
+/* WE THINK THIS DOESNT EXIST ANY MORE
 function loadPathInfo(names){
 	tabSwitch("path");
 	//console.log(names);
-	$('#path-title').text(names);
+	$('#radio-title').text(names);
 
 	if(gv.currentService=="spotify"){
 		d3.select('#pathIframe').html( function() { 
@@ -386,7 +387,7 @@ function loadPathInfo(names){
 	gv.requestCounter = 0; gv.tableData = [];
 	performRequests('path');
 }
-
+*/
 function loadArtistInfo(o) {
 	gv.currentArtistName = o.name;
 	gv.currentArtist = o.id;
@@ -429,7 +430,15 @@ function loadArtistInfo(o) {
 	});
 	
 	d3.json("https://api.spotify.com/v1/artists/"+o.id+"/top-tracks?country=GB", function (error, response) {
-		gv.nodeTracks = response.tracks;
+		gv.nodeTracks = [];
+		for (track of response.tracks) {
+			artistNames = [];
+			for (artist of track.artists) {
+				artistNames.push(artist.name);
+			};
+			parsedTrack = {'id': track.id, 'name': track.name, 'artists': artistNames};
+			gv.nodeTracks.push(parsedTrack);
+		};
 		gv.requestCounter = 0; gv.tableData = [];
 		performRequests('node');
 	});
@@ -475,9 +484,9 @@ function performRequests(mode) {
 		};
 
 		if (score > 0.3) {
-			gv.tableData.push( {"artistNames": '<div class="disabled" style="color:grey; font-style: italic;">'+thisTrack.artists+'</div>', "title": thisTrack.name, "add": "<button class='btn-sm btn-sidebar addToPlaylist' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-plus-sign'></i></button>", "play": "<button class='btn-sm btn-sidebar playNowButton' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-play'></i></button>"} );
+			gv.tableData.push( {"artist": thisTrack.artists.join(", "), "title": thisTrack.name, "add": "<button class='btn-sm btn-sidebar addToPlaylist' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-plus-sign'></i></button>", "play": "<button class='btn-sm btn-sidebar playNowButton' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-play'></i></button>"} );
 		} else {
-			gv.tableData.push( {"artistNames": thisTrack.artists, "title": thisTrack.name, "add": "<button disabled class='btn-sm btn-sidebar disabled addToPlaylist' type='button'><i class='el el-plus-sign'></i></button>", "play": "<button disabled class='btn-sm btn-sidebar disabled playNowButton' type='button'><i class='el el-play'></i></button>"} );
+			gv.tableData.push( {"artist": '<div class="disabled" style="color:grey;">'+thisTrack.artists.join(", ")+'</div>', "title": '<div class="disabled" style="color:grey;">'+thisTrack.name+'</div>', "add": "<button disabled class='btn-sm btn-sidebar disabled addToPlaylist' type='button'><i class='el el-plus-sign'></i></button>", "play": "<button disabled class='btn-sm btn-sidebar disabled playNowButton' type='button'><i class='el el-play'></i></button>"} );
 		};
 
 		gv.requestCounter += 1;
@@ -485,6 +494,7 @@ function performRequests(mode) {
 		$('#'+mode+'YoutubeTable').bootstrapTable('load', gv.tableData);
 		$('#'+mode+'YoutubeTable').bootstrapTable('hideLoading');
 		console.log(gv.tableData)
+
 		if (gv.requestCounter < requestLength) { 
 			performRequests(mode); 
 		} else { 
@@ -821,7 +831,7 @@ function tabSwitch(pane) {
 
 	console.log("switching to "+pane);
 	if (pane == "edge") {
-		for (elt of ["nodeTab", "nodePane", "pathTab", "pathPane"]) {
+		for (elt of ["nodeTab", "nodePane", "radioTab", "radioPane"]) {
 			d3.select('#'+elt).classed("active", false);
 		};
 		for (elt of ["nodeTab"]){
@@ -834,7 +844,7 @@ function tabSwitch(pane) {
 	}
 	
 	else if (pane == "node") {
-		for (elt of ["edgeTab", "edgePane", "pathTab", "pathPane"]) {
+		for (elt of ["edgeTab", "edgePane", "radioTab", "radioPane"]) {
 			d3.select('#'+elt).classed("active", false);
 		};
 		for (elt of ["edgeTab"]){
@@ -846,12 +856,12 @@ function tabSwitch(pane) {
 		};
 	}
 	
-	else if (pane == "path") {
+	else if (pane == "radio") {
 		for (elt of ["edgeTab", "edgePane", "nodeTab", "nodePane"]) {
 			d3.select('#'+elt).classed("active", false);
 		};
 
-		for (elt of ["pathTab", "pathPane"]) {
+		for (elt of ["radioTab", "radioPane"]) {
 			d3.select('#'+elt).classed("active", true);
 			$('#'+elt).show();
 		};
@@ -1043,7 +1053,7 @@ $('#generateSubgraph').on('click', function() {
 	resetZoomLevel();
 	reload();
 });
-
+/*
 function sideBarBack(){
 	console.log(gv.currentSidebar);
 	console.log(gv.sidebars);
@@ -1098,20 +1108,7 @@ $('#sidebarForward').on('click', function() {
 	}
 });
 
-$('a[href="#fullNetwork"]').click(function() {
-	if (gv.nework != 'full') {
-		gv.network = 'full';
-		init(gv.network);
-	};
-});
-
-$('a[href="#sampleNetwork"]').click(function() {
-	if (gv.nework != 'sample') {
-		gv.network = 'sample';
-		init(gv.network);
-	};
-});
-
+*/
 function highlightZoomLevel(){
 	$('.zL').each(function(){
 		if($(this).attr('id').replace("zoomL","") == gv.zoomLevel){

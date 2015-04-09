@@ -140,7 +140,7 @@
 			<ul class="nav nav-pills sideBarTabs" id="sideBarTabs" role="tablist" data-tabs="tabs">
 				<li class="active" id="nodeTab"><a class="sidebar-icon" href="#nodePane" role="tab" data-toggle="tab"><i class="fa fa-info"></i></a></li>
 				<li style="display: none" id="edgeTab"><a class="sidebar-icon" href="#edgePane" role="tab" data-toggle="tab"><i class="fa fa-info"></i></a></li>
-				<li id="pathTab"><a class="sidebar-icon" href="#pathPane" role="tab" data-toggle="tab"><i class="fa fa-music"></i></a></li>
+				<li id="radioTab"><a class="sidebar-icon" href="#radioPane" role="tab" data-toggle="tab"><i class="fa fa-music"></i></a></li>
 			</ul>
 			</div>
 
@@ -232,22 +232,21 @@
 
 				</div>
 
-				<!-- Path Tab -->
-				<div role="tabpanel" class="tab-pane" id="pathPane">
+				<!-- radio Tab -->
+				<div role="tabpanel" class="tab-pane" id="radioPane">
 
-					<!-- Path header-->
-					<h3 class="sidebar-title" id="path-title"></h3>
+					<!-- radio header-->
+					<h3 class="sidebar-title" id="radio-title"></h3>
 
 						<!-- Spotify -->
-						<div style="display:none;" class="content-spotify" id="pathSpotify">
-						<div id="pathIframe" align="middle" style="margin-top:30px"></div>
+						<div style="display:none;" class="content-spotify" id="radioSpotify">
+						<div id="radioIframe" align="middle" style="margin-top:30px"></div>
 						</div>
 						
 						<!-- Youtube -->
-						<div class="content-youtube" id="pathYoutube">
+						<div class="content-youtube" id="radioYoutube">
 							<div class="tableWrapper noselect"> 
-							<table id="pathYoutubeTable" data-toggle="table" data-toolbar="#toolbar" 
-									data-height="300" pagination="true" sortable="true" data-show-header="false">
+							<table id="radioYoutubeTable" data-toggle="table" data-show-header="false">
 								<thead>
 								<tr>
 									<th data-field="artist">Artist</th>
