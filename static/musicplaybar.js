@@ -501,6 +501,8 @@ $('.service-choice').on('click', function(){
 	$('.'+newService).show().filter('li').each(function(){
 		$(this).find('a').tab('show');
 	});
+	$('.content-'+currentService).hide();
+	$('.content-'+newService).show();
   	//IF SWITCHING OUT OF YT THEN PAUSE THE YT MUSIC
   	if(newService!="youtube"){
   		player.pauseVideo();

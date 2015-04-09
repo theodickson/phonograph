@@ -99,12 +99,7 @@ function start_Vis(graph) {
 		graph = pathPositions(graph, newIds, width, height);
 	};
 	
-	if (gv.route == "path") {
-		names = graph.nodes[newIds.indexOf(gv.source)].name+' to '+graph.nodes[newIds.indexOf(gv.destination)].name;
-		loadPathInfo(names);
-	} else {
-		loadRadio(graph);
-	}
+	loadRadio(graph);
 	
 	gv.newGraph = graph;
 	
@@ -252,7 +247,6 @@ function start_Vis(graph) {
 				gv.currentArtist = gv.currentIds[Math.floor(gv.currentIds.length * Math.random())];
 				dehighlightLinks();
 			};
-			svg.transition().duration(250).style("opacity", 1)
 			gv.clickable = true;
 		});
 	
@@ -524,18 +518,21 @@ function getLinkInfo(d){
 	d3.json("/edgeLookup?seed="+pairIds, function(error, response) {
 		//console.log(response);
 		tracks = response.trackIds.join(',');
+		console.log(tracks);
 		tabSwitch("edge");
 		d3.select('#sideBarTitle').text(names);
 		if(gv.currentService=="spotify"){
-			d3.select('#edgeIframe').html( function() { return '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+tracks +'&theme=white" width="'+wellWidth+'" height="'+wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
+			spotifyUrl = '"https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+tracks +'&theme=white"'
+			console.log(spotifyUrl);
+			d3.select('#edgeIframe').html( function() { return '<iframe src='+spotifyUrl+' width="'+wellWidth+'" height="'+wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
 		};
 		c = 0; gv.tableData = []; gv.trackNames = response.trackNames; gv.artistNames = response.artistNames;
-		performRequests(c, 'edge');
+		//performRequests(c, 'edge');
 	});	
 }
 
 function clickLink(d) {
-	$('#edgeYoutubeTable').bootstrapTable('showLoading');
+	//$('#edgeYoutubeTable').bootstrapTable('showLoading');
 	d3.event.stopPropagation();
 	addToSidebarHistory(1, d);
 	getLinkInfo(d);
@@ -758,7 +755,7 @@ function compare(a,b) {
 }
 
 function loadRadio(graph) { console.log('loading radio')
-	console.log(graph.links);
+	/*console.log(graph.links);
 	originTracks = [];
 	otherTracks = [];
 	originIndex = newIds.indexOf(gv.origin);
@@ -793,8 +790,8 @@ function loadRadio(graph) { console.log('loading radio')
 	}
 	c = 0; gv.tableData = [];
 	console.log(gv.trackNames); console.log(gv.artistNames);
-	//tabSwitch('path');
-	performRequests(c, 'path')
+	//tabSwitch('path');*/
+	//performRequests(c, 'path')
 }
 
 function tabSwitch(pane) {

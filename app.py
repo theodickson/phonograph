@@ -231,6 +231,7 @@ def path_finder():
 		g = igrapher(path)
 		return jsonify(d3_dictify(g))
 	else:
+		print paths
 		return jsonify({"error": "No path found."})
 		
 @app.route("/neighbourhood")
