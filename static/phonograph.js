@@ -1055,17 +1055,6 @@ $('a[href="#sampleNetwork"]').click(function() {
 	};
 });
 
-$('.ns').click(function() {
-	////console.log(gv.sizeBTN);
-	d3.select(gv.sizeBTN).classed({'btn-default':true, 'btn-primary':false})
-	d3.select(this).classed({'btn-default':false, 'btn-primary':true});
-	gv.sizeBTN = "#"+this.id;
-	if ( (gv.size!=this.id.substring(1))&&(gv.clickable) ) {
-		gv.size = this.id.substring(1);
-		reload();
-	};
-});
-
 function highlightZoomLevel(){
 	$('.zL').each(function(){
 		if($(this).attr('id').replace("zoomL","") == gv.zoomLevel){
@@ -1131,13 +1120,21 @@ $('.zi').click(function() {
 	}
 });
 
-$('.gs').click(function(){
-	console.log('click')
-	if (gv.genre != $(this).attr('id')) {
-		gv.genre = $(this).attr('id');
+$('#genre').change(function(){
+	var newGenre = $('#genre option:selected')[0].value;
+	if (gv.genre != newGenre) {
+		gv.genre = newGenre;
 		gv.route = "neighbourhood"
 		gv.origin = null;
 		gv.zoomLevel = 1;
+@@ -1144,6 +1134,14 @@ $('.gs').click(function(){
+	};
+});
+
+$('#ns').change(function(){
+	var newSize = $('#ns option:selected')[0].value;
+	if ( (gv.size!=newSize && (gv.clickable) ) ) {
+		gv.size = newSize;
 		reload();
 	};
 });
