@@ -492,9 +492,19 @@ function performRequests(mode) {
 		};
 
 		if (score > 0.3) {
-			gv.tableData.push( {"artist": thisTrack.artists.join(", "), "title": thisTrack.name, "add": "<button class='btn-sm btn-sidebar addToPlaylist' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-plus-sign'></i></button>", "play": "<button class='btn-sm btn-sidebar playNowButton' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-play'></i></button>"} );
+			gv.tableData.push( {
+				"artist": thisTrack.artists.join(", "), 
+				"title": thisTrack.name, 
+				"id": ytresponse.items[0].id.videoId, 
+				"play": "<button class='btn-sm btn-sidebar playNowButton' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-play'></i></button>"
+			});
 		} else {
-			gv.tableData.push( {"artist": '<div class="disabled" style="color:grey;">'+thisTrack.artists.join(", ")+'</div>', "title": '<div class="disabled" style="color:grey;">'+thisTrack.name+'</div>', "add": "<button disabled class='btn-sm btn-sidebar disabled addToPlaylist' type='button'><i class='el el-plus-sign'></i></button>", "play": "<button disabled class='btn-sm btn-sidebar disabled playNowButton' type='button'><i class='el el-play'></i></button>"} );
+			gv.tableData.push( {
+				"artist": '<div class="disabled" style="color:grey;">'+thisTrack.artists.join(", ")+'</div>', 
+				"title": '<div class="disabled" style="color:grey;">'+thisTrack.name+'</div>', 
+				"id": null, 
+				"play": "<button disabled class='btn-sm btn-sidebar disabled playNowButton' type='button'><i class='el el-play'></i></button>"
+			});
 		};
 
 		gv.requestCounter += 1;

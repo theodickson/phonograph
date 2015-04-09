@@ -148,6 +148,16 @@ function playNow(e){
 	player.cueVideoById(gv.customPlaylist[currentTrack][0]);
 };
 
+var $add = $('.add-to-playlist');
+var $table = $('.youtube-table');
+
+$add.click(function () {
+	console.log("clicked add to playlist");
+	console.log($(this).closest('table'));
+	var addedSongs = $table.bootstrapTable('getSelections');
+	console.log(addedSongs);
+});
+
 function addTrackToPlaylist(e){
 	playlistAlert();
 	var ID = e.currentTarget.value;

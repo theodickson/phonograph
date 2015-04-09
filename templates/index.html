@@ -186,19 +186,20 @@
 						<div class="tab-pane" id="nodeYoutube">
 							
 							<div class="tableWrapper noselect" align="middle" style="overflow:scroll"> 
-							<table id="nodeYoutubeTable" 								
+							<table 
+								id="nodeYoutubeTable" 								
+								class="youtube-table"
 								data-show-header="true"
 								data-toggle="table"
 								data-striped="true"
-								data-click-to-select="true"
 							>
 
 								<thead>
 								<tr>
-									<th data-field="state" data-checkbox="true"></th>
-									<th data-field="artist">Artist</th>
+									<th data-field="state" data-align="center" data-checkbox="true"></th>
 									<th data-field="title" data-sortable="true">Title</th>
 									<th data-field="play"></th>
+									<th data-field="id" data-visible="false"></th>
 								</tr>
 								</thead>
 				        	</table>
@@ -227,14 +228,14 @@
 							data-show-header="true"
 							data-toggle="table"
 							data-striped="true"
-							data-click-to-select="true"
 						>
 							<thead>
 							<tr>
-								<th data-field="state" data-checkbox="true"></th>
+								<th data-field="state" data-align="center" data-checkbox="true"></th>
 								<th data-field="artist">Artist</th>
 								<th data-field="title" data-sortable="true">Title</th>
 								<th data-field="play"></th>
+								<th data-field="id" data-visible="false"></th>
 							</tr>
 							</thead>
 			        	</table>
@@ -258,21 +259,25 @@
 						<div class="content-youtube" id="radioYoutube">
 							<div class="tableWrapper noselect"> 
 							<table 
+								class="youtube-table"
 								id="radioYoutubeTable"
 								data-show-header="true"
 								data-toggle="table"
 								data-striped="true"
-								data-click-to-select="true"
 							>
 								<thead>
 								<tr>
-									<th data-field="state" data-checkbox="true"></th>
+									<th data-field="state" data-align="center" data-checkbox="true"></th>
 									<th data-field="artist">Artist</th>
 									<th data-field="title" data-sortable="true">Title</th>
 									<th data-field="play"></th>
+									<th data-field="id" data-visible="false"></th>
 								</tr>
 								</thead>
 				        	</table>
+				        	<button class="add-to-playlist" class="btn btn-primary">
+				        	    <i class="fa fa-plus-square"></i> Add to Playlist
+				        	</button>
 				        	<div class="videoWrapper" align="middle"><div id="player" style="height:1px;"></div></div>	
 				        	</div>
 				        
@@ -295,7 +300,7 @@
 	        	<table id="subgraphTable" align="middle" data-show-header="true" data-striped="true" data-clickToSelect="true" data-height="300">
 	        		<thead>
 	        		<tr>
-	        		    <th data-align="left" data-field="name">Name</th>
+	        		    <th data-align="center" data-field="name">Name</th>
 	        		    <th data-align="right" data-field="remove"></th>
 	        		</tr>
 	        		</thead>
@@ -325,18 +330,20 @@
     				<form onsubmit="return false">
 					<h4 style="text-align: center;">Playlist</h4>
 					<div class="tableWrapper noselect" > 
-			        	<table id="playlistTable" 								
+			        	<table 
+			        			id="playlistTable" 								
+			        			class="youtube-table"
 			        			data-show-header="true"
 								data-toggle="table"
 								data-striped="true"
-								data-click-to-select="true"
 							>
 			        	    <thead>
 			        	    <tr>
-			        	    	<th data-field="state" data-checkbox="true"></th>
+			        	    	<th data-field="state" data-align="center" data-checkbox="true"></th>
 			        	    	<th data-field="artist">Artist</th>
 			        	    	<th data-field="title" data-sortable="true">Title</th>
 			        	    	<th data-field="play"></th>
+			        	    	<th data-field="id" data-visible="false"></th>
 			        	    </tr>
 			        	    </thead>
 			        	</table>
