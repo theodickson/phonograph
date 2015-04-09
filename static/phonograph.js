@@ -1,7 +1,7 @@
 //Main function:
 function reload() {
 	gv.clickable = false;
-	svg.transition().duration(500).style("opacity", 0.5)
+	svg.transition().duration(4000).style("opacity", 0.5)
 	d3.json(flaskURL(), function(error, graph) {
 		start_Vis(graph);
 	});
@@ -14,7 +14,7 @@ function flaskURL() {
 }
 
 function start_Vis(graph) {
-	svg.transition().duration(500).style("opacity", 1)
+	svg.transition().duration(2000).style("opacity", 1)
 	var width = $('#map').width();
 		nheight = $('#navbar').height();
 		height = window.innerHeight - nheight-100;
