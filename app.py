@@ -39,7 +39,7 @@ def igrapher(vertices, path=False, **kwargs):
 			tracks.append({
 						'id': edgetracks[0], 
 						'name': trackinfo['name'],
-						'popularity': trackInfo['popularity'],
+						'popularity': trackinfo['popularity'],
 						'artists': artistNames( list(r.smembers('track.artists:'+edgetracks[0])), nameMap)
 						})
 	g.add_edges(edges)
