@@ -1,33 +1,18 @@
 //Main function:
-function get_graph(seed, route) {
-	dataset.clickable = false;
-	d3.json("/"+route+"?seed="+seed, function(error, graph) {
-	dataset.graphs.splice(0,dataset.currentGraph);
-	dataset.graphs.unshift([graph, route, seed]);
-	dataset.currentGraph = 0;
-	start_Vis([graph, route, seed]);
+function reload() {
+	gv.clickable = false;
+	d3.json(flaskURL(), function(error, graph) {
+		start_Vis(graph);
 	});
 };
 
-function start_Vis(gms) { graph = gms[0]; route = gms[1]; seed = gms[2];
-	if ( (route == "neighbourhood")||(route=="zoom") ) {
-		origin = seed.split(',')[0];
-		clicked = 'a'+origin;
-	};
-	if (route == "path") {
-		start = seed.split(',')[0];
-		finish = seed.split(',')[1];
-		origin = null;
-		clicked = null;
-		dataset.zoomLevel = 1;
-	};
-	if (route == "custom") {
-		core = seed.split(',');
-		origin = null;
-		clicked = null;
-		dataset.zoomLevel = 1;
-	};
-	
+function flaskURL() {
+	url = "/"+gv.route+"?origin="+gv.origin+"&size="+gv.size+"&genre="+gv.genre+"&level="+gv.zoomLevel+"&source="+gv.source+"&destination="+gv.destination+"&core="+gv.core+"&term="+gv.term;
+	console.log(url);
+	return(url);
+}
+
+function start_Vis(graph) {
 	var width = $('#map').width();
 		nheight = $('#navbar').height();
 		height = window.innerHeight - nheight-100;
@@ -78,11 +63,11 @@ function start_Vis(gms) { graph = gms[0]; route = gms[1]; seed = gms[2];
 		newIds.push(n.id);
 	};
 
-	dataset.currentIds = newIds;
+	gv.currentIds = newIds;
 	oldNodes = [];
 	oldIds = [];
-	if (typeof dataset.oldGraph != "undefined") { 
-		for (n of dataset.oldGraph.nodes) {
+	if (typeof gv.oldGraph != "undefined") { 
+		for (n of gv.oldGraph.nodes) {
 			oldNodes.push(n);
 			oldIds.push(n.id);
 		};
@@ -106,19 +91,19 @@ function start_Vis(gms) { graph = gms[0]; route = gms[1]; seed = gms[2];
 		};
 	};
 	
-	if (!(route=="path")) { 
+	if (!(gv.route=="path")) { 
 		graph = optimiseRotation(oldPos, newPos, graph);
 	} else {
-		dataset.playlist = [];
-		graph = pathPositions(start, graph, newIds, width, height);
-		names = graph.nodes[newIds.indexOf(start)].name+' to '+graph.nodes[newIds.indexOf(finish)].name;
+		gv.playlist = [];
+		graph = pathPositions(graph, newIds, width, height);
+		names = graph.nodes[newIds.indexOf(gv.source)].name+' to '+graph.nodes[newIds.indexOf(gv.destination)].name;
 		addToSidebarHistory(2, names);
 		loadPathInfo(names);
 	};
 	
-	dataset.newGraph = graph;
+	gv.newGraph = graph;
 	
-	if ( !(route == "path") ) {
+	if ( !(gv.route == "path") ) {
 		$('.numArtists').show();
 		var wScale = d3.scale.linear().domain(graph.xrange).range(wrange);
 		var hScale = d3.scale.linear().domain(graph.yrange).range(hrange);
@@ -128,17 +113,17 @@ function start_Vis(gms) { graph = gms[0]; route = gms[1]; seed = gms[2];
 		var hScale = d3.scale.linear();
 	};
 	d3.selectAll(".link").attr("class", "oldLink");
-	d3.selectAll(".oldLink").transition().duration(dataset.FadeOut).style("stroke-width", 0).remove();
+	d3.selectAll(".oldLink").transition().duration(gv.FadeOut).style("stroke-width", 0).remove();
 	for (n of toGo) {
-		d3.select('#a'+n).transition().duration(dataset.FadeOut).style("opacity", 0);
+		d3.select('#a'+n).transition().duration(gv.FadeOut).style("opacity", 0);
 		d3.select('#a'+n).attr("class", "toGo");
 	};
 	
-	d3.selectAll(".toGo").transition().delay(dataset.FadeOut).remove();
+	d3.selectAll(".toGo").transition().delay(gv.FadeOut).remove();
 	for (n of toStay) {
 		newNode = graph.nodes[newIds.indexOf(n)];
 		d3.select('#a'+n).attr("class", "oldNode");
-		d3.select('#a'+n).transition().delay(dataset.FadeOut).duration(dataset.NodeSlide)
+		d3.select('#a'+n).transition().delay(gv.FadeOut).duration(gv.NodeSlide)
 			.attr("transform", "translate("+wScale(newNode.pos[0])+","+hScale(newNode.pos[1])+")")
 			.attr("id", "aa"+n);
 	};
@@ -166,7 +151,7 @@ function start_Vis(gms) { graph = gms[0]; route = gms[1]; seed = gms[2];
 			};
 		})
 		.on("click", function(d) {
-				if (dataset.clickable) {
+				if (gv.clickable) {
 					clickLink(d);
 				};
 			});
@@ -180,15 +165,16 @@ function start_Vis(gms) { graph = gms[0]; route = gms[1]; seed = gms[2];
 			.attr("transform", function(d) { return 'translate('+wScale(d.pos[0])+','+hScale(d.pos[1])+')' })
 			.style("opacity", 0)
 			.on("click", function(d) {
-				if ( (clicked != this)&&(dataset.clickable) ) {
+				if ( (clicked != this)&&(gv.clickable) ) {
 					clickNode(this, d, true);
 				};
 				d3.event.stopPropagation(); 
 			})
 			.on("dblclick", function(d) { 
 				d3.event.stopPropagation();
-				if (d.id != origin) {
-					get_graph(d.id+','+dataset.neighbourhoodSize+','+dataset.genre, "neighbourhood");	
+				if ((d.id != gv.origin)&&(gv.clickable)) {
+					gv.origin = d.id;
+					reload();	
 				};
 			});
 			
@@ -198,35 +184,33 @@ function start_Vis(gms) { graph = gms[0]; route = gms[1]; seed = gms[2];
 			return "ncircle "+d.genre;
 		})
 		.attr("r", function(d) {//console.log(d.popularity);
-			if (clicked != null) {
-				if ('a'+d.id == clicked.id) {
+			if ((gv.origin != null)&&(clicked)) {
+				if (d.id == gv.origin) {
 					return 30;
 				};
 			};
 			return nodeScale(d3.max([1,d.popularity]));
 		})
 		.attr("stroke-width", function(d) { 
-			if (clicked != null) {
-				if ('a'+d.id == clicked.id) {
+			if (gv.origin != null) {
+				if (d.id == gv.origin) {
 					return 4;
 				};
 			};
 			return strokeScale(d.popularity);
 		});
 	
-	if (clicked != null) { 
-		node.each(function(d) {
-			if ('a'+d.id == clicked.id) {
-				clicked = this;
-			};
-		});
-	};
-
 	node.append("text")
 		.attr("class", "firstLabel")
-		.attr("dy", function(d) { return firstLabelHeight(d); })
+		.attr("dy", function(d) {return firstLabelHeight(d); })
 		.attr("text-anchor", "middle")
-		.style("font-size", function(d) { return firstLabelFont(d); })
+		.style("font-size", function(d) {
+			if (gv.origin != null) {
+				if (d.id == gv.origin) {
+					return "18px";
+				};
+			};
+			return firstLabelFont(d); })
 		.text(function(d) {
 			return firstLabel(d);
 		});	
@@ -235,66 +219,79 @@ function start_Vis(gms) { graph = gms[0]; route = gms[1]; seed = gms[2];
 		.attr("class", "secondLabel")
 		.attr("dy", function(d) { return "0.9em"; })
 		.attr("text-anchor", "middle")
-		.style("font-size", function(d) { return secondLabelFont(d); })
+		.style("font-size", function(d) {
+			if (gv.origin != null) {
+				if (d.id == gv.origin) {
+					return "18px";
+				};
+			};
+			return secondLabelFont(d); })
 		.text(function(d) {
 			return secondLabel(d);
 		});	
 										
-	dataset.oldGraph = graph;
+	gv.oldGraph = graph;
 	
-	d3.selectAll(".oldNode").transition().delay(dataset.FadeOut+dataset.NodeSlide+dataset.FadeIn).remove();
-	d3.selectAll(".node").transition().delay(dataset.FadeOut+dataset.NodeSlide).duration(dataset.FadeIn).style("opacity", 1)
+	d3.selectAll(".oldNode").transition().delay(gv.FadeOut+gv.NodeSlide+gv.FadeIn).remove();
+	d3.selectAll(".node").transition().delay(gv.FadeOut+gv.NodeSlide).duration(gv.FadeIn).style("opacity", 1)
 		.each("end", function(d) {
-			if (origin != null) {
-				if (d.id == origin) {
-					clickNode(this, d, false);
+			if (gv.origin != null) {
+				if (d.id == gv.origin) {
+					if (gv.route == "zoom") {
+						clickNode(this, d, false);
+					} else {
+						clickNode(this, d, true);
+					};
 				};
-			} else { dehighlightLinks(); };
+			} else { dehighlightLinks(1000); };
 			
-			dataset.clickable = true;
+			gv.clickable = true;
 		});
 	
-	//setTimeout( function() {dehighlightLinks();}, dataset.FadeOut+dataset.FadeIn+dataset.NodeSlide) };
-	dataset.FadeOut = 600;
-	dataset.NodeSlide = 1000;
+	//setTimeout( function() {dehighlightLinks();}, gv.FadeOut+gv.FadeIn+gv.NodeSlide) };
+	gv.FadeOut = 600;
+	gv.NodeSlide = 1000;
 };	
 
 //Initialise variables:
 var dir = "full";
-var origin;
 var initFromURL = false;
-var dataset = {};
-dataset.graphs = [];
-dataset.sidebars = [];
-dataset.customList = [];
-dataset.customListTable = [];
-dataset.currentGraph = 0;
-dataset.zoomLevel = 1;
-dataset.genre = null;
-dataset.currentSidebar = 0;
-dataset.artistList = [];
-dataset.pathOrder = [];
-dataset.currentService = "youtube";
-dataset.playlist = [];
-dataset.neighbourhoodSize = 30;
-dataset.neighbourhoodSizeBTN = "#b30";
-dataset.clickable = true
+var gv = {};
+gv.route = "neighbourhood"
+gv.origin = null;
+gv.zoomLevel = 1;
+gv.genre = null;
+gv.term = null;
+gv.source = null;
+gv.destination = null;
+gv.core = null;
+gv.sidebars = [];
+gv.customList = [];
+gv.customListTable = [];
+gv.currentSidebar = 0;
+gv.artistList = [];
+gv.pathOrder = [];
+gv.currentService = "youtube";
+gv.playlist = [];
+gv.size = 30;
+gv.sizeBTN = "#b30";
+gv.clickable = true
 var clicked = null;
 var width, height;
 var svg = d3.select("#map").append("svg")
 	.attr("id", "svg")
 	.attr("class", "svg")
 	.on("click", function() { 
-		if (dataset.clickable) {
+		if (gv.clickable) {
 			dehighlightLinks();
 			unclick(clicked);
 		};
 	})
 	
 //Animation variables.
-dataset.FadeOut = 0;
-dataset.NodeSlide = 0;
-dataset.FadeIn = 800;
+gv.FadeOut = 0;
+gv.NodeSlide = 0;
+gv.FadeIn = 500;
 
 
 var SidebarTitleHeight = $('#sideBarTitle').outerHeight(true) + $('.navbar').outerHeight();
@@ -330,31 +327,18 @@ $('#subgraphTable').attr("data-height", wellHeight-nheight-nheight);
 $('#subgraphTable').bootstrapTable('resetView');
 
 $('#artistOptions').on('click', function(){
-	$('#artistSearch').val(dataset.currentArtistName);
+	$('#artistSearch').val(gv.currentArtistName);
 });
 
-var URL = document.URL.split("route=");
+/*var URL = document.URL.split("gv.route=");
 
 if(URL.length !== 1){
 	initFromURL = true;
-	var route = URL[1].split("&seed=")[0];
+	var gv.route = URL[1].split("&seed=")[0];
 	var seed = URL[1].split("&seed=")[1];	
-}
+}*/
 
-init();
-
-//Initialise the visualisation.
-function init() { 
-	if (initFromURL) {
-		//console.log("initFromURL with " + seed +" , "+route);
-		get_graph(seed, route);
-	} else {
-		d3.json('/start?genre='+dataset.genre, function(error, response) {
-			origin = response.origin;
-			get_graph(origin+','+dataset.neighbourhoodSize+','+dataset.genre, "neighbourhood");
-		});
-	};
-};
+reload();
 
 //Supplementary functions:
 //Action functions:
@@ -367,8 +351,7 @@ function clickNode(n, o, hl) {
 	d3.select(clicked).select(".secondLabel").transition().duration(500)
 		.style("font-size", "18px")
 		.attr("dy", "0.91em");
-	if (hl) {clickedDuration = 500;} else {clickedDuration = 0;}
-	d3.select(clicked).select("circle").transition().duration(clickedDuration)
+	d3.select(clicked).select("circle").transition().duration(500)
 		.attr("r", 30)
 		.attr("stroke-width", 4); 
 	if (hl) { highlightLinks(); }
@@ -393,31 +376,31 @@ function unclick(d) {
 
 function loadPathInfo(names){
 	tabSwitch("path");
-	console.log(names);
+	//console.log(names);
 	d3.select('#sideBarTitle').text(names);
 
-	if(dataset.currentService=="spotify"){
+	if(gv.currentService=="spotify"){
 		d3.select('#pathIframe').html( function() { 
-			return '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+ dataset.playlist.join(',') +'&theme=white" width="'+wellWidth+'" height="'+wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; 
+			return '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+ gv.playlist.join(',') +'&theme=white" width="'+wellWidth+'" height="'+wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; 
 		});
 	};
-	c = 0; dataset.tableData = [];
+	c = 0; gv.tableData = [];
 	performRequests(c, 'path');
 }
 
 function loadArtistInfo(o) {
-	dataset.currentArtistName = o.name;
-	dataset.currentArtist = o.id;
+	gv.currentArtistName = o.name;
+	gv.currentArtist = o.id;
 	tabSwitch("node");
 	d3.select('#sideBarTitle').text(o.name);
 	d3.json("http://developer.echonest.com/api/v4/artist/biographies?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+o.id+"&format=json&results=1&start=0&license=cc-by-sa", function(error, response) {
-		console.log(response);
+		//console.log(response);
 		if(error){
 			d3.select('#bioText').text("Biography not found in database");
 		}
 		else{
 			var bio = response.response.biographies[0].text;
-			console.log(bio);
+			//console.log(bio);
 			d3.select('#bioText').text(bio);
 		}
 	});
@@ -431,7 +414,7 @@ function loadArtistInfo(o) {
 
 		};
 	});
-	if(dataset.currentService=="spotify"){
+	if(gv.currentService=="spotify"){
 		d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+o.id+'&theme=white" width="'+wellWidth+'" height="'+wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
 	};
 	d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+o.id+'&theme=white" width="'+wellWidth+'" height="'+wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
@@ -447,25 +430,25 @@ function loadArtistInfo(o) {
 	});
 	
 	d3.json("https://api.spotify.com/v1/artists/"+o.id+"/top-tracks?country=GB", function (error, response) {
-		dataset.trackNames = [];
-		dataset.artistNames = [];
+		gv.trackNames = [];
+		gv.artistNames = [];
 		for (track of response.tracks) {
-			dataset.trackNames.push(track.name);
+			gv.trackNames.push(track.name);
 			artists = [];
 			for (artist of track.artists) {
 				artists.push(artist.name);
 			};
-			dataset.artistNames.push(artists);
+			gv.artistNames.push(artists);
 		};
-		c = 0; dataset.tableData = [];
-		//console.log(dataset.trackNames, dataset.artistNames);
+		c = 0; gv.tableData = [];
+		//console.log(gv.trackNames, gv.artistNames);
 		performRequests(c, 'node');
 	});
 };
 
 /*
 function loadArtistInfo(o) {
-	dataset.currentArtist = o.id;
+	gv.currentArtist = o.id;
 	$('#travelTo').val('');
 	tabSwitch("node");
 	d3.select("#name").select("h3").remove();
@@ -507,8 +490,8 @@ function get_url(relations, type) {
 };
 
 function performRequests(c, mode) {
-	stNames = []; for (n of dataset.artistNames[c]) {stNames.push(standardise(n)); };
-	stTrack = standardise(dataset.trackNames[c]);
+	stNames = []; for (n of gv.artistNames[c]) {stNames.push(standardise(n)); };
+	stTrack = standardise(gv.trackNames[c]);
 	yt = yt_requestString(removeNames(stNames, stTrack), stNames.join(' '))
 	d3.json(yt, function(error, ytresponse) {
 		if(ytresponse.items.length !==0){
@@ -518,32 +501,32 @@ function performRequests(c, mode) {
 			score = 0;
 		};
 		if (score > 0.3) {
-			dataset.tableData.push( {"artistNames": '<div class="disabled" style="color:grey; font-style: italic;">'+dataset.artistNames[c]+'</div>', "title": dataset.trackNames[c], "add": "<button class='btn-sm btn-sidebar addToPlaylist' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-plus-sign'></i></button>", "play": "<button class='btn-sm btn-sidebar playNowButton' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-play'></i></button>"} );
+			gv.tableData.push( {"artistNames": '<div class="disabled" style="color:grey; font-style: italic;">'+gv.artistNames[c]+'</div>', "title": gv.trackNames[c], "add": "<button class='btn-sm btn-sidebar addToPlaylist' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-plus-sign'></i></button>", "play": "<button class='btn-sm btn-sidebar playNowButton' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-play'></i></button>"} );
 		}
 		else{
-			console.log("BAD SCORE");
-			dataset.tableData.push( {"artistNames": dataset.artistNames[c], "title": dataset.trackNames[c], "add": "<button disabled class='btn-sm btn-sidebar disabled addToPlaylist' type='button'><i class='el el-plus-sign'></i></button>", "play": "<button disabled class='btn-sm btn-sidebar disabled playNowButton' type='button'><i class='el el-play'></i></button>"} );
+			//console.log("BAD SCORE");
+			gv.tableData.push( {"artistNames": gv.artistNames[c], "title": gv.trackNames[c], "add": "<button disabled class='btn-sm btn-sidebar disabled addToPlaylist' type='button'><i class='el el-plus-sign'></i></button>", "play": "<button disabled class='btn-sm btn-sidebar disabled playNowButton' type='button'><i class='el el-play'></i></button>"} );
 
 		};
 		c += 1;
-		$('#'+mode+'YoutubeTable').bootstrapTable('load', dataset.tableData);
+		$('#'+mode+'YoutubeTable').bootstrapTable('load', gv.tableData);
 		$('#'+mode+'YoutubeTable').bootstrapTable('hideLoading');
-		if (c < dataset.trackNames.length) { 
+		if (c < gv.trackNames.length) { 
 			performRequests(c, mode); 
 		}
 		else { 
-			if (dataset.tableData.length == 0) {
-				dataset.tableData.push({
+			if (gv.tableData.length == 0) {
+				gv.tableData.push({
 					"title": 'No songs found in Database', 
 					"add": "", 
 					"play":""
 				}
 			)};
-			$('#'+mode+'YoutubeTable').bootstrapTable('load', dataset.tableData);
+			$('#'+mode+'YoutubeTable').bootstrapTable('load', gv.tableData);
 			//Play tracks on double click
 			$('tr').dblclick(function(){
 				var playNowButton = $(this).find('.playNowButton');
-				console.log(playNowButton);
+				//console.log(playNowButton);
 				if(playNowButton.attr("disabled")){
 					console.log("Can't play track");
 				}
@@ -560,17 +543,17 @@ function performRequests(c, mode) {
 
 function getLinkInfo(d){
 	console.log(d);
-	var pairIds = [dataset.newGraph.nodes[d.source].id, dataset.newGraph.nodes[d.target].id].sort().join(',');
-	var names = dataset.newGraph.nodes[d.source].name +" & "+dataset.newGraph.nodes[d.target].name;
+	var pairIds = [gv.newGraph.nodes[d.source].id, gv.newGraph.nodes[d.target].id].sort().join(',');
+	var names = gv.newGraph.nodes[d.source].name +" & "+gv.newGraph.nodes[d.target].name;
 	d3.json("/edgeLookup?seed="+pairIds, function(error, response) {
 		//console.log(response);
 		tracks = response.trackIds.join(',');
 		tabSwitch("edge");
 		d3.select('#sideBarTitle').text(names);
-		if(dataset.currentService=="spotify"){
+		if(gv.currentService=="spotify"){
 			d3.select('#edgeIframe').html( function() { return '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+tracks +'&theme=white" width="'+wellWidth+'" height="'+wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
 		};
-		c = 0; dataset.tableData = []; dataset.trackNames = response.trackNames; dataset.artistNames = response.artistNames;
+		c = 0; gv.tableData = []; gv.trackNames = response.trackNames; gv.artistNames = response.artistNames;
 		performRequests(c, 'edge');
 	});	
 }
@@ -619,8 +602,9 @@ function highlightLinks() {
 		});
 	};
 
-function dehighlightLinks() {
-	d3.selectAll(".link").transition().duration(500)
+function dehighlightLinks(dur) {
+	if (typeof(dur) == "undefined") { dur = 500;}
+	d3.selectAll(".link").transition().duration(dur)
 		.style("stroke-width", function(d) { return widthScale(d.weight); });
 };
 
@@ -677,7 +661,7 @@ function secondLabelFont(d) {
 };
 
 function isHighlighted(d) { if (clicked!=null) { 
-		return (clicked.id == 'a'+dataset.oldGraph.nodes[d.source].id) || (clicked.id == 'a'+dataset.oldGraph.nodes[d.target].id);
+		return (clicked.id == 'a'+gv.oldGraph.nodes[d.source].id) || (clicked.id == 'a'+gv.oldGraph.nodes[d.target].id);
 	}
 	return false;
 };
@@ -762,27 +746,27 @@ function rotatePos(alpha, graph) {
 	return graph;
 };
 
-function pathPositions(start, graph, newIds, width, height) {
-	dataset.trackNames = []; dataset.artistNames = [];
-	dataset.pathOrder = [newIds.indexOf(start)]; c = 0; n = newIds.length;
-	while (c < n - 1) { dataset.pathOrder.push(nextNode(graph, dataset.pathOrder)); c += 1};
+function pathPositions(graph, newIds, width, height) {
+	gv.trackNames = []; gv.artistNames = [];
+	gv.pathOrder = [newIds.indexOf(gv.source)]; c = 0; n = newIds.length;
+	while (c < n - 1) { gv.pathOrder.push(nextNode(graph, gv.pathOrder)); c += 1};
 	newY = height/2 - 10; c = 0; xInt = d3.min([(width - 160)/(n-1), width/5]);
 	totalLength = xInt*(n-1); offset = width/2 - totalLength/2;
 	while (c < n) {
-		graph.nodes[dataset.pathOrder[c]].pos[0] = offset + c*xInt; graph.nodes[dataset.pathOrder[c]].pos[1] = newY; c += 1;
+		graph.nodes[gv.pathOrder[c]].pos[0] = offset + c*xInt; graph.nodes[gv.pathOrder[c]].pos[1] = newY; c += 1;
 	};
 	return graph;
 };
 
 function nextNode(graph, pathOrder) {
 	for (link of graph.links) {
-		if ( (link.source == [dataset.pathOrder[dataset.pathOrder.length-1]]) || (link.target == [dataset.pathOrder[dataset.pathOrder.length-1]]) ) {
-			if (dataset.pathOrder.indexOf(link.source) == -1 ) {
-				dataset.playlist.push(link.track.id); dataset.trackNames.push(link.track.name); dataset.artistNames.push(link.track.artists);
+		if ( (link.source == [gv.pathOrder[gv.pathOrder.length-1]]) || (link.target == [gv.pathOrder[gv.pathOrder.length-1]]) ) {
+			if (gv.pathOrder.indexOf(link.source) == -1 ) {
+				gv.playlist.push(link.track.id); gv.trackNames.push(link.track.name); gv.artistNames.push(link.track.artists);
 				return link.source;
 			};
-			if (dataset.pathOrder.indexOf(link.target) == -1 ) {
-				dataset.playlist.push(link.track.id); dataset.trackNames.push(link.track.name); dataset.artistNames.push(link.track.artists);
+			if (gv.pathOrder.indexOf(link.target) == -1 ) {
+				gv.playlist.push(link.track.id); gv.trackNames.push(link.track.name); gv.artistNames.push(link.track.artists);
 				return link.target;
 			};
 		};
@@ -859,8 +843,11 @@ $( "#artistSearch" ).autocomplete({
 	},
     select: function(event, ui) {
     	this.value = '';
-    	origin = ui.item.value;
-    	get_graph(origin+','+dataset.neighbourhoodSize+','+dataset.genre, "neighbourhood");
+    	gv.origin = ui.item.value;
+    	gv.route = "neighbourhood"
+    	gv.genre = null;
+    	gv.zoomLevel = 1;
+    	reload();
     	event.preventDefault();
     },
     delay: 100,
@@ -879,7 +866,12 @@ $( "#genreSearch" ).autocomplete({
 	},
     select: function(event, ui) {
     	this.value = '';
-    	get_graph(ui.item.value+','+dataset.neighbourhoodSize, "genresubgraph");
+    	gv.term = ui.item.value
+    	gv.route = "termsubgraph"
+    	gv.origin = null;
+    	gv.genre = null;
+    	gv.zoomLevel = 1;
+    	reload();
     	event.preventDefault();
     },
     delay: 100,
@@ -898,8 +890,12 @@ $( "#travelTo" ).autocomplete({
 	},
     select: function(event, ui) {
     	this.value = '';
-    	destination = ui.item.value;
-    	get_graph(dataset.currentArtist+','+destination, "path");
+    	gv.source = gv.currentArtist;
+    	gv.destination = ui.item.value;
+    	gv.route = "path"
+    	gv.genre = null;
+    	gv.zoomLevel = 1;
+    	reload();
     	event.preventDefault();
     },
     delay: 100,
@@ -911,9 +907,9 @@ $( "#travelTo" ).autocomplete({
 function checkForSubGraphRemoval(){
 	$('.removeFromSubGraph').on("click", function(){
 		var index = $(this).closest('tr').attr("data-index");
-		dataset.customList.splice(index, 1);
-		dataset.customListTable.splice(index,1);
-		$('#subgraphTable').bootstrapTable('load', dataset.customListTable);
+		gv.customList.splice(index, 1);
+		gv.customListTable.splice(index,1);
+		$('#subgraphTable').bootstrapTable('load', gv.customListTable);
 		$('#subgraphTable').bootstrapTable('resetView');
 		checkForSubGraphRemoval();
 
@@ -930,12 +926,12 @@ $( "#addtoSubgraph" ).autocomplete({
     	this.value = '';
     	chosen = ui.item.value;
     	event.preventDefault();
-    	dataset.customList.push(chosen);
-    	dataset.customListTable.push({
+    	gv.customList.push(chosen);
+    	gv.customListTable.push({
     		"name": ui.item.label,
     		"remove": '<button class="btn-sm btn-sidebar removeFromSubGraph" id="remove'+ui.item.value+'"><i class="el el-remove-sign"></i></button>'
     	})
-    	$('#subgraphTable').bootstrapTable('load', dataset.customListTable);
+    	$('#subgraphTable').bootstrapTable('load', gv.customListTable);
     	$('#subgraphTable').bootstrapTable('resetView');
     	checkForSubGraphRemoval();
 
@@ -978,37 +974,26 @@ player.stopVideo();
 };
 
 function addToSidebarHistory(cat, object){
-	dataset.sidebars.splice(1+dataset.currentSidebar, dataset.sidebars.length-dataset.currentSidebar, [cat, object]);
-	dataset.currentSidebar=dataset.sidebars.length-1;
+	gv.sidebars.splice(1+gv.currentSidebar, gv.sidebars.length-gv.currentSidebar, [cat, object]);
+	gv.currentSidebar=gv.sidebars.length-1;
 }
 
 $('#generateSubgraph').on('click', function() {
-	console.log("GENERATING SUBGRAPH");
-	seed = dataset.neighbourhoodSize + "," +(dataset.customList.join(','));
-	console.log(seed);
-	get_graph(seed, "custom");
+	gv.route = "custom"
+	gv.core = (gv.customList.join(','));
+	gv.genre = null;
+	gv.origin = null;
+	gv.zoomLevel = 1;
+	reload();
 });
 
-$('#graphBack').on('click', function() {
-	if (dataset.currentGraph < dataset.graphs.length) { 
-		dataset.currentGraph += 1;
-		start_Vis(dataset.graphs[dataset.currentGraph]);
-	};
-});
-
-$('#graphForward').on('click', function() {
-	if (dataset.currentGraph > 0) {
-		dataset.currentGraph -= 1;
-		start_Vis(dataset.graphs[dataset.currentGraph]);
-	};
-});
 function sideBarBack(){
-	console.log(dataset.currentSidebar);
-	console.log(dataset.sidebars);
-	if (dataset.currentSidebar < dataset.sidebars.length && dataset.currentSidebar > 0) {
+	console.log(gv.currentSidebar);
+	console.log(gv.sidebars);
+	if (gv.currentSidebar < gv.sidebars.length && gv.currentSidebar > 0) {
 		console.log("Going Back"); 
-		dataset.currentSidebar -= 1;
-		var previousSidebar = dataset.sidebars[dataset.currentSidebar];
+		gv.currentSidebar -= 1;
+		var previousSidebar = gv.sidebars[gv.currentSidebar];
 		//console.log(previousSidebar);
 		if(previousSidebar[0]===0){
 			loadArtistInfo(previousSidebar[1]);
@@ -1034,10 +1019,10 @@ $('#sidebarBack').on('click', function() {
 });
 
 $('#sidebarForward').on('click', function() {
-	if (dataset.currentSidebar  < dataset.sidebars.length-1) {
+	if (gv.currentSidebar  < gv.sidebars.length-1) {
 		console.log("Going Forward");
-		dataset.currentSidebar += 1;
-		var nextSidebar = dataset.sidebars[dataset.currentSidebar]
+		gv.currentSidebar += 1;
+		var nextSidebar = gv.sidebars[gv.currentSidebar]
 		if(nextSidebar[0]===0){
 			loadArtistInfo(nextSidebar[1]);
 		}
@@ -1057,40 +1042,33 @@ $('#sidebarForward').on('click', function() {
 });
 
 $('a[href="#fullNetwork"]').click(function() {
-	if (dataset.nework != 'full') {
-		dataset.network = 'full';
-		init(dataset.network);
+	if (gv.nework != 'full') {
+		gv.network = 'full';
+		init(gv.network);
 	};
 });
 
 $('a[href="#sampleNetwork"]').click(function() {
-	if (dataset.nework != 'sample') {
-		dataset.network = 'sample';
-		init(dataset.network);
+	if (gv.nework != 'sample') {
+		gv.network = 'sample';
+		init(gv.network);
 	};
 });
 
-$('#ns').change(function() {
-	var newNeighbourhoodSize = $('#ns option:selected')[0].value;
-	console.log(newNeighbourhoodSize);
-	if ( (dataset.neighbourhoodSize!= newNeighbourhoodSize )&&(dataset.clickable) ) {
-		dataset.neighbourhoodSize = newNeighbourhoodSize;
-		get_graph(origin+','+dataset.neighbourhoodSize+','+dataset.genre, "neighbourhood");
-	};
-});
-
-
-$('#gs').change(function(){
-	var newGenre = $('#gs option:selected')[0].value;
-	if (dataset.genre != newGenre) {
-		dataset.genre = newGenre;
-		init();
+$('.ns').click(function() {
+	////console.log(gv.sizeBTN);
+	d3.select(gv.sizeBTN).classed({'btn-default':true, 'btn-primary':false})
+	d3.select(this).classed({'btn-default':false, 'btn-primary':true});
+	gv.sizeBTN = "#"+this.id;
+	if ( (gv.size!=this.id.substring(1))&&(gv.clickable) ) {
+		gv.size = this.id.substring(1);
+		reload();
 	};
 });
 
 function highlightZoomLevel(){
 	$('.zL').each(function(){
-		if($(this).attr('id').replace("zoomL","") == dataset.zoomLevel){
+		if($(this).attr('id').replace("zoomL","") == gv.zoomLevel){
 			$(this).addClass("btn-primary");
 			$(this).removeClass("btn-default");
 		}
@@ -1102,11 +1080,11 @@ function highlightZoomLevel(){
 };
 
 function disableZoom(){
-	if(dataset.zoomLevel == 1){
+	if(gv.zoomLevel == 1){
 		$('.zo').addClass('btn-default').removeClass('btn-disabled').prop("disabled", false);
 		$('.zi').addClass('btn-disabled').removeClass('btn-default').prop("disabled", true);
 	}
-	else if(dataset.zoomLevel ==4){
+	else if(gv.zoomLevel ==4){
 		$('.zi').addClass('btn-default').removeClass('btn-disabled').prop("disabled", false);
 		$('.zo').addClass('btn-disabled').removeClass('btn-default').prop("disabled", true);
 	}
@@ -1116,65 +1094,62 @@ function disableZoom(){
 	}
 };
 
-function zoomOut(){
-	console.log('zooming out from '+dataset.zoomLevel);
-	$('.zi').removeClass('btn-disabled').addClass('btn-default').prop("disabled", false);
-	if ((dataset.zoomLevel < 4)&&(dataset.clickable)) {
-		dataset.zoomLevel += 1;
-		console.log("Zooming to "+dataset.zoomLevel);
-		get_graph(origin+','+dataset.neighbourhoodSize+','+dataset.zoomLevel, "zoom");
-	}
-	else{
-		console.log('cant zoom any further');
+function zoom(){
+	gv.route = "zoom";
+	gv.genre = null;
+	if (clicked) {
+		gv.origin = clicked.id.substring(1);
+	} else {
+		if (!gv.origin) {
+			gv.origin = gv.currentIds[Math.floor(currentIds.length * Math.random())];
+		}
 	};
 	highlightZoomLevel();
 	disableZoom();
-};
-
-function zoomIn(){
-	if ( (dataset.zoomLevel > 1)&&(dataset.clickable) ) {
-		dataset.zoomLevel -=1 ;
-		if (dataset.zoomLevel > 1) {
-			get_graph(origin+','+dataset.neighbourhoodSize+','+dataset.zoomLevel, "zoom");
-		} else {
-			get_graph(origin+','+dataset.neighbourhoodSize, "neighbourhood");
-
-		};
-	};
-	highlightZoomLevel();
-	disableZoom();
+	reload();
 };
 
 //ON CLICK OF ZOOM LEVEL MOVE TO THAT LEVEL
 $('.zL').click(function(){
 	var newZoomLevel = $(this).attr('id').replace("zoomL",""); //GET NEW ZOoM LEVEL FROM BUTTON
-	console.log("MOVING TO ZOOM LEVEL "+newZoomLevel);
-	dataset.zoomLevel = newZoomLevel;
-	if(newZoomLevel==1){
-		get_graph(origin+','+dataset.neighbourhoodSize, "neighbourhood");
-	}
-	else{
-		get_graph(origin+','+dataset.neighbourhoodSize+','+dataset.zoomLevel, "zoom");
+	//console.log("MOVING TO ZOOM LEVEL "+newZoomLevel);
+	if (newZoomLevel != gv.zoomLevel) {
+		gv.zoomLevel = newZoomLevel;
+		zoom();
 	};
-	highlightZoomLevel();
-	disableZoom();
-
 })
+
 $('.zo').click(function() { 
-	zoomOut();
+	if ((gv.zoomLevel < 4)&&(gv.clickable)) {
+		gv.zoomLevel += 1;
+		zoom();
+	}
 });
 
 $('.zi').click(function() {
-	zoomIn();
+	if ((gv.zoomLevel > 1)&&(gv.clickable)) {
+		gv.zoomLevel -= 1;
+		zoom();
+	}
+});
+
+$('.gs').click(function(){
+	if (gv.genre != $(this).attr('id')) {
+		gv.genre = $(this).attr('id');
+		gv.route = "neighbourhood"
+		gv.origin = null;
+		gv.zoomLevel = 1;
+		reload();
+	};
 });
 
 $('#urlShare').click(function(){
-	if (typeof location.origin === 'undefined'){
-    	location.origin = location.protocol + '//' + location.host;
+	if (typeof location.gv.origin === 'undefined'){
+    	location.gv.origin = location.protocol + '//' + location.host;
 	}
-	console.log(location.origin);
+	console.log(location.gv.origin);
 
-	d3.select('#URL').property({'value': location.origin+'/?route='+route+'&seed='+seed});
+	d3.select('#URL').property({'value': location.gv.origin+'/?gv.route='+gv.route+'&seed='+seed});
 });
 
 $('#artistOptions').on('click', function(){
