@@ -68,20 +68,11 @@ def d3_dictify(g, **kwargs):
 def step(currentstep,neighbourhood,genre):
 	nextstep = {}
 	for n,score in currentstep.items():
-		for t in r.zrange('artist.tracks:'+n, 0, -1):
-			for a in r.smembers('track.artists:'+t):
-				if genre:
-					if r.hget('artist.info:'+a, 'genre') == genre:
-						try:
-							nextstep[a] += score
-						except:
-							nextstep[a] = score
-				else:
-					try:
-						nextstep[a] += score
-					except:
-						nextstep[a] = score
-
+		for a in genre_neighbours(n, genre):
+			try:
+				nextstep[a] += score
+			except:
+				nextstep[a] = score
 	return nextstep
 
 def year_filter(tracks, **kwargs):
@@ -167,13 +158,16 @@ def random_origin():
 	return origin
 
 def genre_origin(genre):
-	origin = random.choice(r.zrevrange('term.artists:'+genre,0,100))
-	while genre_neighbours(origin, genre) < 3 and r.hget('artist.info:'+origin, 'genre') != genre:
-		origin = random.choice(r.zrevrange('term.artists:'+genre,0,100))
+	origin = random.choice(r.zrevrange('term.artists:'+genre,0,500))
+	while len(genre_neighbours(origin, genre)) < 5 and r.hget('artist.info:'+origin, 'genre') != genre:
+		origin = random.choice(r.zrevrange('term.artists:'+genre,0,500))
 	return origin
 
 def genre_neighbours(origin, genre):
-	return sum(1 for n in r.smembers('artist.neighbours'+origin) if r.hget('artist.info:'+n, 'genre') == genre)
+	if genre:
+		return set([n for n in r.smembers('artist.neighbours:'+origin) if r.hget('artist.info:'+n, 'genre') == genre])
+	else:
+		return r.smembers('artist.neighbours:'+origin)
 	
 def pop_sorted(nodes):
 	return sorted(nodes, key = lambda x:r.hget('artist.info:'+x, 'popularity'), reverse=True)
@@ -237,7 +231,8 @@ def neighbourhood():
 		if origin == 'null':
 			origin = random_origin()
 	else:
-		origin = genre_origin(genre)
+		if origin == 'null':
+			origin = genre_origin(genre)
 	currentstep = {origin:1}
 	neighbourhood = set([origin])
 	visited = set([origin])

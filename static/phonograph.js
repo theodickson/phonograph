@@ -1087,7 +1087,7 @@ function zoom(){
 	gv.route = "zoom";
 	gv.genre = null;
 	if (gv.currentArtist) {
-		gv.origin - gv.currentArtist
+		gv.origin = gv.currentArtist
 	} else {
 		gv.origin = gv.currentIds[Math.floor(gv.currentIds.length * Math.random())];
 	};
