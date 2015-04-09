@@ -47,7 +47,7 @@ def igrapher(vertices, path=False, **kwargs):
 	g.es['track'] = tracks
 	return g
 	
-def d3_dictify(g, **kwargs):
+def d3_dictify(g, origin=None, **kwargs):
 	weights = []
 	for w in g.es['weight']:
 		if w <= 4:
@@ -65,6 +65,7 @@ def d3_dictify(g, **kwargs):
 		d3_dict['nodes'].append({'id': v['name'], 'name': info['name'], 'popularity': int(info['popularity'])+1, 'genre': genre, 'pos': l[i]})
 	for e in g.es():
 		d3_dict['links'].append({'source': e.source, 'target': e.target, 'weight': e['weight'], 'track': e['track']})
+	d3_dict['origin'] = origin
 	return d3_dict	
 
 def step(currentstep,neighbourhood,genre):
@@ -157,7 +158,9 @@ def random_origin():
 	genres = ['rock', 'pop', 'classical', 'hip hop', 'latin', 'reggae', 'electronic', 'country', 'jazz', 'funk']
 	tempgenre = random.choice(genres)
 	origin = random.choice(r.zrevrange('term.artists:'+tempgenre,0,500))
-	while len(r.smembers('artist.neighbours:'+origin)) < 3:
+	while True:
+		if len(r.smembers('artist.neighbours:'+origin)) > 5 and int(r.hget('artist.info:'+origin, 'popularity')) > 25:
+			break
 		origin = random.choice(r.zrevrange('term.artists:'+tempgenre,0,500))
 	return origin
 
@@ -166,7 +169,7 @@ def genre_origin(genre):
 	origin = random.choice(top_artists)
 	gn = genre_neighbours(origin, genre)
 	while True:
-		if len(gn) >= 10 and r.hget('artist.info:'+origin, 'genre') == genre:
+		if len(gn) >= 10 and r.hget('artist.info:'+origin, 'genre') == genre and int(r.hget('artist.info:'+origin, 'popularity')) > 25:
 			break
 		origin = random.choice(top_artists)
 		gn = genre_neighbours(origin, genre)
@@ -266,8 +269,7 @@ def neighbourhood():
 		print len(neighbourhood)
 	vertices = list(neighbourhood)
 	g = igrapher(vertices)
-	
-	return jsonify(d3_dictify(g))
+	return jsonify(d3_dictify(g, origin=origin))
 
 @app.route("/zoom")
 #@login_required

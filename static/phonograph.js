@@ -3,6 +3,9 @@ function reload() {
 	gv.clickable = false;
 	svg.transition().delay(1000).duration(1000).style("opacity", 0.3)
 	d3.json(flaskURL(), function(error, graph) {
+		if (graph.origin) {
+			gv.origin = graph.origin;
+		};
 		start_Vis(graph);
 	});
 };
