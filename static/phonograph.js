@@ -5,7 +5,9 @@ function reload() {
 	d3.json(flaskURL(), function(error, graph) {
 		if (graph.origin) {
 			gv.origin = graph.origin;
-		};
+		} else {
+			gv.origin = null;
+		}
 		start_Vis(graph);
 	});
 };
