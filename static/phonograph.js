@@ -125,7 +125,6 @@ function start_Vis(graph) {
 		d3.select('#a'+n).attr("class", "oldNode");
 		d3.select('#a'+n).transition().delay(gv.FadeOut).duration(gv.NodeSlide)
 			.attr("transform", "translate("+wScale(newNode.pos[0])+","+hScale(newNode.pos[1])+")")
-			.attr("id", "aa"+n);
 	};
 	
 	var link = svg.selectAll(".link")
@@ -175,6 +174,7 @@ function start_Vis(graph) {
 				if ((d.id != gv.origin)&&(gv.clickable)) {
 					gv.origin = d.id;
 					gv.zoomLevel = 1;
+					gv.route = "neighbourhood";
 					disableZoom();
 					highlightZoomLevel();
 					reload();	
@@ -246,8 +246,10 @@ function start_Vis(graph) {
 						clickNode(this, d, true);
 					};
 				};
-			} else { dehighlightLinks(1000); };
-			
+			} else {
+				gv.currentArtist = gv.currentIds[Math.floor(gv.currentIds.length * Math.random())];
+				dehighlightLinks();
+			};
 			gv.clickable = true;
 		});
 	
@@ -449,41 +451,6 @@ function loadArtistInfo(o) {
 	});
 };
 
-/*
-function loadArtistInfo(o) {
-	gv.currentArtist = o.id;
-	$('#travelTo').val('');
-	tabSwitch("node");
-	d3.select("#name").select("h3").remove();
-	d3.select('#name').append("h3").text(o.name).classed('text-center', true);
-	d3.json("/mbid?seed="+o.id, function(error, mbid) {
-		d3.json("http://musicbrainz.org/ws/2/artist/"+mbid.mbid+"/?inc=url-rels&fmt=json", function(error, response) {
-			var wiki = get_url(response.relations, "wikipedia");
-			wikisplt = wiki.split('/wiki/')[1];
-			var image = get_url(response.relations, "image");
-			var youtube = get_url(response.relations, "youtube");
-			$.getJSON("http://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext&exintro=1&exchars=1000&format=json&titles="+wikisplt+"&callback=?", function (data) {
-				for (key in data.query.pages) { 
-					var bio = data.query.pages[key].extract;
-					d3.select('#bio').select("p").remove();	
-					d3.select('#bio').append("p").text(bio);
-				};	
-			});
-			$.getJSON("http://en.wikipedia.org/w/api.php?action=query&prop=pageimages&explaintext&exintro=1&exchars=1000&format=json&titles="+wikisplt+"&callback=?", function (data) {
-				for (key in data.query.pages) {
-					imageref = data.query.pages[key].pageimage;
-					$.getJSON("http://en.wikipedia.org/w/api.php?action=query&titles="+imageref+"&prop=imageinfo&iiprop=url&format=json&callback=?", function (data) {
-						console.log(data);
-					});
-				};
-			});
-			d3.select('#artistImage').html( function() { return '<img src="'+image+'" style="max-width: 180px; max-height: 240p" class="img-thumbnail center-block"/>'; });
-		});
-	});
-	d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+o.id+'&theme=white" width="300" height="380" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
-};
-
-*/
 function get_url(relations, type) {
 	for (rel of relations) {
 		if (rel.type == type) {
