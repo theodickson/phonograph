@@ -527,6 +527,7 @@ function getLinkInfo(d){
 				trackIds.push(track.id);
 			};
 			spotifyUrl = '"https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+trackIds +'&theme=white"'
+		};
 		$('#edge-title').text(names);
 		if(gv.currentService=="spotify"){
 			spotifyUrl = '"https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+tracks +'&theme=white"'
@@ -538,9 +539,9 @@ function getLinkInfo(d){
 			gv.edgeTracks = response.tracks;
 			gv.requestCounter = 0; gv.tableData = [];
 			performRequests('edge');
-		};
-	});	
-}
+		};	
+	});
+};
 
 function clickLink(d) {
 	//$('#edgeYoutubeTable').bootstrapTable('showLoading');
