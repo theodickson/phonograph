@@ -1122,12 +1122,13 @@ $('.zi').click(function() {
 
 $('#genre').change(function(){
 	var newGenre = $('#genre option:selected')[0].value;
+	console.log(newGenre);
 	if (gv.genre != newGenre) {
 		gv.genre = newGenre;
 		gv.route = "neighbourhood"
 		gv.origin = null;
 		gv.zoomLevel = 1;
-@@ -1144,6 +1134,14 @@ $('.gs').click(function(){
+		reload();
 	};
 });
 
@@ -1138,7 +1139,6 @@ $('#ns').change(function(){
 		reload();
 	};
 });
-
 $('#urlShare').click(function(){
 	if (typeof location.gv.origin === 'undefined'){
     	location.gv.origin = location.protocol + '//' + location.host;
