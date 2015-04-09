@@ -101,7 +101,7 @@ function start_Vis(graph) {
 		names = graph.nodes[newIds.indexOf(gv.source)].name+' to '+graph.nodes[newIds.indexOf(gv.destination)].name;
 		loadPathInfo(names);
 	} else {
-		/*loadRadio();*/
+		loadRadio(graph);
 	}
 	
 	gv.newGraph = graph;
@@ -244,9 +244,9 @@ function start_Vis(graph) {
 			if (gv.origin != null) {
 				if (d.id == gv.origin) {
 					if (gv.route == "zoom") {
-						clickNode(this, d, false);
+						//clickNode(this, d, false);
 					} else {
-						clickNode(this, d, true);
+						//clickNode(this, d, true);
 					};
 				};
 			} else {
@@ -464,38 +464,46 @@ function get_url(relations, type) {
 };
 
 function performRequests(c, mode) {
-	stNames = []; for (n of gv.artistNames[c]) {stNames.push(standardise(n)); };
+	//console.log(gv.trackNames); console.log(gv.artistNames);
+	stNames = [];
+	for (n of gv.artistNames[c]) {
+		stNames.push(standardise(n));
+	};
+
 	stTrack = standardise(gv.trackNames[c]);
+
 	yt = yt_requestString(removeNames(stNames, stTrack), stNames.join(' '))
+
 	d3.json(yt, function(error, ytresponse) {
-		if(ytresponse.items.length !==0){
+
+		if (ytresponse.items.length != 0) {
 			score = calculateScore(stTrack, standardise(ytresponse.items[0].snippet.title), stNames);
-		}
-		else{
+		} else {
 			score = 0;
 		};
+
 		if (score > 0.3) {
 			gv.tableData.push( {"artistNames": '<div class="disabled" style="color:grey; font-style: italic;">'+gv.artistNames[c]+'</div>', "title": gv.trackNames[c], "add": "<button class='btn-sm btn-sidebar addToPlaylist' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-plus-sign'></i></button>", "play": "<button class='btn-sm btn-sidebar playNowButton' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-play'></i></button>"} );
-		}
-		else{
-			//console.log("BAD SCORE");
+		} else {
 			gv.tableData.push( {"artistNames": gv.artistNames[c], "title": gv.trackNames[c], "add": "<button disabled class='btn-sm btn-sidebar disabled addToPlaylist' type='button'><i class='el el-plus-sign'></i></button>", "play": "<button disabled class='btn-sm btn-sidebar disabled playNowButton' type='button'><i class='el el-play'></i></button>"} );
-
 		};
+
 		c += 1;
+
 		$('#'+mode+'YoutubeTable').bootstrapTable('load', gv.tableData);
 		$('#'+mode+'YoutubeTable').bootstrapTable('hideLoading');
+
 		if (c < gv.trackNames.length) { 
 			performRequests(c, mode); 
-		}
-		else { 
+		} else { 
 			if (gv.tableData.length == 0) {
 				gv.tableData.push({
-					"title": 'No songs found in Database', 
+					"title": 'No songs found.', 
 					"add": "", 
 					"play":""
 				}
 			)};
+
 			$('#'+mode+'YoutubeTable').bootstrapTable('load', gv.tableData);
 			//Play tracks on double click
 			$('tr').dblclick(function(){
@@ -508,11 +516,8 @@ function performRequests(c, mode) {
 					playNowButton.trigger("click");
 				};
 			});
-
 		};
 	});
-
-
 };
 
 function getLinkInfo(d){
@@ -748,26 +753,53 @@ function nextNode(graph, pathOrder) {
 };
 
 function compare(a,b) {
-  if (parseInt(a.popularity,10) < parseInt(b.popularity,10))
-     return -1;
   if (parseInt(a.popularity,10) > parseInt(b.popularity,10))
+     return -1;
+  if (parseInt(a.popularity,10) < parseInt(b.popularity,10))
     return 1;
   return 0;
 }
 
-/*function loadRadio() {
-	tracks = [];
+function loadRadio(graph) { console.log('loading radio')
+	console.log(graph.links);
+	originTracks = [];
+	otherTracks = [];
+	originIndex = newIds.indexOf(gv.origin);
+	console.log(originIndex);
 	for (l of graph.links) {
-		tracks.push(l)
+		if ((l.source==originIndex)||(l.target==originIndex)) {
+			originTracks.push(l.track)
+		} else {
+			otherTracks.push(l.track)
+		};
 	};
-	tracks = tracks.sort(compare)
-	if (gv.origin) {
-		while (c = 0) {
-			for (track of tracks) {
-				if (track.artists.indexOf())
-		}
+	console.log(originTracks);
+	console.log(otherTracks);
+	originTracks.sort(compare)
+	otherTracks.sort(compare)
+	//console.log(originTracks);
+	//console.log(otherTracks);
+	radioTracks = [otherTracks[0]];
+	otherTracks.splice(0,1);
+	toAdd = originTracks.concat(otherTracks);
+	//console.log(toAdd);
+	toAdd.sort(compare);
+	for (i=0; i < 5; i++) {
+		radioTracks.push(toAdd[i])
+	};
+	console.log(radioTracks);
+	gv.trackNames = [];
+	gv.artistNames = [];
+	for (track of radioTracks) {
+		gv.trackNames.push(track.name);
+		gv.artistNames.push(track.artists);
 	}
-}*/
+	c = 0; gv.tableData = [];
+	console.log(gv.trackNames); console.log(gv.artistNames);
+	tabSwitch('path');
+	performRequests(c, 'path')
+}
+
 function tabSwitch(pane) {
 	$('#artistSearch').val("");
 	$('#info').toggle(true);
