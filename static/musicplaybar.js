@@ -452,7 +452,7 @@ $('#volumeButton').mouseover(function(){
 });
 
 //CHECK FOR SERVICE
-var currentService = dataset.currentService; //INITIAL SERVICE IS YOUTUBE BY DEFAULT
+var currentService = gv.currentService; //INITIAL SERVICE IS YOUTUBE BY DEFAULT
 $('.spotify').hide();
 
 $('.service-choice').on('click', function(){
@@ -475,7 +475,7 @@ $('.service-choice').on('click', function(){
   	if(newService!="spotify"){
   		$('.spotify').find('iframe').remove();
   	};
-  	dataset.currentService = newService;
+  	gv.currentService = newService;
   	currentService = newService;
 })
 

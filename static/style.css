@@ -33,43 +33,43 @@
 }
 
 .hip {
-    stroke: rgb(204, 153, 153);
+    stroke: rgb(204, 214, 224);
 }
 
 .pop {
-    stroke: rgb(194, 153, 194);
+    stroke: rgb(224, 204, 224);
 }
 
 .rock {
-    stroke: rgb(153, 173, 194);
+    stroke: rgb(235, 214, 204)
 }
 
 .electronic {
-    stroke: rgb(153, 173, 153);
+    stroke: rgb(204, 214, 204);
 }
 
 .classical {
-    stroke: rgb(128, 153, 204);
+    stroke: rgb(204, 204, 224);
 }
 
 .country {
-    stroke: rgb(204, 153, 128);
+    stroke: rgb(224, 214, 204)
 }
 
 .funk {
-    stroke: rgb(153, 153, 194) ;
+    stroke: rgb(235, 214, 214) ;
 }
 
 .jazz {
-    stroke: rgb(194, 153, 235);
+    stroke: rgb(224, 204, 224);
 }
 
 .latin {
-    stroke: rgb(204, 153, 178);
+    stroke: rgb(245, 214, 204);
 }
 
 .reggae {
-    stroke: rgb(173, 214, 194) ;
+    stroke: rgb(214, 235, 224);
 }
 
 .null {

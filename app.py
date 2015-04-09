@@ -70,7 +70,7 @@ def step(currentstep,neighbourhood,genre):
 	for n,score in currentstep.items():
 		for t in r.zrange('artist.tracks:'+n, 0, -1):
 			for a in r.smembers('track.artists:'+t):
-				if genre != 'null':
+				if genre:
 					if r.hget('artist.info:'+a, 'genre') == genre:
 						try:
 							nextstep[a] += score
@@ -93,16 +93,12 @@ def year_filter(tracks, **kwargs):
 			min_year = 0
 		return set(track for track in tracks if min_year <= int(r.hget('track.info:'+track, 'year')) <= max_year)
 
-def extend(distances, visited, c, **kwargs):
+def extend(distances, visited, c):
 	distances[c+1] = {}
 	for node in distances[c].keys():
-		to_check = r.smembers('artist.neighbours:'+node) - visited
-		for neighbour in to_check:
-			if not genre:
-				if r.hget('artist.info:'+neighbour, 'genre') == genre:
-					distances[c+1].setdefault(neighbour, []).append(node)
-			else:
-				distances[c+1].setdefault(neighbour, []).append(node)
+		for neighbour in r.smembers('artist.neighbours:'+node) - visited:
+			distances[c+1].setdefault(neighbour, []).append(node)
+	#print distances
 	return distances
 
 def pathfork(path, distances, c):
@@ -111,7 +107,7 @@ def pathfork(path, distances, c):
 		forks.append(path+[n])
 	return forks
 					
-def find_paths(i, genre=None, **kwargs):
+def dijkstra(i,**kwargs):
 	distances = {0: { i: []} }
 	visited = set([])
 	c = 0
@@ -120,7 +116,7 @@ def find_paths(i, genre=None, **kwargs):
 			j = kwargs['to']
 			while j not in distances[c].keys() and c < 7:
 				visited.update(distances[c].keys())
-				distances = extend(distances, visited, c, genre=genre)
+				distances = extend(distances, visited, c)
 				c += 1
 				print c
 			paths = [[j,a] for a in distances[c][j]]
@@ -137,7 +133,38 @@ def find_paths(i, genre=None, **kwargs):
 			visited.update(distances[c].keys())
 			distances = extend(distances, visited, c)
 			c += 1
+			#print c
+			#print kwargs['level']
 		return distances
+
+def pop_sorted(nodes):
+	return sorted(nodes, key = lambda x:r.hget('artist.info:'+x, 'popularity'), reverse=True)
+
+def determine_paths(leaf,distances,c):
+	c1 = c
+	paths = [[leaf,a] for a in distances[c1][leaf]]
+	c1 -= 1
+	while c1 > 0:
+		newpaths = []
+		for path in paths:
+			newpaths += pathfork(path, distances, c1)
+		paths = newpaths
+		c1 -= 1	
+	return paths
+
+def capitalise(phrase):
+	capitalised = []
+	for word in phrase.split(' '):
+		capitalised.append(word[0].upper()+word[1:])
+	return (' ').join(capitalised)
+					
+def get_origin():
+	genres = ['rock', 'pop', 'classical', 'hip hop', 'latin', 'reggae', 'electronic', 'country', 'jazz', 'funk']
+	tempgenre = random.choice(genres)
+	origin = random.choice(r.zrevrange('term.artists:'+tempgenre,0,500))
+	while len(r.smembers('artist.neighbours:'+origin)) < 3:
+		origin = random.choice(r.zrevrange('term.artists:'+tempgenre,0,500))
+	return origin
 
 def pop_sorted(nodes):
 	return sorted(nodes, key = lambda x:r.hget('artist.info:'+x, 'popularity'), reverse=True)
@@ -180,32 +207,27 @@ r = Redis()
 #@login_required
 def index():
     return render_template("index.html")
-
-@app.route("/start")
-#@login_required
-def start():
-	genres = ['rock', 'pop', 'classical', 'hip hop', 'latin', 'reggae', 'electronic', 'country', 'jazz', 'funk']
-	genre = request.args['genre']
-	if genre == 'null':
-		genre = random.choice(genres)
-	origin = random.choice(r.zrevrange('term.artists:'+genre,0,200))
-	return jsonify({'origin': origin})
 		
 @app.route("/path")
 #@login_required
 def path_finder():
-	i = request.args['seed'].split(',')[0]
-	j = request.args['seed'].split(',')[1]
-	path = random.choice(find_paths(i,to=j))
+	i = request.args['source']
+	j = request.args['destination']
+	path = random.choice(dijkstra(i,to=j))
 	g = igrapher(path)
 	return jsonify(d3_dictify(g))
 		
 @app.route("/neighbourhood")
 #@login_required
-def get_neighbourhood():
-	origin = request.args['seed'].split(',')[0]
-	size = int(request.args['seed'].split(',')[1])
-	genre = request.args['seed'].split(',')[2]
+def neighbourhood():
+	print request.args
+	origin = request.args['origin']
+	if origin == 'null':
+		origin = get_origin();
+	size = int(request.args['size'])
+	genre = request.args['genre']
+	if genre == 'null':
+		genre = None
 	currentstep = {origin:1}
 	neighbourhood = set([origin])
 	visited = set([origin])
@@ -231,12 +253,10 @@ def get_neighbourhood():
 @app.route("/zoom")
 #@login_required
 def zoom():
-	seed = request.args['seed'].split(',')
-	origin = seed[0]
-	size = int(seed[1])
-	level = int(seed[2])
-	genre = seed[3]
-	distances = find_paths(origin, level=level, genre=genre)
+	origin = request.args['origin']
+	size = int(request.args['size'])
+	level = int(request.args['level'])
+	distances = dijkstra(origin, level=level)
 	chosen = set([origin])
 	c = max(distances.keys())
 	k = 1
@@ -269,7 +289,7 @@ def zoom():
 				#ranked_leaves = sorted(distances[c].keys(), reverse=True, key = lambda x:len(distances[c][x]))
 				ranked_leaves = random.sample(distances[c].keys(), len(distances[c].keys()))
 			else:
-				distances = find_paths(origin, level=level+k)
+				distances = dijkstra(origin, level=level+k)
 				k += 1
 				chosen = set([origin])
 				c = max(distances.keys())
@@ -281,14 +301,14 @@ def zoom():
 @app.route("/custom")
 #@login_required
 def custom_subgraph():
-	size = request.args['seed'].split(',')[0]
-	startIds = request.args['seed'].split(',')[1:]
-	startPairs = itertools.combinations(startIds,2)
+	size = int(request.args['size'])
+	core = request.args['core'].split(',')
+	startPairs = itertools.combinations(core,2)
 	all_paths = []
 	skeleton = []
 	paths_dict = {}
 	for pair in startPairs:
-		paths = find_paths(pair[0],to=pair[1])
+		paths = dijkstra(pair[0],to=pair[1])
 		paths_dict[pair] = {'paths': paths, 'distance': len(paths[0])}
 		skeleton+=paths[0]
 		for path in paths:
@@ -313,18 +333,7 @@ def custom_subgraph():
 		counter += 1
 		skeleton = list(set(skeleton))
 
-	g = ig.Graph(len(skeleton))
-	g.vs['name'] = skeleton
-	edges = []
-	weights = []
-	for pair in itertools.combinations(skeleton, 2):
-		r.zinterstore('pair', ['artist.tracks:'+pair[0], 'artist.tracks:'+pair[1]])
-		weight = len(r.zrange('pair',0,-1))
-		if weight > 0:
-			edges.append(pair)
-			weights.append(weight)
-	g.add_edges(edges)
-	g.es['weight'] = weights
+	g = igrapher(skeleton)
 	return jsonify(d3_dictify(g))
 	
 @app.route("/edgeLookup")
@@ -378,8 +387,8 @@ def genre_search():
 
 @app.route("/genresubgraph")
 def genre_subgraph():
-	term = request.args['seed'].split(',')[0]
-	size = int(request.args['seed'].split(',')[1])
+	term = request.args['term']
+	size = int(request.args['size'])
 	results = r.zrevrange('term.artists:'+term, 0, size*3)
 	n = len(results) - size
 	g = igrapher(results)
