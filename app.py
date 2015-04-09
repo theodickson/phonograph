@@ -168,7 +168,7 @@ def random_origin():
 
 def genre_origin(genre):
 	origin = random.choice(r.zrevrange('term.artists:'+genre,0,100))
-	while genre_neighbours(origin, genre) < 3:
+	while genre_neighbours(origin, genre) < 3 and r.hget('artist.info:'+origin, 'genre') != genre:
 		origin = random.choice(r.zrevrange('term.artists:'+genre,0,100))
 	return origin
 
