@@ -96,6 +96,7 @@ function start_Vis(graph) {
 	if (!(gv.route=="path")) { 
 		graph = optimiseRotation(oldPos, newPos, graph);
 	} else {
+		gv.radioList = [];
 		graph = pathPositions(graph, newIds, width, height);
 	};
 	
@@ -275,7 +276,6 @@ gv.artistList = [];
 gv.pathOrder = [];
 gv.currentService = "youtube";
 gv.playlist = [];
-gv.radio = [];
 gv.size = 20;
 gv.clickable = true
 var clicked = null;
@@ -384,8 +384,8 @@ function loadPathInfo(names){
 			return '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+ gv.playlist.join(',') +'&theme=white" width="'+wellWidth+'" height="'+wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; 
 		});
 	};
-	c = 0; gv.tableData = [];
-	performRequests(c, 'path');
+	gv.requestCounter = 0; gv.tableData = [];
+	performRequests('path');
 }
 
 function loadArtistInfo(o) {
@@ -431,8 +431,8 @@ function loadArtistInfo(o) {
 	
 	d3.json("https://api.spotify.com/v1/artists/"+o.id+"/top-tracks?country=GB", function (error, response) {
 		gv.nodeTracks = response.tracks;
-		c = 0; gv.tableData = [];
-		performRequests(c, 'node');
+		gv.requestCounter = 0; gv.tableData = [];
+		performRequests('node');
 	});
 };
 
@@ -444,25 +444,31 @@ function get_url(relations, type) {
 	};
 };
 
-function performRequests(c, mode) {
-	//console.log(gv.trackNames); console.log(gv.artistNames);
-	/*if (mode == 'radio') {
-		thisTrack = gv.radioList[c];
+function performRequests(mode) {
+	console.log(mode);
+	if (mode == 'radio') {
+		thisTrack = gv.radioList[gv.requestCounter];
+		requestLength = gv.radioList.length
 	}
 	if (mode == 'node') {
-		thisTrack = 
+		thisTrack = gv.nodeTracks[gv.requestCounter];
+		requestLength = gv.nodeTracks.length
 	}
+	if (mode == 'edge') {
+		thisTrack = gv.edgeTracks[gv.requestCounter];
+		requestLength = gv.edgeTracks.length
+	}
+	console.log(thisTrack);
 	stNames = [];
-	for (n of gv.radioList[c].artists) {
+	for (n of thisTrack.artists) {
 		stNames.push(standardise(n));
 	};
 
-	stTrack = standardise(gv.radioList[c].name);
+	stTrack = standardise(thisTrack.name);
 
 	yt = yt_requestString(removeNames(stNames, stTrack), stNames.join(' '))
 
 	d3.json(yt, function(error, ytresponse) {
-
 		if (ytresponse.items.length != 0) {
 			score = calculateScore(stTrack, standardise(ytresponse.items[0].snippet.title), stNames);
 		} else {
@@ -470,18 +476,18 @@ function performRequests(c, mode) {
 		};
 
 		if (score > 0.3) {
-			gv.tableData.push( {"artistNames": '<div class="disabled" style="color:grey; font-style: italic;">'+gv.artistNames[c]+'</div>', "title": gv.trackNames[c], "add": "<button class='btn-sm btn-sidebar addToPlaylist' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-plus-sign'></i></button>", "play": "<button class='btn-sm btn-sidebar playNowButton' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-play'></i></button>"} );
+			gv.tableData.push( {"artistNames": '<div class="disabled" style="color:grey; font-style: italic;">'+thisTrack.artists+'</div>', "title": thisTrack.name, "add": "<button class='btn-sm btn-sidebar addToPlaylist' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-plus-sign'></i></button>", "play": "<button class='btn-sm btn-sidebar playNowButton' type='button' value="+ytresponse.items[0].id.videoId+"><i class='el el-play'></i></button>"} );
 		} else {
-			gv.tableData.push( {"artistNames": gv.radioList[c], "title": gv.trackNames[c], "add": "<button disabled class='btn-sm btn-sidebar disabled addToPlaylist' type='button'><i class='el el-plus-sign'></i></button>", "play": "<button disabled class='btn-sm btn-sidebar disabled playNowButton' type='button'><i class='el el-play'></i></button>"} );
+			gv.tableData.push( {"artistNames": thisTrack.artists, "title": thisTrack.name, "add": "<button disabled class='btn-sm btn-sidebar disabled addToPlaylist' type='button'><i class='el el-plus-sign'></i></button>", "play": "<button disabled class='btn-sm btn-sidebar disabled playNowButton' type='button'><i class='el el-play'></i></button>"} );
 		};
 
-		c += 1;
+		gv.requestCounter += 1;
 
 		$('#'+mode+'YoutubeTable').bootstrapTable('load', gv.tableData);
 		$('#'+mode+'YoutubeTable').bootstrapTable('hideLoading');
-
-		if (c < gv.trackNames.length) { 
-			performRequests(c, mode); 
+		console.log(gv.tableData)
+		if (gv.requestCounter < requestLength) { 
+			performRequests(mode); 
 		} else { 
 			if (gv.tableData.length == 0) {
 				gv.tableData.push({
@@ -490,7 +496,9 @@ function performRequests(c, mode) {
 					"play":""
 				}
 			)};
-
+			console.log(gv.tableData);
+			$('#'+mode+'YoutubeTable').bootstrapTable('load', gv.tableData);
+			$('#'+mode+'YoutubeTable').bootstrapTable('hideLoading');
 			$('#'+mode+'YoutubeTable').bootstrapTable('load', gv.tableData);
 			//Play tracks on double click
 			$('tr').dblclick(function(){
@@ -504,7 +512,7 @@ function performRequests(c, mode) {
 				};
 			});
 		};
-	});*/
+	});
 };
 
 function getLinkInfo(d){
@@ -513,18 +521,24 @@ function getLinkInfo(d){
 	var names = gv.newGraph.nodes[d.source].name +" & "+gv.newGraph.nodes[d.target].name;
 	d3.json("/edgeLookup?seed="+pairIds, function(error, response) {
 		console.log(response);
-		tracks = response.trackIds.join(',');
-		console.log(tracks);
 		tabSwitch("edge");
 		d3.select('#sideBarTitle').text(names);
-		if(gv.currentService=="spotify"){
-			spotifyUrl = '"https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+tracks +'&theme=white"'
+
+		if(gv.currentService=="spotify") {
+			trackIds = [];
+			for (track of response.tracks) {
+				trackIds.push(track.id);
+			};
+			spotifyUrl = '"https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+trackIds +'&theme=white"'
 			console.log(spotifyUrl);
 			d3.select('#edgeIframe').html( function() { return '<iframe src='+spotifyUrl+' width="'+wellWidth+'" height="'+wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
 		};
-		gv.linkTracks = response.tracks;
-		c = 0; gv.tableData = [];
-		performRequests(c, 'edge');
+
+		if(gv.currentService == "youtube") {
+			gv.edgeTracks = response.tracks;
+			gv.requestCounter = 0; gv.tableData = [];
+			performRequests('edge');
+		};
 	});	
 }
 
@@ -717,7 +731,6 @@ function rotatePos(alpha, graph) {
 };
 
 function pathPositions(graph, newIds, width, height) {
-	gv.trackNames = []; gv.artistNames = [];
 	gv.pathOrder = [newIds.indexOf(gv.source)]; c = 0; n = newIds.length;
 	while (c < n - 1) { gv.pathOrder.push(nextNode(graph, gv.pathOrder)); c += 1};
 	newY = height/2 - 10; c = 0; xInt = d3.min([(width - 160)/(n-1), width/5]);
@@ -732,11 +745,11 @@ function nextNode(graph, pathOrder) {
 	for (link of graph.links) {
 		if ( (link.source == [gv.pathOrder[gv.pathOrder.length-1]]) || (link.target == [gv.pathOrder[gv.pathOrder.length-1]]) ) {
 			if (gv.pathOrder.indexOf(link.source) == -1 ) {
-				gv.playlist.push(link.track.id); gv.trackNames.push(link.track.name); gv.artistNames.push(link.track.artists);
+				gv.radioList.push(link.track);
 				return link.source;
 			};
 			if (gv.pathOrder.indexOf(link.target) == -1 ) {
-				gv.playlist.push(link.track.id); gv.trackNames.push(link.track.name); gv.artistNames.push(link.track.artists);
+				gv.radioList.push(link.track.id);
 				return link.target;
 			};
 		};
@@ -758,7 +771,7 @@ function loadRadio() {
 	if (gv.currentService == 'youtube') {
 		gv.tableData = [];
 		gv.requestCounter = 0;
-		performRequests(gv.requestCounter, 'radio');
+		performRequests('radio');
 	};
 	if (gv.currentService == 'spotify') {
 		trackIds = [];
@@ -788,15 +801,15 @@ function makeRadioList() {
 	otherTracks.sort(compare)
 	//console.log(originTracks);
 	//console.log(otherTracks);
-	radioTracks = [otherTracks[0]];
+	gv.radioList = [otherTracks[0]];
 	otherTracks.splice(0,1);
 	toAdd = originTracks.concat(otherTracks);
 	//console.log(toAdd);
 	toAdd.sort(compare);
 	for (i=0; i < 5; i++) {
-		radioTracks.push(toAdd[i])
+		gv.radioList.push(toAdd[i])
 	};
-	console.log(radioTracks);
+	//console.log(radioTracks);
 }
 
 function tabSwitch(pane) {

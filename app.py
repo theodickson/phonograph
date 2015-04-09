@@ -365,6 +365,7 @@ def edge_lookup():
 	for track in trackIds:
 		trackInfo = r.hgetall('track.info:'+track)
 		trackArtists = [r.hget('artist.info:'+a, 'name') for a in r.smembers('track.artists:'+track)]
+		response.append({'id': track, 'name': trackInfo['name'], 'artists': trackArtists, 'popularity': trackInfo['popularity']})
 	return jsonify({"tracks": response})
 
 @app.route("/autocomplete")
