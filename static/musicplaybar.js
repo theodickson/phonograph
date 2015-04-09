@@ -7,8 +7,8 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 // 3. This function creates an <iframe> (and YouTube player)
 //    after the API code downloads.
 var player;
-var customPlaylist = [['bVP_w1rQweE', 'Action Bronson', 'Random Song'], ["S2RVO_wPrKU", "KRS-One & Channel Live", "Blade"], ["81ETUwMHtqk", "KRS-One & MC Lars", "What Is Hip-Hop?"]]; // ARBITRARY STARTING MUSIC, WILL BE CHOSEN TO REFLECT CONTENTS OF STARTING GRAPH
-var currentTrack = 0;
+var customPlaylist = [] //NOTHING IN PLAYLIST TO STARTONTENTS OF STARTING GRAPH
+var currentTrack = null;
 
 function onYouTubeIframeAPIReady() {
 	player = new YT.Player('player', {
@@ -87,14 +87,21 @@ function onPlayerStateChange(event) {
 
 function playNextTrack(){
 	$( "#scrubberSlider" ).slider( "option", "value", 0);
-	if(currentTrack+1<customPlaylist.length ){
-		currentTrack +=1;
+	if(customPlaylist.length == 0){
+		refreshPlaylist(customPlaylist);
+		player.stopVideo();
+		$('#playerTrackInfo').text("");
 	}
 	else{
-		currentTrack=0;
+		if(currentTrack+1<customPlaylist.length ){
+			currentTrack +=1;
+		}
+		else{
+			currentTrack=0;
+		};
+		refreshPlaylist(customPlaylist);
+		player.cueVideoById(customPlaylist[currentTrack][0]);
 	};
-	refreshPlaylist(customPlaylist);
-	player.cueVideoById(customPlaylist[currentTrack][0]);
 }
 
 function playPreviousTrack(){
@@ -118,9 +125,15 @@ function playNow(e){
 	var artist = $('#sideBarTitle').text();
 	console.log(artist);
 	var trackName = $(e.currentTarget).parent().parent().find(">:first-child")[0].textContent;
-	currentTrack+=1;
-	customPlaylist.splice(currentTrack, 0, [ID, artist, trackName]);
-	refreshPlaylist(customPlaylist);
+	if (currentTrack == null){
+		currentTrack = 0;
+		customPlaylist.push([ID, artist, trackName]);
+	}
+	else{
+		currentTrack+=1;
+		customPlaylist.splice(currentTrack, 0, [ID, artist, trackName]);
+		refreshPlaylist(customPlaylist);
+	}
 	player.cueVideoById(customPlaylist[currentTrack][0]);
 };
 
@@ -265,7 +278,13 @@ function refreshPlaylist(customPlaylist){
 	$('.removeFromPlaylist').on('click', function(){
 		var index = $(this).closest('tr').attr("data-index");
 		//IF TRACK FOUND ON PLAYLIST AND IN CUSTOMPLAYLIST ARRAY THEN
-		if(index > -1){
+
+		//IF DELETING THE ONLY SONG ON THE PLAYLIST
+		if (index = 0 && customPlaylist.length == 1){
+			currentTrack = null; //NO CURRENT TRACK PLAYING
+			while (customPlaylist.length) { customPlaylist.pop(); }; //DESTROY THE PLAYLIST TO BE SURE OF REMOVING ALL ERRORS
+		}
+		else if(index > -1){
 			customPlaylist.splice(index, 1);
 			//IF DELETING THE FIRST TRACK WHICH IS ALSO PLAYING
 			if(index==0 && index == currentTrack){
@@ -288,6 +307,9 @@ function refreshPlaylist(customPlaylist){
 			else{
 				;
 			};
+		}
+		else{
+			alert("ERROR IN REMOVIJNG FROM PLAYLIST, PLEASE LOG ERROR");
 		};
 
 		//REFRESH THE PLAYLIST TO REFLECT THE CHANGED ARRAY
