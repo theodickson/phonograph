@@ -829,81 +829,104 @@ $('#playlistTab').on('click', function(){
 	tabSwitch("playlist");
 });
 
-//Search bar.
-$( "#artistSearch" ).autocomplete({
-	source: function(request, response) {
-		$.getJSON('/autocomplete?terms='+request.term.split(' ').join(','), function (data) {
-			response(data.response);
-		});
-	},
-    select: function(event, ui) {
-    	this.value = '';
-    	gv.origin = ui.item.value;
-    	gv.route = "neighbourhood"
-    	gv.genre = null;
-    	gv.zoomLevel = 1;
-		disableZoom();
-		highlightZoomLevel();
-    	reload();
-    	event.preventDefault();
-    },
-    delay: 100,
-    messages: {
-        noResults: 'No artists found.',
-        results: function() {}
-    },
+function setAutocomplete(){
+	//Search bar.
+	$( ".artist" ).autocomplete({
+		source: function(request, response) {
+			$.getJSON('/autocomplete?terms='+request.term.split(' ').join(','), function (data) {
+				response(data.response);
+			});
+		},
+	    select: function(event, ui) {
+	    	this.value = '';
+	    	gv.origin = ui.item.value;
+	    	gv.route = "neighbourhood"
+	    	gv.genre = null;
+	    	gv.zoomLevel = 1;
+	    	reload();
+	    	event.preventDefault();
+	    },
+	    delay: 100,
+	    messages: {
+	        noResults: 'No artists found.',
+	        results: function() {}
+	    },
+	});
+
+	//Search bar.
+	$( ".term" ).autocomplete({
+		source: function(request, response) {
+			$.getJSON('/genresearch?terms='+request.term.split(' ').join(','), function (data) {
+				response(data.response);
+			});
+		},
+	    select: function(event, ui) {
+	    	this.value = '';
+	    	gv.term = ui.item.value
+	    	gv.route = "termsubgraph"
+	    	gv.origin = null;
+	    	gv.genre = null;
+	    	gv.zoomLevel = 1;
+	    	reload();
+	    	event.preventDefault();
+	    },
+	    delay: 100,
+	    messages: {
+	        noResults: 'No artists found.',
+	        results: function() {}
+	    },
+	});
+
+	//Search bar.
+	$( ".path" ).autocomplete({
+		source: function(request, response) {
+			$.getJSON('/autocomplete?terms='+request.term.split(' ').join(','), function (data) {
+				response(data.response);
+			});
+		},
+	    select: function(event, ui) {
+	    	console.log("PATH SELECT");
+	    	event.preventDefault();
+	    	this.value = ui.item.label;
+	    	gv.source = ui.item.value;
+	    },
+	    delay: 100,
+	    messages: {
+	        noResults: 'No artists found.',
+	        results: function() {}
+	    },
+	});
+
+	//Search bar forTRAVEL TO.
+	$( "#destination" ).autocomplete({
+		source: function(request, response) {
+			$.getJSON('/autocomplete?terms='+request.term.split(' ').join(','), function (data) {
+				response(data.response);
+			});
+		},
+	    select: function(event, ui) {
+	    	this.value = ui.item.label;
+	    	gv.destination = ui.item.value;
+	    	gv.route = "path"
+	    	gv.genre = null;
+	    	gv.zoomLevel = 1;
+	    	event.preventDefault();
+	    },
+	    delay: 100,
+	    messages: {
+	        noResults: 'No artists found.',
+	        results: function() {}
+	    },
+	});
+
+};
+
+$('#search-button').on("click", function(){
+	reload();
 });
 
-//Search bar.
-$( "#genreSearch" ).autocomplete({
-	source: function(request, response) {
-		$.getJSON('/genresearch?terms='+request.term.split(' ').join(','), function (data) {
-			response(data.response);
-		});
-	},
-    select: function(event, ui) {
-    	this.value = '';
-    	gv.term = ui.item.value
-    	gv.route = "termsubgraph"
-    	gv.origin = null;
-    	gv.genre = null;
-    	gv.zoomLevel = 1;
-    	highlightZoomLevel();
-    	disableZoom();
-    	reload();
-    	event.preventDefault();
-    },
-    delay: 100,
-    messages: {
-        noResults: 'No artists found.',
-        results: function() {}
-    },
-});
+setAutocomplete();
 
-//Search bar forTRAVEL TO.
-$( "#travelTo" ).autocomplete({
-	source: function(request, response) {
-		$.getJSON('/autocomplete?terms='+request.term.split(' ').join(','), function (data) {
-			response(data.response);
-		});
-	},
-    select: function(event, ui) {
-    	this.value = '';
-    	gv.source = gv.currentArtist;
-    	gv.destination = ui.item.value;
-    	gv.route = "path"
-    	gv.genre = null;
-    	gv.zoomLevel = 1;
-		highlightZoomLevel();
-    	reload();
-    	event.preventDefault();
-    },
-    delay: 100,
-    messages: {
-        noResults: 'No artists found.',
-        results: function() {}
-    },
-});
 function checkForSubGraphRemoval(){
 	$('.removeFromSubGraph').on("click", function(){
 		var index = $(this).closest('tr').attr("data-index");
@@ -1150,82 +1173,101 @@ $('#urlShare').click(function(){
 	d3.select('#URL').property({'value': location.gv.origin+'/?gv.route='+gv.route+'&seed='+seed});
 });
 
-$('#artistOptions').on('click', function(){
-	var totalWidth = $('#searchBar').width() + $('#artistOptions').width();
-	$('#travelTo').width(totalWidth);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//CHECK FOR SearchType
+$('.search-choice').on('click', function(){
+	var searchType = $(this).attr("id").replace("search-choice-", "");
+	var newIcon = $(this).children('i').clone();
+	$('#searchType').children().first().replaceWith(newIcon);
+	var searchAutoComplete = $('#searchAutoComplete');
+	searchAutoComplete.removeClass("artist");
+	searchAutoComplete.removeClass("path");
+	searchAutoComplete.removeClass("term");
+	searchAutoComplete.addClass(searchType);
+	if(searchType =="artist"){
+		$('#destination').hide(500)
+		searchAutoComplete.attr("placeholder", "Search by Artist");
+	}
+	else if(searchType =="term"){
+		$('#destination').hide(500)
+		searchAutoComplete.attr("placeholder", "Search by Term");
+	}
+	else if(searchType == "path"){
+		$('#destination').show(500)
+		searchAutoComplete.attr("placeholder", "Starting Artist...");
+	};
+	setAutocomplete();
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
