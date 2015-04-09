@@ -805,8 +805,6 @@ $('#playlistTab').on('click', function(){
 	tabSwitch("playlist");
 });
 
-<<<<<<< HEAD
-
 function setAutocomplete(){
 	//Search bar.
 	$( ".artist" ).autocomplete({
@@ -900,7 +898,6 @@ function setAutocomplete(){
 
 $('#search-button').on("click", function(){
 	reload();
-=======
 //Search bar.
 $( "#artistSearch" ).autocomplete({
 	source: function(request, response) {
@@ -975,7 +972,6 @@ $( "#travelTo" ).autocomplete({
         noResults: 'No artists found.',
         results: function() {}
     },
->>>>>>> origin/master
 });
 
 setAutocomplete();
