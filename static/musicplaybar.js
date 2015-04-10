@@ -165,11 +165,34 @@ function playPreviousTrack(){
 	};
 };
 
+function playNextFromDropdown(track){
+	gv.playMode = "playlist";
+	if (currentTrack == null){
+		currentTrack = 0;
+		gv.customPlaylist.push(track);
+		player.cueVideoById(track.youtubeId);
+	}
+	else{
+		gv.customPlaylist.splice(currentTrack+1, 0, track);
+		gv.currentTrack += 1;
+		refreshPlaylist();
+	};
+	refreshPlaylist();
+}
+function addTrackToPlaylist(track){
+	if(currentTrack == null){
+		playNextFromDropdown(track);
+	}
+	else{
+		gv.customPlaylist.push(track);
+	};
+	refreshPlaylist();
+};
+
 function playNext(e){
 	playlistAlert();
-	$( "#scrubberSlider" ).slider( "option", "value", 0);	
 	var trackData = e.currentTarget.value.split("|");
-	//console.log(trackData);
+	console.log(trackData);
 	var track = {
 		"youtubeId" : trackData[0],
 		"name" : trackData[1],
@@ -188,8 +211,6 @@ function playNext(e){
 		gv.currentTrack += 1;
 		refreshPlaylist();
 	};
-	//console.log(gv.customPlaylist[currentTrack]);
-	player.cueVideoById(gv.customPlaylist[currentTrack].youtubeId);
 	refreshPlaylist();
 };
 
@@ -198,20 +219,6 @@ function playNow(e){
 	playNextTrack();
 };
 
-function addTrackToPlaylist(e){
-	playlistAlert();
-	var ID = e.currentTarget.value;
-	var artist = $('#sideBarTitle').text();
-	var trackName = $(e.currentTarget).parent().parent().find(">:first-child")[0].textContent;
-	var track = {
-		"youtubeId": ID,
-		"name": trackName,
-		"artists": "ARTIST"
-	};
-	console.log(track);
-	gv.customPlaylist.push(track);
-	refreshPlaylist();
-};
 
 addPlaySymboltoPlayingTrack=function(i){
 	if(i==currentTrack){

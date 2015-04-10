@@ -485,6 +485,9 @@ function get_url(relations, type) {
 function parseTrack(s){
 	var trackData = s.split("|");
 	//console.log(trackData);
+	if(typeof trackData[2] === 'undefined'){
+	  trackData[2] = "Artist";
+	};
 	var track = {
 		"youtubeId" : trackData[0],
 		"name" : trackData[1],
@@ -572,11 +575,12 @@ function performRequests(mode) {
 				var s = $(this).closest('.btn-group').children('.playNowButton').val();
 				var track = parseTrack(s);
 				console.log(track);
+				playNextFromDropdown(track);
 			});
 			$('.drop-down-add-to-playlist').on("click", function(){
 				var s = $(this).closest('.btn-group').children('.playNowButton').val();
 				var track = parseTrack(s);
-				console.log(track);
+				addTrackToPlaylist(track);
 			});
 		};
 	});
