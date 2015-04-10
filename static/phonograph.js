@@ -625,7 +625,7 @@ function performRadioRequests(mode) {
 				$('#radio-now-playing-name').text(gv.nowPlaying.name);
 				$('#radio-now-playing-artists').text(parseArtists(gv.nowPlaying));
 				$('#radio-up-next-name').text(gv.upNext.name);
-				$('#radio-up-next-artists').text(parseArtists(gv.nowPlaying));
+				$('#radio-up-next-artists').text(parseArtists(gv.upNext));
 			} else {
 				gv.radioList.reverse().pop();
 				gv.radioList.reverse();
