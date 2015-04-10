@@ -31,7 +31,6 @@
 
 <section id="app">
 	<div class="row">
-		<!--
 		<div class="btn-group-vertical" id="zoom">
 				<button id="zoomIn" type="button" disabled class="btn btn-disabled btn-sm zi"><span class="el el-plus"></span></button>
 				
@@ -41,7 +40,6 @@
 
 			 	<button id="zoomOut" type="button" class="btn btn-default btn-sm zo"><span class="el el-minus"></span></button>
 		</div>
-	-->
 		<div id="map" class="col-xs-9">
 		<nav class="navbar navbar-default navbar-top">
 		  <div class="container-fluid">
@@ -147,7 +145,7 @@
 			<ul style="display:none;" class="nav nav-pills sideBarTabs" id="sideBarTabs" role="tablist" data-tabs="tabs">
 				<li class="active" id="nodeTab"><a class="sidebar-icon" href="#nodePane" role="tab" data-toggle="tab"><i class="fa fa-info"></i></a></li>
 				<li style="display: none" id="edgeTab"><a class="sidebar-icon" href="#edgePane" role="tab" data-toggle="tab"><i class="fa fa-info"></i></a></li>
-				<!--<li id="radioTab"><a class="sidebar-icon" href="#radioPane" role="tab" data-toggle="tab"><span class="icon-radio"></a></li>-->
+				<li id="radioTab"><a class="sidebar-icon" href="#radioPane" role="tab" data-toggle="tab"><span class="icon-radio"></a></li>
 			</ul>
 			</div>
 
@@ -239,7 +237,7 @@
 							<tr>
 								<th data-field="artist">Artist</th>
 								<th data-field="name" data-sortable="true">Title</th>
-								<th data-field="play" data-width="25%"></th>
+								<th data-field="play"></th>
 								<th data-field="id" data-visible="false"></th>
 							</tr>
 							</thead>
@@ -312,13 +310,12 @@
 					        	    </tr>
 					        	    </thead>
 					        	</table>
-					        <div class="videoWrapper" align="middle"><div id="player" style="height:1px;"></div></div>
 					        </div>
 						</div>
 		        	</form>
     			</div> 
     		</li>
-    		<!--<li class="dropup" id="radioDropdown">
+    		<li class="dropup" id="radioDropdown">
     			<a class="dropdown-toggle" id="radioICON" href="#" data-toggle="dropdown"><span class="icon-radio"></a>
     			<div class='dropdown-menu top-dropdown-right' id='radioDD'>
     				<form class="form-horizonal">
@@ -337,8 +334,9 @@
 							</div>
 						</div>
 		        	</form>
+		        	<div class="videoWrapper" align="middle"><div id="player" style="height:1px;"></div></div>
     			</div> 
-    		</li>-->
+    		</li>
     	  	<li id="consoleElement"><a id="previous" type="button" class="navbar"><span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span></a></li>
     	  	<li><a id="play-pause" type="button" class="navbar"> <span id="playsong" class="glyphicon glyphicon-play" style="display: none;"aria-hidden="true"></span> <span id="pausesong" class="glyphicon glyphicon-pause" style="display: none;" aria-hidden="true"></span><span id="bufferingsong" style="display: inline-block;" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></a></li>
     	  	<li><a id="next" type="button" class="navbar"><span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span></a></li>
