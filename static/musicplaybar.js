@@ -447,7 +447,6 @@ function setVolIcon(){
 
 };
 
-
 var currentVol;
 
 $('#volumeButton').on('click', function(){
