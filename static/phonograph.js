@@ -111,12 +111,12 @@ function start_Vis(graph) {
 	if (!(gv.route=="path")) { 
 		graph = optimiseRotation(oldPos, newPos, graph);
 	} else {
-		/*gv.radioList = [];*/
+		gv.radioList = [];
 		graph = pathPositions(graph, newIds, width, height);
 	};
 	
 	gv.newGraph = graph;
-	/*makeRadioList();*/
+	makeRadioList();
 
 	if ( !(gv.route == "path") ) {
 		$('.numArtists').show();
@@ -248,9 +248,9 @@ function start_Vis(graph) {
 		if (gv.route == 'zoom' || gv.route == 'neighbourhood') {
 			loadArtistInfo();
 		};
-		/*if (gv.playMode == 'radio') {
+		if (gv.playMode == 'radio') {
 			loadRadio(true);
-		};*/
+		};
 		gv.clickable = true;
 	}, gv.FadeOut+gv.FadeIn+gv.NodeSlide);
 
@@ -286,7 +286,7 @@ gv.currentArtist = null;
 gv.currentLink = null;
 gv.clickedRadius = 30;
 gv.clickedStrokeWidth = 4;
-/*gv.playMode = 'radio';*/
+gv.playMode = 'radio';
 var width, height;
 var svg = d3.select("#map").append("svg")
 	.attr("id", "svg")
@@ -314,16 +314,16 @@ gv.wellWidth = $('#sidebar').width()-40;
 $('#bio').css('max-height', gv.wellHeight+"px");
 $('.fixed-table-container').attr("data-height", gv.wellHeight+"px");
 $('#playlistDD').css({"height": height/2 +"px"});
-/*$('#radioDD').css({
+$('#radioDD').css({
 	"height": height/2 +"px",
 	"left": -1*nwidth+"px"
-});*/
+});
 
 
 $('#sidebar').css('min-height', window.innerHeight+"px");
-var heightOfZoom = $('#zoom').height();
+//var heightOfZoom = $('#zoom').height();
 
-$('#zoom').css({'left': '20px', 'top': height - heightOfZoom - 74 +'px'});
+//$('#zoom').css({'left': '20px', 'top': height - heightOfZoom - 74 +'px'});
 
 $('#subgraphTable').bootstrapTable({
         data: ""
@@ -334,8 +334,8 @@ $('#nodeYoutubeTable').attr("data-height", gv.wellHeight);
 $('#nodeYoutubeTable').bootstrapTable('resetView');
 $('#edgeYoutubeTable').attr("data-height", gv.wellHeight);
 $('#edgeYoutubeTable').bootstrapTable('resetView');
-/*$('#radioYoutubeTable').attr("data-height", gv.wellHeight);
-$('#radioYoutubeTable').bootstrapTable('resetView')*/
+$('#radioYoutubeTable').attr("data-height", gv.wellHeight);
+$('#radioYoutubeTable').bootstrapTable('resetView')
 $('#subgraphTable').attr("data-height", gv.wellHeight-nheight-nheight);
 $('#subgraphTable').bootstrapTable('resetView');
 
@@ -598,7 +598,7 @@ function performRequests(mode) {
 };
 
 
-/*function performRadioRequests(mode) {
+function performRadioRequests(mode) {
 	if (mode == 'upNext') {
 		gv.nowPlaying = gv.upNext;
 	};
@@ -645,7 +645,7 @@ function performRequests(mode) {
 			};
 		};
 	});
-};*/
+};
 
 function loadEdgeInfo(){
 	d = gv.currentLink;
@@ -664,7 +664,7 @@ function loadEdgeInfo(){
 		$('#edge-title').text(names);
 		if(gv.currentService == "youtube") {
 			gv.requestTracks = response.tracks;
-			c = 0; gv.tableData = [];
+			gv.tableData = [];
 			performRequests('edge');
 		};	
 	});
@@ -876,11 +876,11 @@ function nextNode(graph, pathOrder) {
 	for (link of graph.links) {
 		if ( (link.source == [gv.pathOrder[gv.pathOrder.length-1]]) || (link.target == [gv.pathOrder[gv.pathOrder.length-1]]) ) {
 			if (gv.pathOrder.indexOf(link.source) == -1 ) {
-				/*gv.radioList.push(link.track);*/
+				gv.radioList.push(link.track);
 				return link.source;
 			};
 			if (gv.pathOrder.indexOf(link.target) == -1 ) {
-				/*Ugv.radioList.push(link.track.id);*/
+				gv.radioList.push(link.track.id);
 				return link.target;
 			};
 		};
@@ -895,7 +895,7 @@ function compare(a,b) {
   return 0;
 }
 
-/*function fillRadioTitle(){
+function fillRadioTitle(){
 	gv.radioTitle = "";
 	if (gv.route == "zoom" || gv.route == "neighbourhood"){
 		console.log(gv.origin);
@@ -909,7 +909,7 @@ function compare(a,b) {
 	};
 	console.log(gv.radioTitle);
 	$('#radio-title').text(gv.radioTitle);
-};*/
+};
 
 function getName(id) {
 	for (d of gv.newGraph.nodes) {
@@ -919,7 +919,7 @@ function getName(id) {
 	}
 };
 
-/*function loadRadio(firstTime) {
+function loadRadio(firstTime) {
 	radioAlert();
 	fillRadioTitle();
 	if ((gv.currentService == 'youtube')) {
@@ -932,15 +932,15 @@ function getName(id) {
 		};
 		loadSpotify(trackIds);
 	};
-};*/
+};
 
-/*function loadSpotify(tracks) {
+function loadSpotify(tracks) {
 	spotifyUrl = '"https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+trackIds.join(',')+'&theme=white"'
 	d3.select('#radioIframe').html( function() { return '<iframe src='+spotifyUrl+' width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
 
-}*/
+}
 
-/*function makeRadioList() {
+function makeRadioList() {
 	if (gv.route!="path") {
 		gv.radioList = [];
 		gv.radioListIds = [];
@@ -952,7 +952,7 @@ function getName(id) {
 		};
 		gv.radioList.sort(compare)
 	};
-}*/
+}
 
 function tabSwitch(pane) {
 	$('#artistSearch').val("");
@@ -1202,7 +1202,7 @@ $('#sidebarForward').on('click', function() {
 });
 
 */
-function highlightZoomLevel(){
+/*function highlightZoomLevel(){
 	$('.zL').each(function(){
 		if($(this).attr('id').replace("zoomL","") == gv.zoomLevel){
 			$(this).addClass("btn-primary");
@@ -1271,7 +1271,7 @@ $('.zi').click(function() {
 		zoom();
 	}
 });
-
+*/
 $('#genre').change(function(){
 	var newGenre = $('#genre option:selected')[0].value;
 	//console.log(newGenre);
@@ -1329,26 +1329,25 @@ $('.search-choice').on('click', function(){
 
 $('#playlistICON').on("click", function(e){
 	$('#playlistDropdown').toggleClass("open");
-	/*$('#radioDropdown').removeClass("open");*/
+	$('#radioDropdown').removeClass("open");
 	e.stopPropagation();
 });
 ////////////
 
 $('')
 
-/*$('#radioICON').on("click", function(e){
+$('#radioICON').on("click", function(e){
 	$('#radioDropdown').toggleClass("open");
 	$('#playlistDropdown').removeClass("open");
 	e.stopPropagation();
 	loadRadio(false);
-})*/
+})
 
 ////////////
 
 //var oldplaybutton = "<button class='btn-sm btn-sidebar playNowButton' type='button' value='"+ytresponse.items[0].id.videoId+"|"+thisTrack.name+"|" +thisTrack.artists.join("*")+"'><i class='el el-play'></i></button>";
 
 var playInTable = "<div class='btn-group'> <button type='button' class='btn btn-info btn-play playNowButton' &&& value='???'><i class='fa fa-play-circle fa-lg'></i></button> <button type='button' class='btn btn-info btn-play dropdown-toggle' &&& data-toggle='dropdown' aria-expanded='false'> <span class='caret'></span> <span class='sr-only'>Toggle Play Dropdown</span> </button> <ul class='dropdown-menu pull-right' role='menu'> <li><a href='#' class='drop-down-play-now'>Play Now</a></li> <li><a href='#' class='drop-down-play-next'>Play Next</a></li> <li><a href='#' class='drop-down-add-to-playlist'>Add to Playlist</a></li></ul> </div>";
-
 
 
 
