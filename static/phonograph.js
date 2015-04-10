@@ -902,7 +902,7 @@ function fillRadioTitle(){
 		gv.radioTitle = getName(gv.origin) + ' Radio';
 	};
 	if (gv.route == "path") {
-		gv.radioTitle = 'Directions from '+getName(gv.source)+' to '+getName(gv.destination);
+		gv.radioTitle = getName(gv.source)+' to '+getName(gv.destination) + " Radio";
 	}
 	if (gv.route == 'termsubgraph') {
 		gv.radioTitle = gv.termLabel + ' Radio'
@@ -941,15 +941,17 @@ function loadSpotify(tracks) {
 }
 
 function makeRadioList() {
-	gv.radioList = [];
-	gv.radioListIds = [];
-	for (l of gv.newGraph.links) {
-		if (gv.radioListIds.indexOf(l.track.id) == -1) {
-			gv.radioList.push(l.track);
-			gv.radioListIds.push(l.track.id);
-		}
+	if (gv.route!="path") {
+		gv.radioList = [];
+		gv.radioListIds = [];
+		for (l of gv.newGraph.links) {
+			if (gv.radioListIds.indexOf(l.track.id) == -1) {
+				gv.radioList.push(l.track);
+				gv.radioListIds.push(l.track.id);
+			}
+		};
+		gv.radioList.sort(compare)
 	};
-	gv.radioList.sort(compare)
 }
 
 function tabSwitch(pane) {
