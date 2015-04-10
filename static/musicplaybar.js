@@ -27,6 +27,10 @@ function playlistAlert(){
 	$('#playlistICON').effect("highlight", {} , 500);
 };
 
+function radioAlert(){
+	$('#radioICON').effect("highlight", {} , 500);
+};
+
 function secondsToString(s){
 	var minutes = Math.floor(s / 60);
 	var seconds = Math.floor(s - (minutes * 60));
@@ -42,7 +46,7 @@ function secondsToString(s){
 // 4. The API will call this function when the video player is ready.
 function onPlayerReady(event) {
 	if(gv.customPlaylist.length !=0){
-		player.cueVideoById(gv.customPlaylist[0][0]);
+		player.cueVideoById(gv.customPlaylist[0].youtubeID);
 	};
 };
 
@@ -52,16 +56,16 @@ function onPlayerReady(event) {
 var done = false;
 
 function parseArtists(track){
-	var artists = "";
 	var i;
-	artists = track[2];
-	for(i=3; i < track.length-1;i++){
-		artists = artists.concat(", ", track[i]);
+	artists = track.artists;
+	var artistString = artists[0];
+	for(i=1; i < artists.length-1;i++){
+		artistString = artistString.concat(", ", artists[i]);
 	};
-	if(track.length>3){
-		artists = artists.concat(" and ", track[track.length-1]);
+	if(artists.length>1){
+		artistString = artistString.concat(" and ", artists[artists.length-1]);
 	};
-	return artists;
+	return artistString;
 }
 
 function onPlayerStateChange(event) {
@@ -83,7 +87,7 @@ function onPlayerStateChange(event) {
 		$('#bufferingsong').show();
 		var track = gv.customPlaylist[currentTrack];
 		var artists = parseArtists(track);
-		var songName = track[1];
+		var songName = track.title;
 		var playerTrackInfo = artists + ' - '+ songName;
 		$('#playerTrackInfo').text(playerTrackInfo);
 		player.playVideo();
@@ -124,7 +128,7 @@ function playNextTrack(){
 			currentTrack=0;
 		};
 		refreshPlaylist();
-		player.cueVideoById(gv.customPlaylist[currentTrack][0]);
+		player.cueVideoById(gv.customPlaylist[currentTrack].youtubeID);
 	};
 }
 
@@ -135,13 +139,13 @@ function playPreviousTrack(){
 	if(currentTrack>0) {
 		currentTrack -=1;
 		refreshPlaylist();
-		player.cueVideoById(gv.customPlaylist[currentTrack][0]);
+		player.cueVideoById(gv.customPlaylist[currentTrack].youtubeIDid);
 		return true;
 	}
 	else{
 		currentTrack = gv.customPlaylist.length-1;
 		refreshPlaylist();
-		player.cueVideoById(gv.customPlaylist[currentTrack][0]);
+		player.cueVideoById(gv.customPlaylist[currentTrack].youtubeID);
 		return false;
 	};
 };
@@ -150,42 +154,43 @@ function playNow(e){
 	refreshPlaylist();
 	playlistAlert();
 	$( "#scrubberSlider" ).slider( "option", "value", 0);	
-	var trackData = e.currentTarget.value.split(",");
-	if(trackData.length < 3){
-		trackData[2] = $('#node-title').text();
+	var trackData = e.currentTarget.value.split("|");
+	var track = {
+		"youtubeID" : trackData[0],
+		"title" : trackData[1],
+		"artists" : trackData[2].split("*")
+	};
+	if(!trackData[2]){
+		track.artists = "Artist";
 	};
 	console.log(trackData);
 	if (currentTrack == null){
 		currentTrack = 0;
-		gv.customPlaylist.push(trackData);
+		gv.customPlaylist.push(track);
 	}
 	else{
 		currentTrack+=1;
-		gv.customPlaylist.splice(currentTrack, 0, trackData);
+		gv.customPlaylist.splice(currentTrack, 0, track);
 		refreshPlaylist();
 	};
 	console.log(gv.customPlaylist[currentTrack]);
-	player.cueVideoById(gv.customPlaylist[currentTrack][0]);
+	player.cueVideoById(gv.customPlaylist[currentTrack].youtubeID);
 };
-
-var $add = $('.add-to-playlist');
-var $table = $('.youtube-table');
-
-$add.click(function () {
-	console.log("clicked add to playlist");
-	console.log($(this).closest('table'));
-	var addedSongs = $table.bootstrapTable('getSelections');
-	console.log(addedSongs);
-});
 
 function addTrackToPlaylist(e){
 	playlistAlert();
 	var ID = e.currentTarget.value;
 	var artist = $('#sideBarTitle').text();
 	var trackName = $(e.currentTarget).parent().parent().find(">:first-child")[0].textContent;
-	gv.customPlaylist.push([ID, artist, trackName]);
+	var track = {
+		"youtubeID": ID,
+		"title": trackName,
+		"artists": "ARTIST"
+	};
+	console.log(track);
+	gv.customPlaylist.push(track);
 	refreshPlaylist();
-}
+};
 
 addPlaySymboltoPlayingTrack=function(i){
 	if(i==currentTrack){
@@ -202,7 +207,7 @@ getPlaylist = function(){
 		playlistData.push({
 			playing: addPlaySymboltoPlayingTrack(i),
 			artist: parseArtists(gv.customPlaylist[i]),
-			title: gv.customPlaylist[i][1],
+			title: gv.customPlaylist[i].title,
 			option: '<button class="btn-sm btn-sidebar optionPlaylist" id="option'+gv.customPlaylist[i][0]+'"><span class="glyphicon glyphicon-option-horizontal"></span></button>',
 			remove: '<button class="btn-sm btn-sidebar removeFromPlaylist" id="remove'+gv.customPlaylist[i][0]+'"><i class="el el-remove-sign"></i></button>',
 			info: gv.customPlaylist[i]
@@ -287,10 +292,10 @@ function makePlaylistSortable(){
 	        	var rows = $('#playlistTable').find('tr[data-index]');
 	        	var newPlaylist = [];
 	        	console.log("BEFORE SLIDE CURRENT TRACK = "+currentTrack);
-	        	var currentID = gv.customPlaylist[currentTrack][0];
+	        	var currentID = gv.customPlaylist[currentTrack].youtubeID;
 	        	for(i=0; i<rows.length;i++){
 	        		oldPos = $(rows[i]).attr("data-index");
-	        		if(gv.customPlaylist[oldPos][0]==currentID){
+	        		if(gv.customPlaylist[oldPos].youtubeID==currentID){
 	        			currentTrack = i;
 	        		};
 	        		newPlaylist[i] = gv.customPlaylist[oldPos];

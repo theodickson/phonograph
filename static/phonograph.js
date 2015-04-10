@@ -485,17 +485,17 @@ function performRequests(mode) {
 		} else {
 			score = 0;
 		};
-
+		console.log(thisTrack.artists);
 		if (score > 0.3) {
 			gv.tableData.push( {
 				"artist": thisTrack.artists.join(", "), 
 				"title": thisTrack.name, 
 				"id": ytresponse.items[0].id.videoId, 
-				"play": "<button class='btn-sm btn-sidebar playNowButton' type='button' value='"+ytresponse.items[0].id.videoId+","+thisTrack.name+"," +thisTrack.artists.join(",")+"'><i class='el el-play'></i></button>"
+				"play": "<button class='btn-sm btn-sidebar playNowButton' type='button' value='"+ytresponse.items[0].id.videoId+"|"+thisTrack.name+"|" +thisTrack.artists.join("*")+"'><i class='el el-play'></i></button>"
 			});
 		} else {
 			gv.tableData.push( {
-				"artist": '<div class="disabled" style="color:grey;">'+thisTrack.artists.join(", ")+'</div>', 
+				"artist": '<div class="disabled" style="color:grey;">'+thisTrack.artists.join(",")+'</div>', 
 				"title": '<div class="disabled" style="color:grey;">'+thisTrack.name+'</div>', 
 				"id": null, 
 				"play": "<button disabled class='btn-sm btn-sidebar disabled playNowButton' type='button'><i class='el el-play'></i></button>"
