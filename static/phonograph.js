@@ -472,6 +472,7 @@ function loadArtistInfo() {
 					artistNames.push(artist.name);
 				};
 				parsedTrack = {'id': track.id, 'name': track.name, 'artists': artistNames};
+				console.log(parsedTrack);
 				gv.requestTracks.push(parsedTrack);
 			};
 			gv.tableData = [];
@@ -537,7 +538,7 @@ function performRequests(mode) {
 			var playbtn = playInTable.replace("???", "");
 			playbtn = playbtn.replace(/&&&/g, "disabled='disabled'");
 			gv.tableData.push( {
-				"artist": '<div class="disabled" style="color:grey;">'+thisTrack.artists.join(",")+'</div>', 
+				"artist": '<div class="disabled" style="color:grey;">'+thisTrack.artists.join("*")+'</div>', 
 				"name": '<div class="disabled" style="color:grey;">'+thisTrack.name+'</div>', 
 				"id": null, 
 				"play": playbtn
@@ -1290,8 +1291,10 @@ $('#ns').change(function(){
 });
 $('#urlShare').click(function(){
     var root = location.protocol + '//' + location.host;
+    var params = flaskURL().replace("/neighbourhood?", "");
+    console.log(params);
 	console.log(root);
-	d3.select('#URL').property({'value': root+flaskURL()});
+	d3.select('#URL').property({'value': root+"/?" +flaskURL()});
 });
 
 //CHECK FOR SearchType

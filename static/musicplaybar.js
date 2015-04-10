@@ -166,6 +166,8 @@ function playPreviousTrack(){
 };
 
 function playNextFromDropdown(track){
+	$("#tuneIn").show(500);
+	$('#radioICON').trigger("click");
 	gv.playMode = "playlist";
 	if (currentTrack == null){
 		currentTrack = 0;
@@ -193,6 +195,9 @@ function playNext(e){
 	playlistAlert();
 	var trackData = e.currentTarget.value.split("|");
 	console.log(trackData);
+	if(typeof trackData[2] === 'undefined'){
+	  trackData[2] = "Artist";
+	};
 	var track = {
 		"youtubeId" : trackData[0],
 		"name" : trackData[1],
@@ -338,6 +343,10 @@ function refreshPlaylist(){
 		currentTrack=$(this).attr("data-index");
 		refreshPlaylist();
 		gv.playMode = "playlist";
+		$('#radioICON').trigger("click");
+		$("#tuneIn").show(500);
+		$("#upNext").hide(500);
+		$("#track1").text("Up Next");
 		player.cueVideoById(gv.customPlaylist[currentTrack][0]);
 	});
 	//REMOVE FROM PLAYLIST ON CLICK OF 'X'
@@ -425,7 +434,10 @@ $('body').on('click','.addToPlaylist', function (e) {
 
 $('body').on('click','.playNowButton', function (e) {
 	gv.playMode = 'playlist';
-	$('#tuneIn').show();
+	$('#tuneIn').show(500);
+	$("#upNext").hide(500);
+	$("#track1").text("Up Next");
+	$("#playlistICON").trigger("click");
 	playNow(e);
 });
 
@@ -602,7 +614,9 @@ function phonograph(){
 //SWTICH TO RADIO MODE ON TUNE IN BUTTON
 $('#tuneIn').on("click", function(){
 	gv.playMode = "radio";
-	$('#tuneIn').hide();
+	$('#tuneIn').hide(500);
+	$("#upNext").show(500);
+	$("#track1").text("Now Playing:");
 	player.cueVideoById(gv.upNext.youtubeId);
 });
 
