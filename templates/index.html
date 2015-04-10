@@ -191,7 +191,7 @@
 						<!-- Youtube -->
 						<div class="tab-pane" id="nodeYoutube">
 							
-							<div class="tableWrapper noselect" align="middle" style="overflow:scroll"> 
+							<div class="tableWrapper noselect" align="middle" style="overflow:auto;"> 
 							<table 
 								id="nodeYoutubeTable" 								
 								class="youtube-table"
@@ -226,7 +226,7 @@
 					
 					<!-- Youtube -->
 					<div class="content-youtube" id="edgeYoutube">
-						<div class="tableWrapper noselect" align="middle" style="overflow:scroll"> 
+						<div class="tableWrapper noselect" align="middle" style="overflow:auto;"> 
 						<table 
 							class="youtube-table"
 							id="edgeYoutubeTable"
@@ -292,8 +292,8 @@
     			<div class='dropdown-menu top-dropdown-right' id='playlistDD'>
     				<form class="form-horizonal">
     					<div class="form-group">
-							<h4 style="text-align: center;">Playlist</h4>
-							<div class="tableWrapper noselect" > 
+							<h4 class="header" style="text-align: center;">Playlist</h4>
+							<div class="tableWrapper noselect content" > 
 					        	<table 
 					        			id="playlistTable" 								
 					        			class="youtube-table"
@@ -339,7 +339,12 @@
     			</div> 
     		</li>-->
     	  	<li id="consoleElement"><a id="previous" type="button" class="navbar"><span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span></a></li>
-    	  	<li><a id="play-pause" type="button" class="navbar"> <span id="playsong" class="glyphicon glyphicon-play" style="display: none;"aria-hidden="true"></span> <span id="pausesong" class="glyphicon glyphicon-pause" style="display: none;" aria-hidden="true"></span><span id="bufferingsong" style="display: inline-block;" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></a></li>
+    	  	<li><a id="play-pause" type="button" class="navbar"> 
+    	  			<span style="display: inline-block;" id="playsong" class="glyphicon glyphicon-play" aria-hidden="true"></span>
+    	  			<span style="display: none;" id="pausesong" class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+    	  			<span style="display: none;" id="bufferingsong"  class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+    	  		</a>
+    	  	</li>
     	  	<li><a id="next" type="button" class="navbar"><span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span></a></li>
     	  	<li><p class="navbar-text" id="currentTime">0.00</p></li>
     	  	<li><div id="scrubberSlider" class="nav-bar pull-left" style="margin:15px; margin-top:22px;"></div></li>

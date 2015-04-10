@@ -370,6 +370,11 @@ function refreshPlaylist(){
 			currentTrack = null; //NO CURRENT TRACK PLAYING
 			while (gv.customPlaylist.length) { gv.customPlaylist.pop(); }; //DESTROY THE PLAYLIST TO BE SURE OF REMOVING ALL ERRORS
 			gv.customPlaylist = [];
+			$('#playerTrackInfo').text("");
+			player.stopVideo();
+			$( "#scrubberSlider" ).slider( "option", "value", 0);
+			$("#player-pause").children().hide()
+			$('#playsong').show();
 		}
 		else if(index > -1){
 			//console.log(gv.customPlaylist);

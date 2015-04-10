@@ -34,7 +34,7 @@ function start_Vis(graph) {
 
 	gv.wellHeight = window.innerHeight - nheight-170+"px";
 	$('#bio').css('height', gv.wellHeight);
-	$('.fixed-table-container').attr({"data-height": height+"px", "data-width": "100%"});
+	$('.fixed-table-container').attr({"data-height": height+"px"});
 	var radius = Math.min(width, height)/2;
 		
 	svg.attr("width", width).attr("height", height);
