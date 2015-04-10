@@ -202,7 +202,7 @@
 
 								<thead>
 								<tr>
-									<th data-field="title" data-sortable="true">Title</th>
+									<th data-field="name" data-sortable="true">Title</th>
 									<th data-field="play"></th>
 									<th data-field="id" data-visible="false"></th>
 								</tr>
@@ -237,7 +237,7 @@
 							<thead>
 							<tr>
 								<th data-field="artist">Artist</th>
-								<th data-field="title" data-sortable="true">Title</th>
+								<th data-field="name" data-sortable="true">Title</th>
 								<th data-field="play"></th>
 								<th data-field="id" data-visible="false"></th>
 							</tr>
@@ -247,48 +247,7 @@
 					</div>
 
 				</div>
-
-				<!-- radio Tab -->
-				<div role="tabpanel" class="tab-pane" id="radioPane">
-
-					<!-- radio header-->
-					<h3 class="sidebar-title" id="radio-title"></h3>
-
-						<!-- Spotify -->
-						<div style="display:none;" class="content-spotify" id="radioSpotify">
-						<div id="radioIframe" align="middle" style="margin-top:30px"></div>
-						</div>
-						
-						<!-- Youtube -->
-						<div class="content-youtube" id="radioYoutube">
-							<div class="tableWrapper noselect"> 
-							<table 
-								class="youtube-table"
-								id="radioYoutubeTable"
-								data-show-header="true"
-								data-toggle="table"
-								data-striped="true"
-							>
-								<thead>
-								<tr>
-									<th data-field="state" data-align="center" data-checkbox="true"></th>
-									<th data-field="artist">Artist</th>
-									<th data-field="title" data-sortable="true">Title</th>
-									<th data-field="play"></th>
-									<th data-field="id" data-visible="false"></th>
-								</tr>
-								</thead>
-				        	</table>
-				        	<button class="add-to-playlist" class="btn btn-primary">
-				        	    <i class="fa fa-plus-square"></i> Add to Playlist
-				        	</button>
-				        	<div class="videoWrapper" align="middle"><div id="player" style="height:1px;"></div></div>	
-				        	</div>
-				        
-						</div>
-
-					</div>
-				</div>
+			</div>
 
 
 		</div>
@@ -346,7 +305,7 @@
 					        	    <tr>
 					        	    	<th data-field="playing" data-valign="middle"></th>
 					        	    	<th data-field="artist">Artist</th>
-					        	    	<th data-field="title" data-sortable="true">Title</th>
+					        	    	<th data-field="name" data-sortable="true">Title</th>
 					        	    	<th data-field="remove"></th>
 					        	    	<th data-field="id" data-visible="false"></th>
 					        	    </tr>
@@ -362,7 +321,13 @@
     			<div class='dropdown-menu top-dropdown-right' id='radioDD'>
     				<form class="form-horizonal">
     					<div class="form-group">
-							<h4 style="text-align: center;">Radio</h4>
+							<h4 style="text-align:center;" id="radio-title"></h4>
+							<h5 style="text-align: left;">Now Playing:</h5>
+							<h5 style="text-align:center;" id="radio-now-playing"></h5>
+							<h5 style="text-align: left;">Up Next:</h5>
+							<h5 style="text-align:center;" id="radio-up-next"></h5>
+							<div class="videoWrapper" align="middle"><div id="player" style="height:1px;"></div></div>	
+
 						</div>
 		        	</form>
     			</div> 

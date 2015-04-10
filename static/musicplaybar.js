@@ -1,3 +1,7 @@
+gv.customPlaylist = [] //NOTHING IN PLAYLIST TO STARTONTENTS OF STARTING GRAPH
+var currentTrack = null;
+
+// 2. This code loads the IFrame Player API code asynchronously.
 var tag = document.createElement('script');
 
 tag.src = "https://www.youtube.com/iframe_api";
@@ -7,20 +11,16 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 // 3. This function creates an <iframe> (and YouTube player)
 //    after the API code downloads.
 var player;
-gv.customPlaylist = [] //NOTHING IN PLAYLIST TO STARTONTENTS OF STARTING GRAPH
-var currentTrack = null;
-
 function onYouTubeIframeAPIReady() {
-	player = new YT.Player('player', {
-		height: '100',
-		width: '640',
-		videoId: 'M7lc1UVf-VE',
-		events: {
-			'onReady': onPlayerReady,
-			'onStateChange': onPlayerStateChange
-		}
-
-	});
+  player = new YT.Player('player', {
+    height: '390',
+    width: '640',
+    videoId: 'M7lc1UVf-VE',
+    events: {
+      'onReady': onPlayerReady,
+      'onStateChange': onPlayerStateChange
+    }
+  });
 }
 
 function playlistAlert(){
@@ -45,9 +45,8 @@ function secondsToString(s){
 
 // 4. The API will call this function when the video player is ready.
 function onPlayerReady(event) {
-	if(gv.customPlaylist.length !=0){
-		player.cueVideoById(gv.customPlaylist[0].youtubeId);
-	};
+	//WHEN YT READY LOAD RADIO 
+	loadRadio();
 };
 
 // 5. The API calls this function when the player's state changes.
@@ -69,7 +68,7 @@ function parseArtists(track){
 }
 
 function onPlayerStateChange(event) {
-	console.log(event);
+	//console.log(event);
 	if(event.data == 3 || event.data == -1){
 		$('#play-pause').children().hide();
 		$('#bufferingsong').show();
@@ -85,9 +84,16 @@ function onPlayerStateChange(event) {
 	else if(event.data == 5){
 		$('#play-pause').children().hide();
 		$('#bufferingsong').show();
-		var track = gv.customPlaylist[currentTrack];
+		var track = [];
+		if(gv.playMode == "radio"){
+			//console.log(track);
+			track = gv.nowPlaying;
+		}
+		else{
+			track = gv.customPlaylist[currentTrack];
+		};
 		var artists = parseArtists(track);
-		var songName = track.title;
+		var songName = track.name;
 		var playerTrackInfo = artists + ' - '+ songName;
 		$('#playerTrackInfo').text(playerTrackInfo);
 		player.playVideo();
@@ -112,24 +118,32 @@ function onPlayerStateChange(event) {
 }
 
 function playNextTrack(){
-	playlistAlert();
-	refreshPlaylist();
 	$( "#scrubberSlider" ).slider( "option", "value", 0);
-	if(gv.customPlaylist.length == 0){
+	if(gv.playMode == "playlist"){
+		playlistAlert();
 		refreshPlaylist();
-		player.stopVideo();
-		$('#playerTrackInfo').text("");
-	}
-	else{
-		if(currentTrack+1<gv.customPlaylist.length ){
-			currentTrack +=1;
+		if(gv.customPlaylist.length == 0){
+			refreshPlaylist();
+			player.stopVideo();
+			$('#playerTrackInfo').text("");
 		}
 		else{
-			currentTrack=0;
-		};
-		refreshPlaylist();
-		player.cueVideoById(gv.customPlaylist[currentTrack].youtubeId);
+			if(currentTrack+1<gv.customPlaylist.length ){
+				currentTrack +=1;
+			}
+			else{
+				currentTrack=0;
+			};
+			refreshPlaylist();
+			player.cueVideoById(gv.customPlaylist[currentTrack].youtubeId);
+		};	
+	}
+	else if(gv.playMode == "radio"){
+		radioAlert();
+		performRadioRequests("upNext");
+		player.cueVideoById(gv.nowPlaying.youtubeId);
 	};
+	
 }
 
 function playPreviousTrack(){
@@ -155,16 +169,16 @@ function playNow(e){
 	playlistAlert();
 	$( "#scrubberSlider" ).slider( "option", "value", 0);	
 	var trackData = e.currentTarget.value.split("|");
-	console.log(trackData);
+	//console.log(trackData);
 	var track = {
 		"youtubeId" : trackData[0],
-		"title" : trackData[1],
+		"name" : trackData[1],
 		"artists" : trackData[2].split("*")
 	};
 	if(!trackData[2]){
 		track.artists = "Artist";
 	};
-	console.log(trackData);
+	//console.log(trackData);
 	if (currentTrack == null){
 		currentTrack = 0;
 		gv.customPlaylist.push(track);
@@ -174,7 +188,7 @@ function playNow(e){
 		gv.customPlaylist.splice(currentTrack, 0, track);
 		refreshPlaylist();
 	};
-	console.log(gv.customPlaylist[currentTrack]);
+	//console.log(gv.customPlaylist[currentTrack]);
 	player.cueVideoById(gv.customPlaylist[currentTrack].youtubeId);
 };
 
@@ -185,7 +199,7 @@ function addTrackToPlaylist(e){
 	var trackName = $(e.currentTarget).parent().parent().find(">:first-child")[0].textContent;
 	var track = {
 		"youtubeId": ID,
-		"title": trackName,
+		"name": trackName,
 		"artists": "ARTIST"
 	};
 	console.log(track);
@@ -208,7 +222,7 @@ getPlaylist = function(){
 		playlistData.push({
 			playing: addPlaySymboltoPlayingTrack(i),
 			artist: parseArtists(gv.customPlaylist[i]),
-			title: gv.customPlaylist[i].title,
+			name: gv.customPlaylist[i].name,
 			option: '<button class="btn-sm btn-sidebar optionPlaylist" id="option'+gv.customPlaylist[i][0]+'"><span class="glyphicon glyphicon-option-horizontal"></span></button>',
 			remove: '<button class="btn-sm btn-sidebar removeFromPlaylist" id="remove'+gv.customPlaylist[i][0]+'"><i class="el el-remove-sign"></i></button>',
 			info: gv.customPlaylist[i]
@@ -279,7 +293,7 @@ function makePlaylistSortable(){
 	        update: function( event, ui ) {
 	        	var rows = $('#playlistTable').find('tr[data-index]');
 	        	var newPlaylist = [];
-	        	console.log("BEFORE SLIDE CURRENT TRACK = "+currentTrack);
+	        	//console.log("BEFORE SLIDE CURRENT TRACK = "+currentTrack);
 	        	var currentID = gv.customPlaylist[currentTrack].youtubeId;
 	        	for(i=0; i<rows.length;i++){
 	        		oldPos = $(rows[i]).attr("data-index");
@@ -288,9 +302,9 @@ function makePlaylistSortable(){
 	        		};
 	        		newPlaylist[i] = gv.customPlaylist[oldPos];
 	        	};
-	        	console.log("CURRENT TRACK = " + currentTrack);
+	        	//console.log("CURRENT TRACK = " + currentTrack);
 	        	gv.customPlaylist = newPlaylist;
-	        	console.log(gv.customPlaylist);
+	        	//console.log(gv.customPlaylist);
 	        	refreshPlaylist();
 
 	        }
@@ -298,12 +312,12 @@ function makePlaylistSortable(){
 }
 
 function refreshPlaylist(){
-	console.log("refreshing playlist");
+	//console.log("refreshing playlist");
 	$playlistTable = $('#playlistTable');
 	$playlistTable.bootstrapTable('load', getPlaylist())
 	$playlistTable.bootstrapTable('resetView');
 	makePlaylistSortable();
-	console.log(gv.customPlaylist);
+	//console.log(gv.customPlaylist);
 
 	//PLAY FROM PLAYLIST ON DOUBLE CLICK OF ROW
 	$('#playlistTable').find('tr').dblclick(function(){
@@ -314,7 +328,7 @@ function refreshPlaylist(){
 	//REMOVE FROM PLAYLIST ON CLICK OF 'X'
 	$('.removeFromPlaylist').on('click', function(){
 		var index = $(this).closest('tr').attr("data-index");
-		console.log("INDEX ofDELETION : "+index +"    INDEX OF CURRENT "+currentTrack);
+		//console.log("INDEX ofDELETION : "+index +"    INDEX OF CURRENT "+currentTrack);
 		//IF DELETING THE ONLY SONG ON THE PLAYLIST
 		if (index == 0 && gv.customPlaylist.length == 1){
 			currentTrack = null; //NO CURRENT TRACK PLAYING
@@ -322,24 +336,24 @@ function refreshPlaylist(){
 			gv.customPlaylist = [];
 		}
 		else if(index > -1){
-			console.log(gv.customPlaylist);
-			console.log("DELTING INDEX: "+index);
+			//console.log(gv.customPlaylist);
+			//console.log("DELTING INDEX: "+index);
 			gv.customPlaylist.splice(index, 1);
 			//IF DELETING THE FIRST TRACK WHICH IS ALSO PLAYING
 			if(index==0 && index == currentTrack){
-				console.log("deleting current track which is 1st");
+				//console.log("deleting current track which is 1st");
 				currentTrack-=1;
 				playNextTrack();
 			}
 			//IF DELETING THE PLAYING TRACK PLAY THE PREVIOUS TRACK
 			else if(index==currentTrack){
-				console.log("deleting current track");
+				//console.log("deleting current track");
 				currentTrack-=1;
 				playNextTrack();
 			}
 			//IF DELETING A TRACK BELOW THE CURRENT TRACK EVERYTHING MOVES DOWN IN THE ARRAY
 			else if(index<currentTrack){
-				console.log("below track");
+				//console.log("below track");
 				currentTrack-=1;
 			}
 			//IF DELETING A TRACK ABOVE THE CURRENT TRACK THE CURRENT TRACKS POSITION STAYS THE SAME
@@ -487,11 +501,11 @@ function isEllipsisActive(e) {
 }
 $("#INFO").hover(function () {
     if(isEllipsisActive($('#playerTrackInfo')) || $('#playerTrackInfo').hasClass('marquee')){
-    	//console.log("active");
+    	////console.log("active");
         $("#playerTrackInfo").toggleClass("marquee ellipsis");
     }
     else{
-    	//console.log("unactive");
+    	////console.log("unactive");
     };
 });
 
@@ -517,7 +531,7 @@ var currentService = gv.currentService; //INITIAL SERVICE IS YOUTUBE BY DEFAULT
 $('.spotify').hide();
 
 $('.service-choice').on('click', function(){
-	console.log(currentService);
+	//console.log(currentService);
 	var newService = $(this).attr("id").replace("service-choice-", "");
 	var newIcon = $(this).children('i').clone();
 	$('#service-choice-displayed').children().first().replaceWith(newIcon);
@@ -562,7 +576,12 @@ $('body')
     e.stopPropagation();
 });
 
-
+//IF MODE IS RADIO PLAY THE RADIO
+function phonograph(){
+	gv.radioStarted = true;
+	console.log(gv.nowPlaying);
+	player.cueVideoById(gv.nowPlaying.youtubeId);
+}
 
 
 

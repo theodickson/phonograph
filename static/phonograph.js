@@ -111,7 +111,7 @@ function start_Vis(graph) {
 	
 	gv.newGraph = graph;
 	
-	loadRadio();
+
 
 	if ( !(gv.route == "path") ) {
 		$('.numArtists').show();
@@ -276,12 +276,12 @@ gv.playlist = [];
 gv.size = 20;
 gv.clickable = true
 gv.clicked = null;
-gv.playMode = 'playlist';
 gv.clickedNode = null;
 gv.currentArtist = null;
 gv.currentLink = null;
 gv.clickedRadius = 30;
 gv.clickedStrokeWidth = 4;
+gv.playMode = 'radio';
 var width, height;
 var svg = d3.select("#map").append("svg")
 	.attr("id", "svg")
@@ -596,6 +596,16 @@ function performRadioRequests(mode) {
 			};
 		};
 	});
+	if(mode == "nowPlaying"){
+		$('#radio-now-playing').text(thisTrack.name);
+	}
+	else{
+		$('#radio-up-next').text(thisTrack.name);
+		if(gv.playMode =="radio"){
+			//STARTING THE PHONOGRAPH
+			phonograph();
+		}
+	};
 };
 
 function loadEdgeInfo(){
@@ -1082,35 +1092,7 @@ $( "#addtoSubgraph" ).autocomplete({
     },
 });
 */
-//Youtube stuff.
-var tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api?wmode=transparent";
-var firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-var player;
-function onYouTubeIframeAPIReady() {
-player = new YT.Player('player', {
-  events: {
-	'onReady': onPlayerReady,
-	'onStateChange': onPlayerStateChange
-  }
-});
-};
 
-function onPlayerReady(event) {
-event.target.playVideo();
-}
-var done = false;
-function onPlayerStateChange(event) {
-if (event.data == YT.PlayerState.PLAYING && !done) {
-  //fullimeout(stopVideo, 6000);
-  done = true;
-}
-}
-
-function stopVideo() {
-player.stopVideo();
-};
 
 function addToSidebarHistory(cat, object){
 	gv.sidebars.splice(1+gv.currentSidebar, gv.sidebars.length-gv.currentSidebar, [cat, object]);
