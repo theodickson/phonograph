@@ -454,7 +454,7 @@ function performRequests(mode) {
 	//console.log(mode);
 	if (mode == 'radio') {
 		thisTrack = gv.radioList[gv.requestCounter];
-		requestLength = gv.radioList.length
+		requestLength = 2
 	}
 	if (mode == 'node') {
 		thisTrack = gv.nodeTracks[gv.requestCounter];
