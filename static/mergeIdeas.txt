@@ -1,0 +1,28 @@
+Two type of merge:
+	Straight merge:
+		a1, a2: pop(a1) > pop(a2)
+		If name(a2)<name(a1), take name(a2) otherwise, take name(a1)
+		Assign all of a2's tracks to a1.
+		Replace all neighbour mentions of a2 with a1.
+		mergemapper[a2] = a1
+		Delete a2
+	Splitter merge:
+		a1,a2: a2 = 'a1&a3'
+		splitmergemapper.setdefault(a2, set([])).update(a1)
+		Assign all of a2's tracks to a1.
+
+
+
+For each track:
+	Do previous merges on artists.
+	Determine which artists have splitters.
+	If none:
+		For each artist:
+			Find merges.
+			If none:
+				Store.
+		Store track.
+	Else:
+		For each name with splitters:
+			For each other name:
+				Find merges.

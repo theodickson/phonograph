@@ -40,9 +40,11 @@ function start_Vis(graph) {
 	};
 
 	var popvals = [];
-	for (d of graph.nodes) { popvals.push(d3.max([parseInt(d.popularity,10),1])) };
-	////console.log(popvals);
-	////console.log(d3.min(popvals));
+	gv.artist = {};
+	for (d of graph.nodes) {
+		popvals.push(d3.max([parseInt(d.popularity,10),1]));
+		gv.artist[d.id] = {name: d.name, }};
+
 	nodeScale = d3.scale.log(1.5)
 						.domain([d3.min(popvals), d3.max(popvals)])
 						.range([10, 20]);
@@ -133,7 +135,7 @@ function start_Vis(graph) {
 			.attr("transform", "translate("+wScale(newNode.pos[0])+","+hScale(newNode.pos[1])+")")
 	};
 	
-	var link = svg.selectAll(".link")
+	gv.link = svg.selectAll(".link")
 		.data(graph.links).enter().append("line")
 		.attr("class", "link")
 		.attr("x1", function(d) { return wScale(graph.nodes[d.source].pos[0]); })
@@ -161,7 +163,7 @@ function start_Vis(graph) {
 				};
 			});
 		
-	var node = svg.selectAll(".node")
+	gv.node = svg.selectAll(".node")
 			.data(graph.nodes)
 			.enter()
 			.append("g")
@@ -170,8 +172,8 @@ function start_Vis(graph) {
 			.attr("transform", function(d) { return 'translate('+wScale(d.pos[0])+','+hScale(d.pos[1])+')' })
 			.style("opacity", 0)
 			.on("click", function(d) {
-				if ( (clicked != this)&&(gv.clickable) ) {
-					clickNode(this, d, true);
+				if ( (gv.clicked != d.id)&&(gv.clickable) ) {
+					clickNode(d.id);
 				};
 				d3.event.stopPropagation(); 
 			})
@@ -186,12 +188,12 @@ function start_Vis(graph) {
 			});
 			
 	
-	node.append("circle")
+	gv.node.append("circle")
 		.attr("class", function(d) {
 			return "ncircle "+d.genre;
 		})
 		.attr("r", function(d) {////console.log(d.popularity);
-			if ((gv.origin != null)&&(clicked)) {
+			if ((gv.origin != null)&&(gv.clicked)) {
 				if (d.id == gv.origin) {
 					return 30;
 				};
@@ -207,7 +209,7 @@ function start_Vis(graph) {
 			return strokeScale(d.popularity);
 		});
 	
-	node.append("text")
+	gv.node.append("text")
 		.attr("class", "firstLabel")
 		.attr("dy", function(d) {return firstLabelHeight(d); })
 		.attr("text-anchor", "middle")
@@ -222,7 +224,7 @@ function start_Vis(graph) {
 			return firstLabel(d);
 		});	
 	
-	node.append("text")
+	gv.node.append("text")
 		.attr("class", "secondLabel")
 		.attr("dy", function(d) { return "0.9em"; })
 		.attr("text-anchor", "middle")
@@ -245,9 +247,9 @@ function start_Vis(graph) {
 			if (gv.origin != null) {
 				if (d.id == gv.origin) {
 					if (gv.route == "zoom") {
-						clickNode(this, d, false);
+						//clickNode(this, d, false);
 					} else {
-						clickNode(this, d, true);
+						//clickNode(this, d, true);
 					};
 				};
 			} else {
@@ -284,7 +286,7 @@ gv.currentService = "youtube";
 gv.playlist = [];
 gv.size = 20;
 gv.clickable = true
-var clicked = null;
+gv.clicked = null;
 var width, height;
 var svg = d3.select("#map").append("svg")
 	.attr("id", "svg")
@@ -292,7 +294,7 @@ var svg = d3.select("#map").append("svg")
 	.on("click", function() { 
 		if (gv.clickable) {
 			dehighlightLinks();
-			unclick(clicked);
+			unclickNode();
 		};
 	})
 	
@@ -347,60 +349,48 @@ reload();
 
 //Supplementary functions:
 //Action functions:
-function clickNode(n, o, hl) {
+function clickNode(id) {
 	dehighlightLinks();
-	if (clicked != null) { unclick(clicked); };
-	clicked = n;
-	d3.select(clicked).select(".firstLabel").transition().duration(500)
+	unclickNode();
+	gv.clicked = id;
+	elt = gv.node.filter(function(d, i) { return (d.id==id); });
+	elt.select(".firstLabel").transition().duration(500)
 		.style("font-size", "18px");
-	d3.select(clicked).select(".secondLabel").transition().duration(500)
+	elt.select(".secondLabel").transition().duration(500)
 		.style("font-size", "18px")
 		.attr("dy", "0.91em");
-	d3.select(clicked).select("circle").transition().duration(500)
+	elt.select("circle").transition().duration(500)
 		.attr("r", 30)
 		.attr("stroke-width", 4); 
-	if (hl) { highlightLinks(); }
+	highlightLinks();
 	$('#nodeYoutubeTable').bootstrapTable('showLoading');
-	addToSidebarHistory(0, o);
-	loadArtistInfo(o);
+	//addToSidebarHistory(0, o);
+	loadArtistInfo(id);
 };
 
-function unclick(d) { 
-	d3.select(clicked).select(".firstLabel").transition().duration(500)
-		.style("font-size", function(d) { return firstLabelFont(d); });
-	d3.select(clicked).select(".secondLabel").transition().duration(500)
-		.style("font-size", function(d) { return secondLabelFont(d); })
-		.attr("dy", "0.9em");
-	d3.select(d).select("circle").transition()
-		.duration(500)
-		.attr("r", function(d) { return nodeScale(d.popularity); })
-		.attr("stroke-width", function(d) { return strokeScale(d.popularity); })
-		.style("fill-opacity", 1);
-	clicked = null;
-};
-
-/* WE THINK THIS DOESNT EXIST ANY MORE
-function loadPathInfo(names){
-	tabSwitch("path");
-	////console.log(names);
-	$('#radio-title').text(names);
-
-	if(gv.currentService=="spotify"){
-		d3.select('#pathIframe').html( function() { 
-			return '<iframe src="https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+ gv.playlist.join(',') +'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; 
-		});
+function unclickNode() {
+	if (gv.clicked) {
+		elt = gv.node.filter(function(d, i) { return (d.id==gv.clicked); });
+		elt.select(".firstLabel").transition().duration(500)
+			.style("font-size", function(d) { return firstLabelFont(d); });
+		elt.select(".secondLabel").transition().duration(500)
+			.style("font-size", function(d) { return secondLabelFont(d); })
+			.attr("dy", "0.9em");
+		elt.select("circle").transition()
+			.duration(500)
+			.attr("r", function(d) { return nodeScale(d.popularity); })
+			.attr("stroke-width", function(d) { return strokeScale(d.popularity); })
+			.style("fill-opacity", 1);
+		gv.clicked = null;
 	};
-	gv.requestCounter = 0; gv.tableData = [];
-	performRequests('path');
-}
-*/
-function loadArtistInfo(o) {
-	gv.currentArtistName = o.name;
-	gv.currentArtist = o.id;
+};
+
+function loadArtistInfo(id) {
+	gv.currentArtistName = gv.artist[id].name;
+	gv.currentArtist = id;
 	tabSwitch("node");
-	$('#node-title').text(o.name);
-	d3.json("http://developer.echonest.com/api/v4/artist/biographies?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+o.id+"&format=json&results=1&start=0&license=cc-by-sa", function(error, response) {
-		////console.log(response);
+	$('#node-title').text(gv.currentArtistName);
+	d3.json("http://developer.echonest.com/api/v4/artist/biographies?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json&results=1&start=0&license=cc-by-sa", function(error, response) {
 		if(error){
 			d3.select('#bioText').text("Biography not found in database");
 		}
@@ -410,7 +400,7 @@ function loadArtistInfo(o) {
 			d3.select('#bioText').text(bio);
 		}
 	});
-	d3.json("http://developer.echonest.com/api/v4/artist/images?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+o.id+"&format=json&results=1&start=0", function(error, response) {
+	d3.json("http://developer.echonest.com/api/v4/artist/images?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json&results=1&start=0", function(error, response) {
 		if(error){
 			d3.select('#artistImage').html( function() { return '<img src="static/images/default.jpg" style="max-width: 180px; max-height: 240p" class="img-thumbnail center-block"/>'; });
 		}
@@ -422,22 +412,22 @@ function loadArtistInfo(o) {
 	});
 
 	if(gv.currentService=="spotify"){
-		d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+o.id+'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
+		d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+id+'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
 	};
 
-	d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+o.id+'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
+	d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+id+'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
 
-	d3.json("http://developer.echonest.com/api/v4/artist/twitter?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+o.id+"&format=json", function(error, response) {
+	d3.json("http://developer.echonest.com/api/v4/artist/twitter?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json", function(error, response) {
 		var twttrId = response.response.artist.twitter;
 		if (typeof(twttrId)!= "undefined") {
 			d3.select('#twitter').html('<a id="twitterTimeline" height="'+gv.wellHeight+'" class="twitter-timeline" href="https://twitter.com/'+twttrId+'" data-widget-id="574576262469009409" text="HAHAHAHAH" data-screen-name="'+twttrId+'">Loading Tweets by @'+twttrId+'</a>');
 			twttr.widgets.load();
 		} else {
-			d3.select('#twitter').html('<p><em>Twitter Data Not Found</em></p><p><a href="#">Click here to update Phonograph</a></p>');
+			d3.select('#twitter').html('<p><em>Twitter account not found.</em></p>');
 		};
 	});
 	
-	d3.json("https://api.spotify.com/v1/artists/"+o.id+"/top-tracks?country=GB", function (error, response) {
+	d3.json("https://api.spotify.com/v1/artists/"+id+"/top-tracks?country=GB", function (error, response) {
 		gv.nodeTracks = [];
 		for (track of response.tracks) {
 			artistNames = [];
@@ -667,9 +657,8 @@ function secondLabelFont(d) {
 	return (labelScale(d.popularity)*0.85).toString() + "px";
 };
 
-function isHighlighted(d) { if (clicked!=null) { 
-		return (clicked.id == 'a'+gv.oldGraph.nodes[d.source].id) || (clicked.id == 'a'+gv.oldGraph.nodes[d.target].id);
-	}
+function isHighlighted(d) {
+		return (gv.clicked == gv.oldGraph.nodes[d.source].id) || (gv.clicked == gv.oldGraph.nodes[d.target].id);
 	return false;
 };
 
@@ -834,34 +823,18 @@ function loadSpotify(tracks) {
 	d3.select('#radioIframe').html( function() { return '<iframe src='+spotifyUrl+' width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
 
 }
+
 function makeRadioList() {
-	////console.log(graph.links);
-	originTracks = [];
-	otherTracks = [];
-	originIndex = newIds.indexOf(gv.origin);
-	////console.log(originIndex);
+	gv.radioList = [];
+	gv.radioListIds = [];
 	for (l of gv.newGraph.links) {
-		if ((l.source==originIndex)||(l.target==originIndex)) {
-			originTracks.push(l.track)
-		} else {
-			otherTracks.push(l.track)
-		};
+		if (gv.radioListIds.indexOf(l.track.id) == -1) {
+			gv.radioList.push(l.track);
+			gv.radioListIds.push(l.track.id);
+		}
 	};
-	//console.log(originTracks);
-	//console.log(otherTracks);
-	originTracks.sort(compare)
-	otherTracks.sort(compare)
-	////console.log(originTracks);
-	////console.log(otherTracks);
-	gv.radioList = [otherTracks[0]];
-	otherTracks.splice(0,1);
-	toAdd = originTracks.concat(otherTracks);
-	////console.log(toAdd);
-	toAdd.sort(compare);
-	for (i=0; i < 5; i++) {
-		gv.radioList.push(toAdd[i])
-	};
-	////console.log(radioTracks);
+	gv.radioList.sort(compare)
+	console.log(gv.radioList);
 }
 
 function tabSwitch(pane) {
