@@ -541,14 +541,10 @@ $('.service-choice').on('click', function(){
 	  		$('.spotify').find('iframe').remove();
 	  	};
 	  	if (gv.currentLink) {
-	  		d = gv.currentLink;
-	  		gv.currentLink = null;
-	  		getLinkInfo(d);
+	  		loadEdgeInfo();
 	  	};
 	  	if (gv.currentArtist) {
-	  		d = gv.currentArtist;
-	  		gv.currentArtist = null;
-	  		loadArtistInfo(d);
+	  		loadArtistInfo();
 	  	};
 	};
 });

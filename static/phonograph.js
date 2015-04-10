@@ -5,7 +5,8 @@ function reload() {
 	d3.json(flaskURL(), function(error, graph) {
 		if (graph.origin) {
 			gv.origin = graph.origin;
-			//gv.currentArtist = graph.origin;
+			gv.currentArtist = graph.origin;
+			gv.clickedNode = graph.origin;
 		} else {
 			gv.origin = null;
 		}
@@ -173,8 +174,8 @@ function start_Vis(graph) {
 			.attr("transform", function(d) { return 'translate('+wScale(d.pos[0])+','+hScale(d.pos[1])+')' })
 			.style("opacity", 0)
 			.on("click", function(d) {
-				if ( (gv.currentArtist != d.id || gv.clicked != d.id)&&(gv.clickable) ) {
-					clickNode(d.id);
+				if (gv.clickable) {
+					clickNode(d);
 				};
 				d3.event.stopPropagation(); 
 			})
@@ -241,8 +242,7 @@ function start_Vis(graph) {
 		.each("end", function() {
 			if (transitions==gv.node.length) {
 				if (gv.origin) {
-					gv.clicked = gv.origin;
-					loadArtistInfo(gv.origin);
+					loadArtistInfo();
 				};
 				gv.clickable = true;
 			};
@@ -277,14 +277,20 @@ gv.size = 20;
 gv.clickable = true
 gv.clicked = null;
 gv.playMode = 'playlist';
+gv.clickedNode = null;
+gv.currentArtist = null;
+gv.currentLink = null;
+gv.clickedRadius = 30;
+gv.clickedStrokeWidth = 4;
 var width, height;
 var svg = d3.select("#map").append("svg")
 	.attr("id", "svg")
 	.attr("class", "svg")
 	.on("click", function() { 
 		if (gv.clickable) {
+			gv.clickedNode = null;
+			highlightNode();
 			dehighlightLinks();
-			unclickNode();
 		};
 	})
 	
@@ -344,24 +350,53 @@ reload();
 
 //Supplementary functions:
 //Action functions:
-function clickNode(id) {
-	dehighlightLinks();
-	unclickNode();
-	gv.clicked = id;
-	elt = gv.node.filter(function(d, i) { return (d.id==id); });
-	elt.select(".firstLabel").transition().duration(500)
-		.style("font-size", "18px");
-	elt.select(".secondLabel").transition().duration(500)
-		.style("font-size", "18px")
-		.attr("dy", "0.91em");
-	elt.select("circle").transition().duration(500)
-		.attr("r", 30)
-		.attr("stroke-width", 4); 
-	highlightLinks();
-	$('#nodeYoutubeTable').bootstrapTable('showLoading');
-	//addToSidebarHistory(0, o);
-	loadArtistInfo(id);
+function clickNode(d) {
+	gv.currentLink = null;
+	if (gv.clickedNode != d.id) {
+		gv.clickedNode = d.id;
+		highlightNode();
+		highlightLinks();
+	}
+	if (gv.currentArtist != d.id) {
+		gv.currentArtist = d.id;
+		loadArtistInfo();
+		tabSwitch('node');
+	}
 };
+
+function highlightNode() {
+	d3.selectAll('circle').transition().duration(500)
+		.attr('r', function(d) {
+			if (d.id == gv.clickedNode) {
+				return gv.clickedRadius; 
+			} else {
+				return nodeScale(d.popularity)
+			};
+		})
+		.attr('stroke-width', function(d) {
+			if (d.id == gv.clickedNode) {
+				return gv.clickedStrokeWidth; 
+			} else {
+				return strokeScale(d.popularity)
+			};
+		});
+	d3.selectAll('.firstLabel').transition().duration(500)
+		.style('font-size', function(d) {
+			if (d.id == gv.clickedNode) {
+				return "18px"; 
+			} else {
+				return firstLabelFont(d);
+			};
+		});
+	d3.selectAll('.secondLabel').transition().duration(500)
+		.style('font-size', function(d) {
+			if (d.id == gv.clickedNode) {
+				return "18px"; 
+			} else {
+				return secondLabelFont(d);
+			};
+		});
+}
 
 function unclickNode() {
 	if (gv.clicked) {
@@ -381,63 +416,60 @@ function unclickNode() {
 	};
 };
 
-function loadArtistInfo(id) {
-	if (gv.currentArtist != id) {
-		gv.currentArtistName = gv.artist[id].name;
-		gv.currentArtist = id;
-		tabSwitch("node");
-		$('#node-title').text(gv.currentArtistName);
-		d3.json("http://developer.echonest.com/api/v4/artist/biographies?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json&results=1&start=0&license=cc-by-sa", function(error, response) {
-			if(error){
-				d3.select('#bioText').text("Biography not found in database");
-			}
-			else{
-				var bio = response.response.biographies[0].text;
-				////console.log(bio);
-				d3.select('#bioText').text(bio);
-			}
-		});
-		d3.json("http://developer.echonest.com/api/v4/artist/images?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json&results=1&start=0", function(error, response) {
-			if(error){
-				d3.select('#artistImage').html( function() { return '<img src="static/images/default.jpg" style="max-width: 180px; max-height: 240p" class="img-thumbnail center-block"/>'; });
-			}
-			else{
-				var image = response.response.images[0].url;
-				d3.select('#artistImage').html( function() { return '<img src="'+image+'" style="max-width: 180px; max-height: 240p" class="img-thumbnail center-block"/>'; });
+function loadArtistInfo() {
+	gv.currentArtistName = 'asdfas';
+	id  = gv.currentArtist;
+	$('#node-title').text(gv.currentArtistName);
+	d3.json("http://developer.echonest.com/api/v4/artist/biographies?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json&results=1&start=0&license=cc-by-sa", function(error, response) {
+		if(error){
+			d3.select('#bioText').text("Biography not found in database");
+		}
+		else{
+			var bio = response.response.biographies[0].text;
+			////console.log(bio);
+			d3.select('#bioText').text(bio);
+		}
+	});
+	d3.json("http://developer.echonest.com/api/v4/artist/images?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json&results=1&start=0", function(error, response) {
+		if(error){
+			d3.select('#artistImage').html( function() { return '<img src="static/images/default.jpg" style="max-width: 180px; max-height: 240p" class="img-thumbnail center-block"/>'; });
+		}
+		else{
+			var image = response.response.images[0].url;
+			d3.select('#artistImage').html( function() { return '<img src="'+image+'" style="max-width: 180px; max-height: 240p" class="img-thumbnail center-block"/>'; });
 
-			};
-		});
-
-		if(gv.currentService=="spotify"){
-			d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+id+'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
 		};
+	});
 
+	if(gv.currentService=="spotify"){
 		d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+id+'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
-
-		d3.json("http://developer.echonest.com/api/v4/artist/twitter?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json", function(error, response) {
-			var twttrId = response.response.artist.twitter;
-			if (typeof(twttrId)!= "undefined") {
-				d3.select('#twitter').html('<a id="twitterTimeline" height="'+gv.wellHeight+'" class="twitter-timeline" href="https://twitter.com/'+twttrId+'" data-widget-id="574576262469009409" text="HAHAHAHAH" data-screen-name="'+twttrId+'">Loading Tweets by @'+twttrId+'</a>');
-				twttr.widgets.load();
-			} else {
-				d3.select('#twitter').html('<p><em>Twitter account not found.</em></p>');
-			};
-		});
-		
-		d3.json("https://api.spotify.com/v1/artists/"+id+"/top-tracks?country=GB", function (error, response) {
-			gv.requestTracks = [];
-			for (track of response.tracks) {
-				artistNames = [];
-				for (artist of track.artists) {
-					artistNames.push(artist.name);
-				};
-				parsedTrack = {'id': track.id, 'name': track.name, 'artists': artistNames};
-				gv.requestTracks.push(parsedTrack);
-			};
-			c = 0; gv.tableData = [];
-			performRequests('node', c);
-		});
 	};
+
+	d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+id+'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
+
+	d3.json("http://developer.echonest.com/api/v4/artist/twitter?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json", function(error, response) {
+		var twttrId = response.response.artist.twitter;
+		if (typeof(twttrId)!= "undefined") {
+			d3.select('#twitter').html('<a id="twitterTimeline" height="'+gv.wellHeight+'" class="twitter-timeline" href="https://twitter.com/'+twttrId+'" data-widget-id="574576262469009409" text="HAHAHAHAH" data-screen-name="'+twttrId+'">Loading Tweets by @'+twttrId+'</a>');
+			twttr.widgets.load();
+		} else {
+			d3.select('#twitter').html('<p><em>Twitter account not found.</em></p>');
+		};
+	});
+	
+	d3.json("https://api.spotify.com/v1/artists/"+id+"/top-tracks?country=GB", function (error, response) {
+		gv.requestTracks = [];
+		for (track of response.tracks) {
+			artistNames = [];
+			for (artist of track.artists) {
+				artistNames.push(artist.name);
+			};
+			parsedTrack = {'id': track.id, 'name': track.name, 'artists': artistNames};
+			gv.requestTracks.push(parsedTrack);
+		};
+		c = 0; gv.tableData = [];
+		performRequests('node', c);
+	});
 };
 
 function get_url(relations, type) {
@@ -524,7 +556,9 @@ function performRequests(mode) {
 
 
 function performRadioRequests(mode) {
-	gv.nowPlaying = gv.upNext;
+	if (mode == 'upNext') {
+		gv.nowPlaying = gv.upNext;
+	};
 	console.log('performRadioRequests' + mode)
 	console.log(gv.radioList);
 	var thisTrack = gv.radioList[0];
@@ -549,8 +583,11 @@ function performRadioRequests(mode) {
 				gv.radioList.reverse().pop();
 				gv.radioList.reverse();
 				if (mode == 'nowPlaying') {	
-					performRadioRequests('upNext')
-				}''
+					if (!(gv.nowPlaying)) {
+						performRadioRequests('upNext')
+					}
+				}
+				console.log(gv.nowPlaying); console.log(gv.upNext);
 			} else {
 				gv.radioList.reverse().pop();
 				gv.radioList.reverse();
@@ -561,38 +598,38 @@ function performRadioRequests(mode) {
 	});
 };
 
-function getLinkInfo(d){
-	if (gv.currentLink!=d) {
-		gv.currentLink = d;
-		var linkId = [gv.newGraph.nodes[d.source].id, gv.newGraph.nodes[d.target].id].sort().join(',');
-		var names = gv.newGraph.nodes[d.source].name +" & "+gv.newGraph.nodes[d.target].name;
-		d3.json("/edgeLookup?seed="+linkId, function(error, response) {
-			//console.log(response);
-			tabSwitch("edge");
-			if(gv.currentService=="spotify") {
-				trackIds = [];
-				for (track of response.tracks) {
-					trackIds.push(track.id);
-				};
-				spotifyUrl = '"https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+trackIds +'&theme=white"'
-				d3.select('#edgeIframe').html( function() { return '<iframe src='+spotifyUrl+' width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
+function loadEdgeInfo(){
+	d = gv.currentLink;
+	var linkId = [gv.newGraph.nodes[d.source].id, gv.newGraph.nodes[d.target].id].sort().join(',');
+	var names = gv.newGraph.nodes[d.source].name +" & "+gv.newGraph.nodes[d.target].name;
+	d3.json("/edgeLookup?seed="+linkId, function(error, response) {
+		//console.log(response);
+		if(gv.currentService=="spotify") {
+			trackIds = [];
+			for (track of response.tracks) {
+				trackIds.push(track.id);
 			};
-			$('#edge-title').text(names);
-			if(gv.currentService == "youtube") {
-				gv.requestTracks = response.tracks;
-				c = 0; gv.tableData = [];
-				performRequests('edge');
-			};	
-		});
-	};
+			spotifyUrl = '"https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+trackIds +'&theme=white"'
+			d3.select('#edgeIframe').html( function() { return '<iframe src='+spotifyUrl+' width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
+		};
+		$('#edge-title').text(names);
+		if(gv.currentService == "youtube") {
+			gv.requestTracks = response.tracks;
+			c = 0; gv.tableData = [];
+			performRequests('edge');
+		};	
+	});
 };
 
 function clickLink(d) {
-	//$('#edgeYoutubeTable').bootstrapTable('showLoading');
 	d3.event.stopPropagation();
-	addToSidebarHistory(1, d);
+	//addToSidebarHistory(1, d);
 	gv.currentArtist = null;
-	getLinkInfo(d);
+	if (gv.currentLink != d) {
+		gv.currentLink = d;
+		loadEdgeInfo();
+		tabSwitch('edge');
+	}
 };	
 
 function calculateScore(requestName, responseName, artistNames) {
@@ -691,7 +728,7 @@ function secondLabelFont(d) {
 };
 
 function isHighlighted(d) {
-		return (gv.clicked == gv.oldGraph.nodes[d.source].id) || (gv.clicked == gv.oldGraph.nodes[d.target].id);
+		return (gv.clickedNode == gv.oldGraph.nodes[d.source].id) || (gv.clickedNode == gv.oldGraph.nodes[d.target].id);
 	return false;
 };
 
