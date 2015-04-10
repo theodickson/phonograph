@@ -305,14 +305,19 @@ gv.FadeIn = 500;
 
 
 var width = $('#map').width();
-	nheight = $('#navbar').height();
-	height = window.innerHeight;
+var nwidth = $('#playlistDropdown').width();
+var height = window.innerHeight;
+var nheight= $('#playerlistDropdown').height();
 gv.wellHeight = window.innerHeight - nheight-170;
 gv.wellWidth = $('#sidebar').width()-40;
 $('#bio').css('max-height', gv.wellHeight+"px");
-
 $('.fixed-table-container').attr("data-height", gv.wellHeight+"px");
 $('#playlistDD').css({"height": height/2 +"px"});
+$('#radioDD').css({
+	"height": height/2 +"px",
+	"left": -1*nwidth+"px"
+});
+
 
 $('#sidebar').css('min-height', window.innerHeight+"px");
 var heightOfZoom = $('#zoom').height();
@@ -1255,10 +1260,23 @@ $('#playlistDropdown').on('hide.bs.dropdown', function(e){
 
 $('#playlistICON').on("click", function(e){
 	$('#playlistDropdown').toggleClass("open");
+	$('#radioDropdown').removeClass("open");
 	e.stopPropagation();
 })
 ////////////
 
+//KEEP Radio OPEN UNLESS CLICKING ICON
+$('#radioDropdown').on('hide.bs.dropdown', function(e){
+	console.log(e);
+	return false;
+});
+
+$('#radioICON').on("click", function(e){
+	$('#radioDropdown').toggleClass("open");
+	$('#playlistDropdown').removeClass("open");
+	e.stopPropagation();
+})
+////////////
 
 
 

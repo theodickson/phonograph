@@ -142,7 +142,7 @@
 		<div id="info">
 			<!--Main tabs-->
 			<div>
-			<ul class="nav nav-pills sideBarTabs" id="sideBarTabs" role="tablist" data-tabs="tabs">
+			<ul style="display:none;" class="nav nav-pills sideBarTabs" id="sideBarTabs" role="tablist" data-tabs="tabs">
 				<li class="active" id="nodeTab"><a class="sidebar-icon" href="#nodePane" role="tab" data-toggle="tab"><i class="fa fa-info"></i></a></li>
 				<li style="display: none" id="edgeTab"><a class="sidebar-icon" href="#edgePane" role="tab" data-toggle="tab"><i class="fa fa-info"></i></a></li>
 				<li id="radioTab"><a class="sidebar-icon" href="#radioPane" role="tab" data-toggle="tab"><span class="icon-radio"></a></li>
@@ -326,7 +326,7 @@
 </section>
 
 <nav class="navbar navbar-default navbar-fixed-bottom" id="bottomNav">
-  <div class="container-fluid youtube">
+  <div id="player-bar" class="container-fluid youtube">
     <div class="navbar-left" id="bottomLeftNav">
       	<ul class="nav navbar-nav">
     		<li class="dropup" id="playlistDropdown">
@@ -354,6 +354,16 @@
 					        	    </thead>
 					        	</table>
 					        </div>
+						</div>
+		        	</form>
+    			</div> 
+    		</li>
+    		<li class="dropup" id="radioDropdown">
+    			<a class="dropdown-toggle" id="radioICON" href="#" data-toggle="dropdown"><span class="icon-radio"></a>
+    			<div class='dropdown-menu top-dropdown-right' id='radioDD'>
+    				<form class="form-horizonal">
+    					<div class="form-group">
+							<h4 style="text-align: center;">Radio</h4>
 						</div>
 		        	</form>
     			</div> 

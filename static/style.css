@@ -229,7 +229,6 @@ text {
 
 .sidebar-title{
     text-align: center;
-    margin-top: 5px;
 }
 
 .tableWrapper{
@@ -326,4 +325,8 @@ text {
 #playlistDD{
     height: 300px;
     overflow:auto;
+}
+
+#player-bar{
+    padding-left:0px;
 }

@@ -321,17 +321,16 @@ function refreshPlaylist(){
 	//REMOVE FROM PLAYLIST ON CLICK OF 'X'
 	$('.removeFromPlaylist').on('click', function(){
 		var index = $(this).closest('tr').attr("data-index");
-		console.log("DELETING TRACK " +index);
-		console.log("CURRENT SONG "+currentTrack);
-		console.log(gv.customPlaylist);
-
+		console.log("INDEX ofDELETION : "+index +"    INDEX OF CURRENT "+currentTrack);
 		//IF DELETING THE ONLY SONG ON THE PLAYLIST
-		if (index = 0 && gv.customPlaylist.length == 1){
+		if (index == 0 && gv.customPlaylist.length == 1){
 			currentTrack = null; //NO CURRENT TRACK PLAYING
 			while (gv.customPlaylist.length) { gv.customPlaylist.pop(); }; //DESTROY THE PLAYLIST TO BE SURE OF REMOVING ALL ERRORS
 			gv.customPlaylist = [];
 		}
 		else if(index > -1){
+			console.log(gv.customPlaylist);
+			console.log("DELTING INDEX: "+index);
 			gv.customPlaylist.splice(index, 1);
 			//IF DELETING THE FIRST TRACK WHICH IS ALSO PLAYING
 			if(index==0 && index == currentTrack){
