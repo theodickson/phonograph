@@ -423,14 +423,14 @@ function loadArtistInfo(id) {
 	});
 	
 	d3.json("https://api.spotify.com/v1/artists/"+id+"/top-tracks?country=GB", function (error, response) {
-		gv.nodeTracks = [];
+		gv.requestTracks = [];
 		for (track of response.tracks) {
 			artistNames = [];
 			for (artist of track.artists) {
 				artistNames.push(artist.name);
 			};
 			parsedTrack = {'id': track.id, 'name': track.name, 'artists': artistNames};
-			gv.nodeTracks.push(parsedTrack);
+			gv.requestTracks.push(parsedTrack);
 		};
 		c = 0; gv.tableData = [];
 		performRequests('node', c);
@@ -445,35 +445,26 @@ function get_url(relations, type) {
 	};
 };
 
-function performRequests(mode, c) {
+function performRequests(mode) {
 	//console.log(mode);
-	if (mode == 'radio') {
-		thisTrack = gv.radioList[c];
-		requestLength = gv.radioList.length
-	}
-	if (mode == 'node') {
-		thisTrack = gv.nodeTracks[c];
-		requestLength = gv.nodeTracks.length
-	}
-	if (mode == 'edge') {
-		thisTrack = gv.edgeTracks[c];
-		requestLength = gv.edgeTracks.length
-	}
-	//console.log(thisTrack);
-	stNames = [];
+	var thisTrack = gv.requestTracks[0];
+
+	var stNames = [];
 	for (n of thisTrack.artists) {
 		stNames.push(standardise(n));
 	};
 
-	stTrack = standardise(thisTrack.name);
+	var stTrack = standardise(thisTrack.name);
 
-	yt = yt_requestString(removeNames(stNames, stTrack), stNames.join(' '))
+	var yt = yt_requestString(removeNames(stNames, stTrack), stNames.join(' '))
 
+	gv.requestTracks.reverse().pop();
+	gv.requestTracks.reverse();
 	d3.json(yt, function(error, ytresponse) {
 		if (ytresponse.items.length != 0) {
-			score = calculateScore(stTrack, standardise(ytresponse.items[0].snippet.title), stNames);
+			var score = calculateScore(stTrack, standardise(ytresponse.items[0].snippet.title), stNames);
 		} else {
-			score = 0;
+			var score = 0;
 		};
 		console.log(thisTrack.artists);
 		if (score > 0.3) {
@@ -492,12 +483,11 @@ function performRequests(mode, c) {
 			});
 		};
 
-		c += 1;
 		$('#'+mode+'YoutubeTable').bootstrapTable('load', gv.tableData);
 		$('#'+mode+'YoutubeTable').bootstrapTable('hideLoading');
 		//console.log(gv.tableData)
 
-		if (c < requestLength) { 
+		if (gv.requestTracks.length != 0) { 
 			performRequests(mode); 
 		} else { 
 			if (gv.tableData.length == 0) {
@@ -526,6 +516,45 @@ function performRequests(mode, c) {
 	});
 };
 
+
+function performRadioRequests(mode) {
+	gv.nowPlaying = gv.upNext;
+	console.log('performRadioRequests' + mode)
+	console.log(gv.radioList);
+	var thisTrack = gv.radioList[0];
+	var stNames = [];
+	for (n of thisTrack.artists) {
+		stNames.push(standardise(n));
+	};
+
+	var stTrack = standardise(thisTrack.name);
+
+	var yt = yt_requestString(removeNames(stNames, stTrack), stNames.join(' '))
+
+	d3.json(yt, function(error, ytresponse) {
+		if (ytresponse.items.length != 0) {
+			var score = calculateScore(stTrack, standardise(ytresponse.items[0].snippet.title), stNames);
+			var youtubeId = ytresponse.items[0].id.videoId;
+			console.log(score);
+			console.log(youtubeId);
+			if (score > 0.3) {
+				gv.upNext = gv.radioList[0];
+				gv.upNext.youtubeId = youtubeId;
+				gv.radioList.reverse().pop();
+				gv.radioList.reverse();
+				if (mode == 'nowPlaying') {	
+					performRadioRequests('upNext')
+				}''
+			} else {
+				gv.radioList.reverse().pop();
+				gv.radioList.reverse();
+				//console.log(gv.radioList);
+				performRadioRequests(mode);
+			};
+		};
+	});
+};
+
 function getLinkInfo(d){
 	//console.log(d);
 	var pairIds = [gv.newGraph.nodes[d.source].id, gv.newGraph.nodes[d.target].id].sort().join(',');
@@ -543,7 +572,7 @@ function getLinkInfo(d){
 		};
 		$('#edge-title').text(names);
 		if(gv.currentService == "youtube") {
-			gv.edgeTracks = response.tracks;
+			gv.requestTracks = response.tracks;
 			c = 0; gv.tableData = [];
 			performRequests('edge', 0);
 		};	
@@ -800,9 +829,7 @@ function loadRadio() {
 		makeRadioList();
 	};
 	if (gv.currentService == 'youtube') {
-		gv.tableData = [];
-		c = 0;
-		performRequests('radio', c);
+		performRadioRequests('nowPlaying');
 	};
 	if (gv.currentService == 'spotify') {
 		trackIds = [];
@@ -829,7 +856,6 @@ function makeRadioList() {
 		}
 	};
 	gv.radioList.sort(compare)
-	console.log(gv.radioList);
 }
 
 function tabSwitch(pane) {
