@@ -591,8 +591,10 @@ function performRadioRequests(mode) {
 						};
 					}
 				}
-				$('#radio-now-playing').text(gv.nowPlaying.name);
-				$('#radio-up-next').text(gv.upNext.name);
+				$('#radio-now-playing-name').text(gv.nowPlaying.name);
+				$('#radio-now-playing-artists').text(parseArtists(gv.nowPlaying));
+				$('#radio-up-next-name').text(gv.upNext.name);
+				$('#radio-up-next-artists').text(parseArtists(gv.nowPlaying));
 			} else {
 				gv.radioList.reverse().pop();
 				gv.radioList.reverse();
@@ -1304,10 +1306,7 @@ $('#radioICON').on("click", function(e){
 	$('#radioDropdown').toggleClass("open");
 	$('#playlistDropdown').removeClass("open");
 	e.stopPropagation();
-	if (gv.playMode != 'radio') {
-		gv.playMode = 'radio'
-		loadRadio();
-	};
+	loadRadio();
 })
 
 ////////////

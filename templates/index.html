@@ -321,12 +321,16 @@
     			<div class='dropdown-menu top-dropdown-right' id='radioDD'>
     				<form class="form-horizonal">
     					<div class="form-group">
-							<h4 style="text-align:center;" id="radio-title"></h4>
-							<h5 style="text-align: left;">Now Playing:</h5>
-							<h5 style="text-align:center;" id="radio-now-playing"></h5>
-							<h5 style="text-align: left;">Up Next:</h5>
-							<h5 style="text-align:center;" id="radio-up-next"></h5>
-							<button type="button" style="display: none;" id="tuneIn"class="btn btn-warning">Tune In</button>
+    						<h4 id="radio-title"></h4>
+    						<div class="well">
+								<h6 id="track1" style="text-align: left;"><h6>
+								<h5 style="text-align:center;" id="radio-now-playing-name"></h5>
+								<h5 style="text-align:center; font-style: italic;" id="radio-now-playing-artists"></h5>
+								<button type="button" style="display: none; width: 100%;" id="tuneIn"class="btn btn-warning">Tune In</button>
+							</div>
+								<h6 id="track2" style="text-align: left;">Up Next:</h6>
+								<h5 style="text-align:center;" id="radio-up-next-name"></h5>
+								<h5 style="text-align:center; font-style: italic;" id="radio-up-next-artists"></h5>
 						</div>
 		        	</form>
 		        	<div class="videoWrapper" align="middle"><div id="player" style="height:1px;"></div></div>
