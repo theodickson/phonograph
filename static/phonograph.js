@@ -481,6 +481,17 @@ function get_url(relations, type) {
 	};
 };
 
+function parseTrack(s){
+	var trackData = s.split("|");
+	//console.log(trackData);
+	var track = {
+		"youtubeId" : trackData[0],
+		"name" : trackData[1],
+		"artists" : trackData[2].split("*")
+	};
+	return track;
+}
+
 function performRequests(mode) {
 	//console.log(mode);
 	var thisTrack = gv.requestTracks[0];
@@ -555,6 +566,16 @@ function performRequests(mode) {
 			//Plays tracks on click of play now dropdown
 			$('.drop-down-play-now').on("click", function(){
 				$(this).closest('.btn-group').children('.playNowButton').trigger("click");
+			});
+			$('.drop-down-play-next').on("click", function(){
+				var s = $(this).closest('.btn-group').children('.playNowButton').val();
+				var track = parseTrack(s);
+				console.log(track);
+			});
+			$('.drop-down-add-to-playlist').on("click", function(){
+				var s = $(this).closest('.btn-group').children('.playNowButton').val();
+				var track = parseTrack(s);
+				console.log(track);
 			});
 		};
 	});
