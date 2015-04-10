@@ -350,7 +350,7 @@ function refreshPlaylist(){
 		player.cueVideoById(gv.customPlaylist[currentTrack][0]);
 	});
 	//REMOVE FROM PLAYLIST ON CLICK OF 'X'
-	$('.removeFromPlaylist').on('click', function(){
+	$('.removeFromPlaylist').on('click', function(e){
 		var index = $(this).closest('tr').attr("data-index");
 		//console.log("INDEX ofDELETION : "+index +"    INDEX OF CURRENT "+currentTrack);
 		//IF DELETING THE ONLY SONG ON THE PLAYLIST
@@ -391,6 +391,7 @@ function refreshPlaylist(){
 
 		//REFRESH THE PLAYLIST TO REFLECT THE CHANGED ARRAY
 		refreshPlaylist();
+		e.preventDefault()
 	});
 }
 
@@ -614,6 +615,7 @@ function phonograph(){
 //SWTICH TO RADIO MODE ON TUNE IN BUTTON
 $('#tuneIn').on("click", function(){
 	gv.playMode = "radio";
+	$
 	$('#tuneIn').hide(500);
 	$("#upNext").show(500);
 	$("#track1").text("Now Playing:");

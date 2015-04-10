@@ -1325,10 +1325,7 @@ $('.search-choice').on('click', function(){
 });
 
 //KEEP PLAYLIST OPEN UNLESS CLICKING ICON
-$('#playlistDropdown').on('hide.bs.dropdown', function(e){
-	console.log(e);
-	return false;
-});
+
 
 $('#playlistICON').on("click", function(e){
 	$('#playlistDropdown').toggleClass("open");
@@ -1337,11 +1334,7 @@ $('#playlistICON').on("click", function(e){
 });
 ////////////
 
-//KEEP Radio OPEN UNLESS CLICKING ICON
-$('#radioDropdown').on('hide.bs.dropdown', function(e){
-	console.log(e);
-	return false;
-});
+$('')
 
 $('#radioICON').on("click", function(e){
 	$('#radioDropdown').toggleClass("open");
