@@ -5,6 +5,7 @@ function reload() {
 	d3.json(flaskURL(), function(error, graph) {
 		if (graph.origin) {
 			gv.origin = graph.origin;
+			gv.currentArtist = graph.origin;
 		} else {
 			gv.origin = null;
 		}
@@ -45,17 +46,17 @@ function start_Vis(graph) {
 		popvals.push(d3.max([parseInt(d.popularity,10),1]));
 		gv.artist[d.id] = {name: d.name, }};
 
-	nodeScale = d3.scale.log(1.5)
-						.domain([d3.min(popvals), d3.max(popvals)])
+	nodeScale = d3.scale.linear()
+						.domain([1, 100])
 						.range([10, 20]);
 						
 	labelScale = d3.scale.log(1.5)
-						.domain([d3.min(popvals), d3.max(popvals)])
-						.range([12, 15]);
+						.domain([1, 100])
+						.range([12, 16]);
 						
 	strokeScale = d3.scale.linear()
-						.domain([d3.min(popvals), d3.max(popvals)])
-						.range([1, 4]);
+						.domain([1, 100])
+						.range([2, 4]);
 	var weights = [];
 	for (d of graph.links) { weights.push(d.weight); };
 	var linkCount = graph.links.length
@@ -193,19 +194,15 @@ function start_Vis(graph) {
 			return "ncircle "+d.genre;
 		})
 		.attr("r", function(d) {////console.log(d.popularity);
-			if ((gv.origin != null)&&(gv.clicked)) {
-				if (d.id == gv.origin) {
+			if (d.id == gv.origin) {
 					return 30;
 				};
-			};
 			return nodeScale(d3.max([1,d.popularity]));
 		})
 		.attr("stroke-width", function(d) { 
-			if (gv.origin != null) {
-				if (d.id == gv.origin) {
+			if (d.id == gv.origin) {
 					return 4;
 				};
-			};
 			return strokeScale(d.popularity);
 		});
 	
@@ -214,10 +211,8 @@ function start_Vis(graph) {
 		.attr("dy", function(d) {return firstLabelHeight(d); })
 		.attr("text-anchor", "middle")
 		.style("font-size", function(d) {
-			if (gv.origin != null) {
-				if (d.id == gv.origin) {
-					return "18px";
-				};
+			if (d.id == gv.origin) {
+				return "18px";
 			};
 			return firstLabelFont(d); })
 		.text(function(d) {
@@ -229,10 +224,8 @@ function start_Vis(graph) {
 		.attr("dy", function(d) { return "0.9em"; })
 		.attr("text-anchor", "middle")
 		.style("font-size", function(d) {
-			if (gv.origin != null) {
-				if (d.id == gv.origin) {
-					return "18px";
-				};
+			if (d.id == gv.origin) {
+				return "18px";
 			};
 			return secondLabelFont(d); })
 		.text(function(d) {
@@ -242,21 +235,17 @@ function start_Vis(graph) {
 	gv.oldGraph = graph;
 	
 	d3.selectAll(".oldNode").transition().delay(gv.FadeOut+gv.NodeSlide+gv.FadeIn).remove();
+	var transitions = 0;
 	d3.selectAll(".node").transition().delay(gv.FadeOut+gv.NodeSlide).duration(gv.FadeIn).style("opacity", 1)
-		.each("end", function(d) {
-			if (gv.origin != null) {
-				if (d.id == gv.origin) {
-					if (gv.route == "zoom") {
-						//clickNode(this, d, false);
-					} else {
-						//clickNode(this, d, true);
-					};
+		.each("start", transitions ++)
+		.each("end", function() {
+			if (transitions==gv.node.length) {
+				if (gv.origin) {
+					gv.clicked = gv.origin;
+					loadArtistInfo(gv.origin);
 				};
-			} else {
-				gv.currentArtist = gv.currentIds[Math.floor(gv.currentIds.length * Math.random())];
-				dehighlightLinks();
+				gv.clickable = true;
 			};
-			gv.clickable = true;
 		});
 	
 	setTimeout( function() {dehighlightLinks();}, gv.FadeOut+gv.FadeIn+gv.NodeSlide);
@@ -375,6 +364,7 @@ function clickNode(id) {
 
 function unclickNode() {
 	if (gv.clicked) {
+		console.log('unclicking')
 		elt = gv.node.filter(function(d, i) { return (d.id==gv.clicked); });
 		elt.select(".firstLabel").transition().duration(500)
 			.style("font-size", function(d) { return firstLabelFont(d); });
@@ -442,8 +432,8 @@ function loadArtistInfo(id) {
 			parsedTrack = {'id': track.id, 'name': track.name, 'artists': artistNames};
 			gv.nodeTracks.push(parsedTrack);
 		};
-		gv.requestCounter = 0; gv.tableData = [];
-		performRequests('node');
+		c = 0; gv.tableData = [];
+		performRequests('node', c);
 	});
 };
 
@@ -455,18 +445,18 @@ function get_url(relations, type) {
 	};
 };
 
-function performRequests(mode) {
+function performRequests(mode, c) {
 	//console.log(mode);
 	if (mode == 'radio') {
-		thisTrack = gv.radioList[gv.requestCounter];
-		requestLength = 2
+		thisTrack = gv.radioList[c];
+		requestLength = gv.radioList.length
 	}
 	if (mode == 'node') {
-		thisTrack = gv.nodeTracks[gv.requestCounter];
+		thisTrack = gv.nodeTracks[c];
 		requestLength = gv.nodeTracks.length
 	}
 	if (mode == 'edge') {
-		thisTrack = gv.edgeTracks[gv.requestCounter];
+		thisTrack = gv.edgeTracks[c];
 		requestLength = gv.edgeTracks.length
 	}
 	//console.log(thisTrack);
@@ -502,12 +492,12 @@ function performRequests(mode) {
 			});
 		};
 
-		gv.requestCounter += 1;
+		c += 1;
 		$('#'+mode+'YoutubeTable').bootstrapTable('load', gv.tableData);
 		$('#'+mode+'YoutubeTable').bootstrapTable('hideLoading');
 		//console.log(gv.tableData)
 
-		if (gv.requestCounter < requestLength) { 
+		if (c < requestLength) { 
 			performRequests(mode); 
 		} else { 
 			if (gv.tableData.length == 0) {
@@ -554,8 +544,8 @@ function getLinkInfo(d){
 		$('#edge-title').text(names);
 		if(gv.currentService == "youtube") {
 			gv.edgeTracks = response.tracks;
-			gv.requestCounter = 0; gv.tableData = [];
-			performRequests('edge');
+			c = 0; gv.tableData = [];
+			performRequests('edge', 0);
 		};	
 	});
 };
@@ -811,8 +801,8 @@ function loadRadio() {
 	};
 	if (gv.currentService == 'youtube') {
 		gv.tableData = [];
-		gv.requestCounter = 0;
-		performRequests('radio');
+		c = 0;
+		performRequests('radio', c);
 	};
 	if (gv.currentService == 'spotify') {
 		trackIds = [];
