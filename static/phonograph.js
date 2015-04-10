@@ -902,7 +902,7 @@ function fillRadioTitle(){
 		gv.radioTitle = getName(gv.origin) + ' Radio';
 	};
 	if (gv.route == "path") {
-		gv.radioTitle = 'Directions from '+getName(gv.source)+' to '+getName(gv.destination);
+		gv.radioTitle = getName(gv.source)+' to '+getName(gv.destination) + " Radio";
 	}
 	if (gv.route == 'termsubgraph') {
 		gv.radioTitle = gv.termLabel + ' Radio'
@@ -941,15 +941,17 @@ function loadSpotify(tracks) {
 }
 
 function makeRadioList() {
-	gv.radioList = [];
-	gv.radioListIds = [];
-	for (l of gv.newGraph.links) {
-		if (gv.radioListIds.indexOf(l.track.id) == -1) {
-			gv.radioList.push(l.track);
-			gv.radioListIds.push(l.track.id);
-		}
+	if (gv.route!="path") {
+		gv.radioList = [];
+		gv.radioListIds = [];
+		for (l of gv.newGraph.links) {
+			if (gv.radioListIds.indexOf(l.track.id) == -1) {
+				gv.radioList.push(l.track);
+				gv.radioListIds.push(l.track.id);
+			}
+		};
+		gv.radioList.sort(compare)
 	};
-	gv.radioList.sort(compare)
 }
 
 function tabSwitch(pane) {
@@ -1257,7 +1259,7 @@ $('.zL').click(function(){
 })
 
 $('.zo').click(function() { 
-	if ((gv.zoomLevel < 4)&&(gv.clickable)) {
+	if ((gv.zoomLevel < 3)&&(gv.clickable)) {
 		gv.zoomLevel += 1;
 		zoom();
 	}
@@ -1323,10 +1325,7 @@ $('.search-choice').on('click', function(){
 });
 
 //KEEP PLAYLIST OPEN UNLESS CLICKING ICON
-$('#playlistDropdown').on('hide.bs.dropdown', function(e){
-	console.log(e);
-	return false;
-});
+
 
 $('#playlistICON').on("click", function(e){
 	$('#playlistDropdown').toggleClass("open");
@@ -1335,11 +1334,7 @@ $('#playlistICON').on("click", function(e){
 });
 ////////////
 
-//KEEP Radio OPEN UNLESS CLICKING ICON
-$('#radioDropdown').on('hide.bs.dropdown', function(e){
-	console.log(e);
-	return false;
-});
+$('')
 
 $('#radioICON').on("click", function(e){
 	$('#radioDropdown').toggleClass("open");
