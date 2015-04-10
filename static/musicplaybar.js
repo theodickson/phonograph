@@ -528,18 +528,29 @@ $('.service-choice').on('click', function(){
 	$('.content-'+currentService).hide();
 	$('.content-'+newService).show();
   	//IF SWITCHING OUT OF YT THEN PAUSE THE YT MUSIC
-  	if(newService!="youtube"){
-  		player.pauseVideo();
-  		$('#playsong').toggle(true);
-  		$('#pausesong').toggle(false);
-  		$('#bufferingsong').toggle(false);
-  	};
-  	//IF SWITICHING OUT OF SPOTIFY THEN DESTROY SPOTIFY IFRAMES
-  	if(newService!="spotify"){
-  		$('.spotify').find('iframe').remove();
-  	};
-  	gv.currentService = newService;
-  	currentService = newService;
+  	if (gv.currentService != newService) {
+  		gv.currentService = newService;
+	  	if(newService!="youtube"){
+	  		player.pauseVideo();
+	  		$('#playsong').toggle(true);
+	  		$('#pausesong').toggle(false);
+	  		$('#bufferingsong').toggle(false);
+	  	};
+	  	//IF SWITICHING OUT OF SPOTIFY THEN DESTROY SPOTIFY IFRAMES
+	  	if(newService!="spotify"){
+	  		$('.spotify').find('iframe').remove();
+	  	};
+	  	if (gv.currentLink) {
+	  		d = gv.currentLink;
+	  		gv.currentLink = null;
+	  		getLinkInfo(d);
+	  	};
+	  	if (gv.currentArtist) {
+	  		d = gv.currentArtist;
+	  		gv.currentArtist = null;
+	  		loadArtistInfo(d);
+	  	};
+	};
 });
 
 //REFRESH PLAYLIST ON OPEN

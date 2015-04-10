@@ -276,6 +276,7 @@ gv.playlist = [];
 gv.size = 20;
 gv.clickable = true
 gv.clicked = null;
+gv.playMode = 'playlist';
 var width, height;
 var svg = d3.select("#map").append("svg")
 	.attr("id", "svg")
@@ -561,35 +562,37 @@ function performRadioRequests(mode) {
 };
 
 function getLinkInfo(d){
-	//console.log(d);
-	var pairIds = [gv.newGraph.nodes[d.source].id, gv.newGraph.nodes[d.target].id].sort().join(',');
-	var names = gv.newGraph.nodes[d.source].name +" & "+gv.newGraph.nodes[d.target].name;
-	d3.json("/edgeLookup?seed="+pairIds, function(error, response) {
-		//console.log(response);
-		tabSwitch("edge");
-		if(gv.currentService=="spotify") {
-			trackIds = [];
-			for (track of response.tracks) {
-				trackIds.push(track.id);
+	if (gv.currentLink!=d) {
+		gv.currentLink = d;
+		var linkId = [gv.newGraph.nodes[d.source].id, gv.newGraph.nodes[d.target].id].sort().join(',');
+		var names = gv.newGraph.nodes[d.source].name +" & "+gv.newGraph.nodes[d.target].name;
+		d3.json("/edgeLookup?seed="+linkId, function(error, response) {
+			//console.log(response);
+			tabSwitch("edge");
+			if(gv.currentService=="spotify") {
+				trackIds = [];
+				for (track of response.tracks) {
+					trackIds.push(track.id);
+				};
+				spotifyUrl = '"https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+trackIds +'&theme=white"'
+				d3.select('#edgeIframe').html( function() { return '<iframe src='+spotifyUrl+' width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
 			};
-			spotifyUrl = '"https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+trackIds +'&theme=white"'
-			d3.select('#edgeIframe').html( function() { return '<iframe src='+spotifyUrl+' width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
-		};
-		$('#edge-title').text(names);
-		if(gv.currentService == "youtube") {
-			gv.requestTracks = response.tracks;
-			c = 0; gv.tableData = [];
-			performRequests('edge', 0);
-		};	
-	});
+			$('#edge-title').text(names);
+			if(gv.currentService == "youtube") {
+				gv.requestTracks = response.tracks;
+				c = 0; gv.tableData = [];
+				performRequests('edge');
+			};	
+		});
+	};
 };
 
 function clickLink(d) {
 	//$('#edgeYoutubeTable').bootstrapTable('showLoading');
 	d3.event.stopPropagation();
 	addToSidebarHistory(1, d);
-	getLinkInfo(d);
 	gv.currentArtist = null;
+	getLinkInfo(d);
 };	
 
 function calculateScore(requestName, responseName, artistNames) {
