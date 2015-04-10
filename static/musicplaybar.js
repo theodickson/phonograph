@@ -62,7 +62,7 @@ function secondsToString(s){
 // 4. The API will call this function when the video player is ready.
 function onPlayerReady(event) {
 	//WHEN YT READY LOAD RADIO 
-	loadRadio(true);
+	//loadRadio(true);
 };
 
 // 5. The API calls this function when the player's state changes.
@@ -497,7 +497,7 @@ $('#volumeSlider').slider({
 	range: "min",
 	min: 0,
 	max: 100,
-	value: 60,
+	value: 80,
 	create: function(event, ui){
 		$(this).find('.ui-slider-handle').hide();
 	},
@@ -591,6 +591,7 @@ $('.service-choice').on('click', function(){
 	  	//IF SWITICHING OUT OF SPOTIFY THEN DESTROY SPOTIFY IFRAMES
 	  	if(newService!="spotify"){
 	  		$('.spotify').find('iframe').remove();
+	  		$('.spotify').hide();
 	  	};
 	  	if (gv.currentLink) {
 	  		loadEdgeInfo();
@@ -614,7 +615,7 @@ $('body')
     e.stopPropagation();
 });
 
-//IF MODE IS RADIO PLAY THE RADIO
+/*IF MODE IS RADIO PLAY THE RADIO
 function phonograph(){
 	gv.radioStarted = true;
 	console.log(gv.nowPlaying);
@@ -627,7 +628,7 @@ $('#tuneIn').on("click", function(){
 	radioMode();
 	player.cueVideoById(gv.upNext.youtubeId);
 });
-
+*/
 
 
 

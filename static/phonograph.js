@@ -111,12 +111,12 @@ function start_Vis(graph) {
 	if (!(gv.route=="path")) { 
 		graph = optimiseRotation(oldPos, newPos, graph);
 	} else {
-		gv.radioList = [];
+		//gv.radioList = [];
 		graph = pathPositions(graph, newIds, width, height);
 	};
 	
 	gv.newGraph = graph;
-	makeRadioList();
+	//makeRadioList();
 
 	if ( !(gv.route == "path") ) {
 		$('.numArtists').show();
@@ -249,7 +249,7 @@ function start_Vis(graph) {
 			loadArtistInfo();
 		};
 		if (gv.playMode == 'radio') {
-			loadRadio(true);
+			//loadRadio(true);
 		};
 		gv.clickable = true;
 	}, gv.FadeOut+gv.FadeIn+gv.NodeSlide);
@@ -286,7 +286,7 @@ gv.currentArtist = null;
 gv.currentLink = null;
 gv.clickedRadius = 30;
 gv.clickedStrokeWidth = 4;
-gv.playMode = 'radio';
+//gv.playMode = 'radio';
 var width, height;
 var svg = d3.select("#map").append("svg")
 	.attr("id", "svg")
@@ -314,11 +314,11 @@ gv.wellWidth = $('#sidebar').width()-40;
 $('#bio').css('max-height', gv.wellHeight+"px");
 $('.fixed-table-container').attr("data-height", gv.wellHeight+"px");
 $('#playlistDD').css({"height": height/2 +"px"});
-$('#radioDD').css({
+/*$('#radioDD').css({
 	"height": height/2 +"px",
 	"left": -1*nwidth+"px"
 });
-
+*/
 
 $('#sidebar').css('min-height', window.innerHeight+"px");
 //var heightOfZoom = $('#zoom').height();
@@ -334,8 +334,8 @@ $('#nodeYoutubeTable').attr("data-height", gv.wellHeight);
 $('#nodeYoutubeTable').bootstrapTable('resetView');
 $('#edgeYoutubeTable').attr("data-height", gv.wellHeight);
 $('#edgeYoutubeTable').bootstrapTable('resetView');
-$('#radioYoutubeTable').attr("data-height", gv.wellHeight);
-$('#radioYoutubeTable').bootstrapTable('resetView')
+/*$('#radioYoutubeTable').attr("data-height", gv.wellHeight);
+$('#radioYoutubeTable').bootstrapTable('resetView')*/
 $('#subgraphTable').attr("data-height", gv.wellHeight-nheight-nheight);
 $('#subgraphTable').bootstrapTable('resetView');
 
@@ -566,7 +566,7 @@ function performRequests(mode) {
 			//Play tracks on double click
 			$('tr').dblclick(function(){
 				var playNowButton = $(this).find('.playNowButton');
-				////console.log(playNowButton);
+				console.log(playNowButton);
 				if(playNowButton.attr("disabled")){
 					//console.log("Can't play track");
 				}
@@ -597,7 +597,7 @@ function performRequests(mode) {
 	});
 };
 
-
+/*
 function performRadioRequests(mode) {
 	if (mode == 'upNext') {
 		gv.nowPlaying = gv.upNext;
@@ -646,7 +646,7 @@ function performRadioRequests(mode) {
 		};
 	});
 };
-
+*/
 function loadEdgeInfo(){
 	d = gv.currentLink;
 	var linkId = [gv.newGraph.nodes[d.source].id, gv.newGraph.nodes[d.target].id].sort().join(',');
@@ -876,11 +876,11 @@ function nextNode(graph, pathOrder) {
 	for (link of graph.links) {
 		if ( (link.source == [gv.pathOrder[gv.pathOrder.length-1]]) || (link.target == [gv.pathOrder[gv.pathOrder.length-1]]) ) {
 			if (gv.pathOrder.indexOf(link.source) == -1 ) {
-				gv.radioList.push(link.track);
+				//gv.radioList.push(link.track);
 				return link.source;
 			};
 			if (gv.pathOrder.indexOf(link.target) == -1 ) {
-				gv.radioList.push(link.track.id);
+				//gv.radioList.push(link.track.id);
 				return link.target;
 			};
 		};
@@ -894,7 +894,7 @@ function compare(a,b) {
     return 1;
   return 0;
 }
-
+/*
 function fillRadioTitle(){
 	gv.radioTitle = "";
 	if (gv.route == "zoom" || gv.route == "neighbourhood"){
@@ -910,7 +910,7 @@ function fillRadioTitle(){
 	console.log(gv.radioTitle);
 	$('#radio-title').text(gv.radioTitle);
 };
-
+*/
 function getName(id) {
 	for (d of gv.newGraph.nodes) {
 		if (d.id == id) {
@@ -918,7 +918,7 @@ function getName(id) {
 		}
 	}
 };
-
+/*
 function loadRadio(firstTime) {
 	radioAlert();
 	fillRadioTitle();
@@ -933,13 +933,13 @@ function loadRadio(firstTime) {
 		loadSpotify(trackIds);
 	};
 };
-
+*/
 function loadSpotify(tracks) {
 	spotifyUrl = '"https://embed.spotify.com/?uri=spotify:trackset:Phonograph Radio:'+trackIds.join(',')+'&theme=white"'
-	d3.select('#radioIframe').html( function() { return '<iframe src='+spotifyUrl+' width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
+	//d3.select('#radioIframe').html( function() { return '<iframe src='+spotifyUrl+' width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>'; });
 
 }
-
+/*
 function makeRadioList() {
 	if (gv.route!="path") {
 		gv.radioList = [];
@@ -953,7 +953,7 @@ function makeRadioList() {
 		gv.radioList.sort(compare)
 	};
 }
-
+*/
 function tabSwitch(pane) {
 	$('#artistSearch').val("");
 	$('#info').toggle(true);
@@ -1290,6 +1290,7 @@ $('#ns').change(function(){
 		reload();
 	};
 });
+/*
 $('#urlShare').click(function(){
     var root = location.protocol + '//' + location.host;
     var params = flaskURL().replace("/neighbourhood?", "");
@@ -1297,7 +1298,7 @@ $('#urlShare').click(function(){
 	console.log(root);
 	d3.select('#URL').property({'value': root+"/?" +flaskURL()});
 });
-
+*/
 //CHECK FOR SearchType
 $('.search-choice').on('click', function(){
 	var searchType = $(this).attr("id").replace("search-choice-", "");
@@ -1328,7 +1329,7 @@ $('.search-choice').on('click', function(){
 
 $('#playlistICON').on("click", function(e){
 	$('#playlistDropdown').toggleClass("open");
-	$('#radioDropdown').removeClass("open");
+	//$('#radioDropdown').removeClass("open");
 	e.stopPropagation();
 });
 ////////////
@@ -1336,9 +1337,9 @@ $('#playlistICON').on("click", function(e){
 $('#playlistDropdown').on('hide.bs.dropdown', function (e) {
 	e.preventDefault();
 });
-
+/*
 $('#radioICON').on("click", function(e){
-	$('#radioDropdown').toggleClass("open");
+	//$('#radioDropdown').toggleClass("open");
 	$('#playlistDropdown').removeClass("open");
 	e.stopPropagation();
 	loadRadio(false);
@@ -1347,6 +1348,7 @@ $('#radioICON').on("click", function(e){
 ////////////
 
 //var oldplaybutton = "<button class='btn-sm btn-sidebar playNowButton' type='button' value='"+ytresponse.items[0].id.videoId+"|"+thisTrack.name+"|" +thisTrack.artists.join("*")+"'><i class='el el-play'></i></button>";
+*/
 
 var playInTable = "<div class='btn-group'> <button type='button' class='btn btn-info btn-play playNowButton' &&& value='???'><i class='fa fa-play-circle fa-lg'></i></button> <button type='button' class='btn btn-info btn-play dropdown-toggle' &&& data-toggle='dropdown' aria-expanded='false'> <span class='caret'></span> <span class='sr-only'>Toggle Play Dropdown</span> </button> <ul class='dropdown-menu pull-right' role='menu'> <li><a href='#' class='drop-down-play-now'>Play Now</a></li> <li><a href='#' class='drop-down-play-next'>Play Next</a></li> <li><a href='#' class='drop-down-add-to-playlist'>Add to Playlist</a></li></ul> </div>";
 
