@@ -242,7 +242,7 @@ function start_Vis(graph) {
 		dehighlightLinks();
 		loadArtistInfo();
 		if (gv.playMode == 'radio') {
-			loadRadio();
+			loadRadio(true);
 		};
 		gv.clickable = true;
 	}, gv.FadeOut+gv.FadeIn+gv.NodeSlide);
@@ -441,12 +441,6 @@ function loadArtistInfo() {
 		};
 	});
 
-	if(gv.currentService=="spotify"){
-		d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+id+'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
-	};
-
-	d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+id+'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
-
 	d3.json("http://developer.echonest.com/api/v4/artist/twitter?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json", function(error, response) {
 		var twttrId = response.response.artist.twitter;
 		if (typeof(twttrId)!= "undefined") {
@@ -456,21 +450,27 @@ function loadArtistInfo() {
 			d3.select('#twitter').html('<p><em>Twitter account not found.</em></p>');
 		};
 	});
-	
-	d3.json("https://api.spotify.com/v1/artists/"+id+"/top-tracks?country=GB", function (error, response) {
-		gv.requestTracks = [];
-		console.log(response);
-		for (track of response.tracks) {
-			artistNames = [];
-			for (artist of track.artists) {
-				artistNames.push(artist.name);
+
+	if (gv.currentService=="spotify") {
+		d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+id+'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
+	};
+
+	if (gv.currentService == 'youtube') {
+		d3.json("https://api.spotify.com/v1/artists/"+id+"/top-tracks?country=GB", function (error, response) {
+			gv.requestTracks = [];
+			console.log(response);
+			for (track of response.tracks) {
+				artistNames = [];
+				for (artist of track.artists) {
+					artistNames.push(artist.name);
+				};
+				parsedTrack = {'id': track.id, 'name': track.name, 'artists': artistNames};
+				gv.requestTracks.push(parsedTrack);
 			};
-			parsedTrack = {'id': track.id, 'name': track.name, 'artists': artistNames};
-			gv.requestTracks.push(parsedTrack);
-		};
-		gv.tableData = [];
-		performRequests('node');
-	});
+			gv.tableData = [];
+			performRequests('node');
+		});
+	};
 };
 
 function get_url(relations, type) {
@@ -882,13 +882,13 @@ function getName(id) {
 	}
 };
 
-function loadRadio() {
+function loadRadio(doRequests) {
 	radioAlert();
 	fillRadioTitle();
 	if (gv.route != 'path') {
 		makeRadioList();
 	};
-	if (gv.currentService == 'youtube') {
+	if ((gv.currentService == 'youtube')&&(doRequests)) {
 		performRadioRequests('nowPlaying');
 	};
 	if (gv.currentService == 'spotify') {
@@ -1309,7 +1309,7 @@ $('#radioICON').on("click", function(e){
 	$('#radioDropdown').toggleClass("open");
 	$('#playlistDropdown').removeClass("open");
 	e.stopPropagation();
-	loadRadio();
+	loadRadio(false);
 })
 
 ////////////

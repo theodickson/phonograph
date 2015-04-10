@@ -165,7 +165,7 @@ function playPreviousTrack(){
 	};
 };
 
-function playNow(e){
+function playNext(e){
 	playlistAlert();
 	$( "#scrubberSlider" ).slider( "option", "value", 0);	
 	var trackData = e.currentTarget.value.split("|");
@@ -184,13 +184,18 @@ function playNow(e){
 		gv.customPlaylist.push(track);
 	}
 	else{
-		currentTrack+=1;
-		gv.customPlaylist.splice(currentTrack, 0, track);
+		gv.customPlaylist.splice(currentTrack+1, 0, track);
+		gv.currentTrack += 1;
 		refreshPlaylist();
 	};
 	//console.log(gv.customPlaylist[currentTrack]);
 	player.cueVideoById(gv.customPlaylist[currentTrack].youtubeId);
 	refreshPlaylist();
+};
+
+function playNow(e){
+	playNext(e);
+	playNextTrack();
 };
 
 function addTrackToPlaylist(e){

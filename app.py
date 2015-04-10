@@ -317,7 +317,7 @@ def zoom():
 				#ranked_leaves = sorted(distances[c].keys(), reverse=True, key = lambda x:len(distances[c][x]))
 				ranked_leaves = random.sample(distances[c].keys(), len(distances[c].keys()))
 				paths = {}
-	return jsonify(d3_dictify(igrapher(list(chosen))))
+	return jsonify(d3_dictify(igrapher(list(chosen)), origin=origin))
 	
 @app.route("/custom")
 #@login_required
