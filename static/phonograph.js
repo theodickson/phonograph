@@ -296,6 +296,9 @@ var svg = d3.select("#map").append("svg")
 			gv.clickedNode = null;
 			highlightNode();
 			dehighlightLinks();
+		$('#playlistDropdown').removeClass('open');
+		$('#radioDropdown').removeClass('open');
+		d3.event.stopPropagation();
 		};
 	})
 	
@@ -1340,7 +1343,6 @@ $('#radioICON').on("click", function(e){
 	$('#radioDropdown').toggleClass("open");
 	$('#playlistDropdown').removeClass("open");
 	e.stopPropagation();
-	loadRadio(false);
 })
 
 ////////////
