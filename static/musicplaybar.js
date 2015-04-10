@@ -166,7 +166,6 @@ function playPreviousTrack(){
 };
 
 function playNow(e){
-	refreshPlaylist();
 	playlistAlert();
 	$( "#scrubberSlider" ).slider( "option", "value", 0);	
 	var trackData = e.currentTarget.value.split("|");
@@ -191,6 +190,7 @@ function playNow(e){
 	};
 	//console.log(gv.customPlaylist[currentTrack]);
 	player.cueVideoById(gv.customPlaylist[currentTrack].youtubeId);
+	refreshPlaylist();
 };
 
 function addTrackToPlaylist(e){
@@ -406,8 +406,7 @@ $('#previous').click(function(){
 });
 
 $('body').on('click','.addToPlaylist', function (e) {
-	addTrackToPlaylist(e);
-      
+	addTrackToPlaylist(e);    
 });
 
 $('body').on('click','.playNowButton', function (e) {
@@ -594,6 +593,7 @@ $('#tuneIn').on("click", function(){
 	player.cueVideoById(gv.upNext.youtubeId);
 });
 
+$('')
 
 
 

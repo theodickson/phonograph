@@ -458,6 +458,7 @@ function loadArtistInfo() {
 	
 	d3.json("https://api.spotify.com/v1/artists/"+id+"/top-tracks?country=GB", function (error, response) {
 		gv.requestTracks = [];
+		console.log(response);
 		for (track of response.tracks) {
 			artistNames = [];
 			for (artist of track.artists) {
@@ -501,6 +502,7 @@ function performRequests(mode) {
 			var score = 0;
 		};
 		if (score > 0.3) {
+			console.log(thisTrack.artists);
 			var playbtn = playInTable.replace("???", ytresponse.items[0].id.videoId+"|"+thisTrack.name+"|" +thisTrack.artists.join("*"));
 			playbtn = playbtn.replace(/&&&/g, "");
 			gv.tableData.push( {
