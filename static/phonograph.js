@@ -189,7 +189,7 @@ function start_Vis(graph) {
 				if ((d.id != gv.origin)&&(gv.clickable)) {
 					gv.origin = d.id;
 					gv.route = "neighbourhood"
-					resetZoomLevel();
+					//resetZoomLevel();
 					reload();	
 				};
 			});
@@ -1006,7 +1006,7 @@ function setAutocomplete(){
 	    	gv.origin = ui.item.value;
 	    	gv.route = "neighbourhood"
 	    	gv.genre = null;
-	    	resetZoomLevel();
+	    	//resetZoomLevel();
 	    	reload();
 	    	event.preventDefault();
 	    },
@@ -1031,7 +1031,7 @@ function setAutocomplete(){
 	    	gv.route = "termsubgraph"
 	    	gv.origin = null;
 	    	gv.genre = null;
-	    	resetZoomLevel();
+	    	//resetZoomLevel();
 	    	reload();
 	    	event.preventDefault();
 	    },
@@ -1074,7 +1074,7 @@ function setAutocomplete(){
 	    	gv.destination = ui.item.value;
 	    	gv.route = "path"
 	    	gv.genre = null;
-	    	resetZoomLevel();
+	    	//resetZoomLevel();
 	    	event.preventDefault();
 	    },
 	    delay: 100,
@@ -1279,7 +1279,7 @@ $('#genre').change(function(){
 		gv.genre = newGenre;
 		gv.route = "neighbourhood"
 		gv.origin = null;
-		resetZoomLevel();
+		//resetZoomLevel();
 		reload();
 	};
 });
