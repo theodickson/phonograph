@@ -569,15 +569,19 @@ function performRequests(mode) {
 			});
 			//Plays tracks on click of play now dropdown
 			$('.drop-down-play-now').on("click", function(){
+				$('#tuneIn').show();
 				$(this).closest('.btn-group').children('.playNowButton').trigger("click");
 			});
 			$('.drop-down-play-next').on("click", function(){
+				$('#tuneIn').show();
 				var s = $(this).closest('.btn-group').children('.playNowButton').val();
 				var track = parseTrack(s);
 				console.log(track);
 				playNextFromDropdown(track);
+
 			});
 			$('.drop-down-add-to-playlist').on("click", function(){
+				$('#tuneIn').show();
 				var s = $(this).closest('.btn-group').children('.playNowButton').val();
 				var track = parseTrack(s);
 				addTrackToPlaylist(track);
