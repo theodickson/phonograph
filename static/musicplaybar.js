@@ -414,7 +414,9 @@ $('#next').click(function(){
 });
 
 $('#previous').click(function(){
-	playPreviousTrack();
+	if (gv.mode = 'playlist') {
+		playPreviousTrack();
+	};
 });
 
 $('body').on('click','.addToPlaylist', function (e) {
@@ -604,7 +606,6 @@ $('#tuneIn').on("click", function(){
 	player.cueVideoById(gv.upNext.youtubeId);
 });
 
-$('')
 
 
 

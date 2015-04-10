@@ -1,7 +1,7 @@
 //Main function:
 function reload() {
 	gv.clickable = false;
-	svg.transition().delay(1000).duration(1000).style("opacity", 0.3)
+	svg.transition().delay(500).duration(1500).style("opacity", 0.3)
 	d3.json(flaskURL(), function(error, graph) {
 		if (graph.origin) {
 			gv.origin = graph.origin;
@@ -10,7 +10,13 @@ function reload() {
 		} else {
 			gv.origin = null;
 		}
-		start_Vis(graph);
+		if (!(graph.error)) {
+			start_Vis(graph);
+		} else {
+			console.log('No path found.')
+			gv.clickable = true;
+			svg.transition().delay(500).duration(500).style("opacity", 1);
+		};
 	});
 };
 
@@ -239,7 +245,7 @@ function start_Vis(graph) {
 	
 	setTimeout( function() {
 		dehighlightLinks();
-		if (gv.currentArtist) {
+		if (gv.route == 'zoom' || gv.route == 'neighbourhood') {
 			loadArtistInfo();
 		};
 		if (gv.playMode == 'radio') {
@@ -915,7 +921,7 @@ function getName(id) {
 function loadRadio(firstTime) {
 	radioAlert();
 	fillRadioTitle();
-	if ((gv.currentService == 'youtube')&&(firstTime)) {
+	if ((gv.currentService == 'youtube')) {
 		performRadioRequests('nowPlaying');
 	};
 	if (gv.currentService == 'spotify') {
