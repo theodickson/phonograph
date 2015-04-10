@@ -23,6 +23,22 @@ function onYouTubeIframeAPIReady() {
   });
 }
 
+function radioMode(){
+	$('#previous').disabled=true;
+	$('#radioICON').trigger("click");
+	$("#tuneIn").hide(500);
+	$("#upNext").show(500);
+	$("#track1").text("");
+};
+
+function playlistMode(){
+	$('#previous').disabled=false;
+	$('#playlistICON').trigger("click");
+	$("#tuneIn").show(500);
+	$("#upNext").hide(500);
+	$("#track1").text("Up Next: ");
+}
+
 function playlistAlert(){
 	$('#playlistICON').effect("highlight", {} , 500);
 };
@@ -166,8 +182,7 @@ function playPreviousTrack(){
 };
 
 function playNextFromDropdown(track){
-	$("#tuneIn").show(500);
-	$('#radioICON').trigger("click");
+	playlistMode();
 	gv.playMode = "playlist";
 	if (currentTrack == null){
 		currentTrack = 0;
@@ -343,10 +358,7 @@ function refreshPlaylist(){
 		currentTrack=$(this).attr("data-index");
 		refreshPlaylist();
 		gv.playMode = "playlist";
-		$('#radioICON').trigger("click");
-		$("#tuneIn").show(500);
-		$("#upNext").hide(500);
-		$("#track1").text("Up Next");
+		playlistMode();
 		player.cueVideoById(gv.customPlaylist[currentTrack][0]);
 	});
 	//REMOVE FROM PLAYLIST ON CLICK OF 'X'
@@ -435,10 +447,8 @@ $('body').on('click','.addToPlaylist', function (e) {
 
 $('body').on('click','.playNowButton', function (e) {
 	gv.playMode = 'playlist';
-	$('#tuneIn').show(500);
-	$("#upNext").hide(500);
-	$("#track1").text("Up Next");
-	$("#playlistICON").trigger("click");
+	playlistMode();
+
 	playNow(e);
 });
 
@@ -615,10 +625,7 @@ function phonograph(){
 //SWTICH TO RADIO MODE ON TUNE IN BUTTON
 $('#tuneIn').on("click", function(){
 	gv.playMode = "radio";
-	$
-	$('#tuneIn').hide(500);
-	$("#upNext").show(500);
-	$("#track1").text("Now Playing:");
+	radioMode();
 	player.cueVideoById(gv.upNext.youtubeId);
 });
 

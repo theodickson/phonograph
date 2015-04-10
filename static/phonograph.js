@@ -296,9 +296,6 @@ var svg = d3.select("#map").append("svg")
 			gv.clickedNode = null;
 			highlightNode();
 			dehighlightLinks();
-		$('#playlistDropdown').removeClass('open');
-		$('#radioDropdown').removeClass('open');
-		d3.event.stopPropagation();
 		};
 	})
 	
@@ -579,11 +576,11 @@ function performRequests(mode) {
 			});
 			//Plays tracks on click of play now dropdown
 			$('.drop-down-play-now').on("click", function(){
-				$('#tuneIn').show();
+				playlistMode();
 				$(this).closest('.btn-group').children('.playNowButton').trigger("click");
 			});
 			$('.drop-down-play-next').on("click", function(){
-				$('#tuneIn').show();
+				playlistMode();
 				var s = $(this).closest('.btn-group').children('.playNowButton').val();
 				var track = parseTrack(s);
 				console.log(track);
@@ -591,7 +588,7 @@ function performRequests(mode) {
 
 			});
 			$('.drop-down-add-to-playlist').on("click", function(){
-				$('#tuneIn').show();
+				playlistMode();
 				var s = $(this).closest('.btn-group').children('.playNowButton').val();
 				var track = parseTrack(s);
 				addTrackToPlaylist(track);
@@ -1348,11 +1345,9 @@ $('#radioICON').on("click", function(e){
 	$('#radioDropdown').toggleClass("open");
 	$('#playlistDropdown').removeClass("open");
 	e.stopPropagation();
+	loadRadio(false);
 })
 
-svg.on("click", function(){
-	
-})
 ////////////
 
 //var oldplaybutton = "<button class='btn-sm btn-sidebar playNowButton' type='button' value='"+ytresponse.items[0].id.videoId+"|"+thisTrack.name+"|" +thisTrack.artists.join("*")+"'><i class='el el-play'></i></button>";
