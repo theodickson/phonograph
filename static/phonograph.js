@@ -286,7 +286,7 @@ var svg = d3.select("#map").append("svg")
 			unclickNode();
 		};
 	})
-	
+gv.playMode == 'playlist';	
 //Animation variables.
 gv.FadeOut = 0;
 gv.NodeSlide = 0;
