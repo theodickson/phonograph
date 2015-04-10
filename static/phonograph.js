@@ -1279,7 +1279,6 @@ $('#genre').change(function(){
 		gv.genre = newGenre;
 		gv.route = "neighbourhood"
 		gv.origin = null;
-		resetZoomLevel();
 		reload();
 	};
 });
@@ -1334,7 +1333,9 @@ $('#playlistICON').on("click", function(e){
 });
 ////////////
 
-$('')
+$('#playlistDropdown').on('hide.bs.dropdown', function (e) {
+	e.preventDefault();
+});
 
 $('#radioICON').on("click", function(e){
 	$('#radioDropdown').toggleClass("open");
@@ -1349,7 +1350,11 @@ $('#radioICON').on("click", function(e){
 
 var playInTable = "<div class='btn-group'> <button type='button' class='btn btn-info btn-play playNowButton' &&& value='???'><i class='fa fa-play-circle fa-lg'></i></button> <button type='button' class='btn btn-info btn-play dropdown-toggle' &&& data-toggle='dropdown' aria-expanded='false'> <span class='caret'></span> <span class='sr-only'>Toggle Play Dropdown</span> </button> <ul class='dropdown-menu pull-right' role='menu'> <li><a href='#' class='drop-down-play-now'>Play Now</a></li> <li><a href='#' class='drop-down-play-next'>Play Next</a></li> <li><a href='#' class='drop-down-add-to-playlist'>Add to Playlist</a></li></ul> </div>";
 
-
+$('#svg').on("click", function(){
+	if($('#playlistDropdown').hasClass("open")){
+		$('#playlistICON').trigger("click");
+	};
+});
 
 
 

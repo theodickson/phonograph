@@ -447,8 +447,7 @@ $('body').on('click','.addToPlaylist', function (e) {
 
 $('body').on('click','.playNowButton', function (e) {
 	gv.playMode = 'playlist';
-	playlistMode();
-
+	//playlistMode();
 	playNow(e);
 });
 
