@@ -358,11 +358,9 @@ reload();
 //Action functions:
 function clickNode(d) {
 	gv.currentLink = null;
+	gv.clickedNode = d.id;
 	highlightNode();
 	highlightLinks();
-	if (gv.clickedNode != d.id) {
-		gv.clickedNode = d.id;
-	}
 	if (gv.currentArtist != d.id) {
 		gv.currentArtist = d.id;
 		loadArtistInfo();
