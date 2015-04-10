@@ -30,7 +30,7 @@ function start_Vis(graph) {
 	svg.transition().duration(1000).style("opacity", 1)
 	var width = $('#map').width();
 		nheight = $('#navbar').height();
-		height = window.innerHeight - nheight-105;
+		height = window.innerHeight - nheight-115;
 
 	gv.wellHeight = window.innerHeight - nheight-170+"px";
 	$('#bio').css('height', gv.wellHeight);
