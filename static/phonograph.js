@@ -5,7 +5,7 @@ function reload() {
 	d3.json(flaskURL(), function(error, graph) {
 		if (graph.origin) {
 			gv.origin = graph.origin;
-			gv.currentArtist = graph.origin;
+			//gv.currentArtist = graph.origin;
 		} else {
 			gv.origin = null;
 		}
@@ -173,7 +173,7 @@ function start_Vis(graph) {
 			.attr("transform", function(d) { return 'translate('+wScale(d.pos[0])+','+hScale(d.pos[1])+')' })
 			.style("opacity", 0)
 			.on("click", function(d) {
-				if ( (gv.clicked != d.id)&&(gv.clickable) ) {
+				if ( (gv.currentArtist != d.id || gv.clicked != d.id)&&(gv.clickable) ) {
 					clickNode(d.id);
 				};
 				d3.event.stopPropagation(); 
@@ -381,60 +381,62 @@ function unclickNode() {
 };
 
 function loadArtistInfo(id) {
-	gv.currentArtistName = gv.artist[id].name;
-	gv.currentArtist = id;
-	tabSwitch("node");
-	$('#node-title').text(gv.currentArtistName);
-	d3.json("http://developer.echonest.com/api/v4/artist/biographies?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json&results=1&start=0&license=cc-by-sa", function(error, response) {
-		if(error){
-			d3.select('#bioText').text("Biography not found in database");
-		}
-		else{
-			var bio = response.response.biographies[0].text;
-			////console.log(bio);
-			d3.select('#bioText').text(bio);
-		}
-	});
-	d3.json("http://developer.echonest.com/api/v4/artist/images?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json&results=1&start=0", function(error, response) {
-		if(error){
-			d3.select('#artistImage').html( function() { return '<img src="static/images/default.jpg" style="max-width: 180px; max-height: 240p" class="img-thumbnail center-block"/>'; });
-		}
-		else{
-			var image = response.response.images[0].url;
-			d3.select('#artistImage').html( function() { return '<img src="'+image+'" style="max-width: 180px; max-height: 240p" class="img-thumbnail center-block"/>'; });
+	if (gv.currentArtist != id) {
+		gv.currentArtistName = gv.artist[id].name;
+		gv.currentArtist = id;
+		tabSwitch("node");
+		$('#node-title').text(gv.currentArtistName);
+		d3.json("http://developer.echonest.com/api/v4/artist/biographies?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json&results=1&start=0&license=cc-by-sa", function(error, response) {
+			if(error){
+				d3.select('#bioText').text("Biography not found in database");
+			}
+			else{
+				var bio = response.response.biographies[0].text;
+				////console.log(bio);
+				d3.select('#bioText').text(bio);
+			}
+		});
+		d3.json("http://developer.echonest.com/api/v4/artist/images?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json&results=1&start=0", function(error, response) {
+			if(error){
+				d3.select('#artistImage').html( function() { return '<img src="static/images/default.jpg" style="max-width: 180px; max-height: 240p" class="img-thumbnail center-block"/>'; });
+			}
+			else{
+				var image = response.response.images[0].url;
+				d3.select('#artistImage').html( function() { return '<img src="'+image+'" style="max-width: 180px; max-height: 240p" class="img-thumbnail center-block"/>'; });
 
-		};
-	});
-
-	if(gv.currentService=="spotify"){
-		d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+id+'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
-	};
-
-	d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+id+'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
-
-	d3.json("http://developer.echonest.com/api/v4/artist/twitter?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json", function(error, response) {
-		var twttrId = response.response.artist.twitter;
-		if (typeof(twttrId)!= "undefined") {
-			d3.select('#twitter').html('<a id="twitterTimeline" height="'+gv.wellHeight+'" class="twitter-timeline" href="https://twitter.com/'+twttrId+'" data-widget-id="574576262469009409" text="HAHAHAHAH" data-screen-name="'+twttrId+'">Loading Tweets by @'+twttrId+'</a>');
-			twttr.widgets.load();
-		} else {
-			d3.select('#twitter').html('<p><em>Twitter account not found.</em></p>');
-		};
-	});
-	
-	d3.json("https://api.spotify.com/v1/artists/"+id+"/top-tracks?country=GB", function (error, response) {
-		gv.requestTracks = [];
-		for (track of response.tracks) {
-			artistNames = [];
-			for (artist of track.artists) {
-				artistNames.push(artist.name);
 			};
-			parsedTrack = {'id': track.id, 'name': track.name, 'artists': artistNames};
-			gv.requestTracks.push(parsedTrack);
+		});
+
+		if(gv.currentService=="spotify"){
+			d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+id+'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
 		};
-		c = 0; gv.tableData = [];
-		performRequests('node', c);
-	});
+
+		d3.select('#nodeIframe').html('<iframe src="https://embed.spotify.com/?uri=spotify:artist:'+id+'&theme=white" width="'+gv.wellWidth+'" height="'+gv.wellHeight+'" frameborder="0" allowtransparency="true" allowtransparency="true"></iframe>');
+
+		d3.json("http://developer.echonest.com/api/v4/artist/twitter?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json", function(error, response) {
+			var twttrId = response.response.artist.twitter;
+			if (typeof(twttrId)!= "undefined") {
+				d3.select('#twitter').html('<a id="twitterTimeline" height="'+gv.wellHeight+'" class="twitter-timeline" href="https://twitter.com/'+twttrId+'" data-widget-id="574576262469009409" text="HAHAHAHAH" data-screen-name="'+twttrId+'">Loading Tweets by @'+twttrId+'</a>');
+				twttr.widgets.load();
+			} else {
+				d3.select('#twitter').html('<p><em>Twitter account not found.</em></p>');
+			};
+		});
+		
+		d3.json("https://api.spotify.com/v1/artists/"+id+"/top-tracks?country=GB", function (error, response) {
+			gv.requestTracks = [];
+			for (track of response.tracks) {
+				artistNames = [];
+				for (artist of track.artists) {
+					artistNames.push(artist.name);
+				};
+				parsedTrack = {'id': track.id, 'name': track.name, 'artists': artistNames};
+				gv.requestTracks.push(parsedTrack);
+			};
+			c = 0; gv.tableData = [];
+			performRequests('node', c);
+		});
+	};
 };
 
 function get_url(relations, type) {
@@ -587,6 +589,7 @@ function clickLink(d) {
 	d3.event.stopPropagation();
 	addToSidebarHistory(1, d);
 	getLinkInfo(d);
+	gv.currentArtist = null;
 };	
 
 function calculateScore(requestName, responseName, artistNames) {
