@@ -110,8 +110,7 @@ function start_Vis(graph) {
 	};
 	
 	gv.newGraph = graph;
-	
-
+	makeRadioList();
 
 	if ( !(gv.route == "path") ) {
 		$('.numArtists').show();
@@ -240,7 +239,9 @@ function start_Vis(graph) {
 	
 	setTimeout( function() {
 		dehighlightLinks();
-		loadArtistInfo();
+		if (gv.currentArtist) {
+			loadArtistInfo();
+		};
 		if (gv.playMode == 'radio') {
 			loadRadio(true);
 		};
@@ -903,13 +904,10 @@ function getName(id) {
 	}
 };
 
-function loadRadio(doRequests) {
+function loadRadio(firstTime) {
 	radioAlert();
 	fillRadioTitle();
-	if (gv.route != 'path') {
-		makeRadioList();
-	};
-	if ((gv.currentService == 'youtube')&&(doRequests)) {
+	if ((gv.currentService == 'youtube')&&(firstTime)) {
 		performRadioRequests('nowPlaying');
 	};
 	if (gv.currentService == 'spotify') {

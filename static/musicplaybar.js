@@ -46,7 +46,7 @@ function secondsToString(s){
 // 4. The API will call this function when the video player is ready.
 function onPlayerReady(event) {
 	//WHEN YT READY LOAD RADIO 
-	loadRadio();
+	loadRadio(true);
 };
 
 // 5. The API calls this function when the player's state changes.
