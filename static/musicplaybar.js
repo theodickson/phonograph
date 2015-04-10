@@ -91,6 +91,7 @@ function onPlayerStateChange(event) {
 		}
 		else{
 			track = gv.customPlaylist[currentTrack];
+			console.log(track);
 		};
 		var artists = parseArtists(track);
 		var songName = track.name;
@@ -321,8 +322,10 @@ function refreshPlaylist(){
 
 	//PLAY FROM PLAYLIST ON DOUBLE CLICK OF ROW
 	$('#playlistTable').find('tr').dblclick(function(){
+		console.log("doubleclicked playlist");
 		currentTrack=$(this).attr("data-index");
 		refreshPlaylist();
+		gv.playMode = "playlist";
 		player.cueVideoById(gv.customPlaylist[currentTrack][0]);
 	});
 	//REMOVE FROM PLAYLIST ON CLICK OF 'X'
@@ -408,8 +411,8 @@ $('body').on('click','.addToPlaylist', function (e) {
 });
 
 $('body').on('click','.playNowButton', function (e) {
+	gv.playMode = 'playlist';
 	playNow(e);
-      
 });
 
 function setVolIcon(){

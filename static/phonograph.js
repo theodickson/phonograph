@@ -236,19 +236,17 @@ function start_Vis(graph) {
 	gv.oldGraph = graph;
 	
 	d3.selectAll(".oldNode").transition().delay(gv.FadeOut+gv.NodeSlide+gv.FadeIn).remove();
-	var transitions = 0;
-	d3.selectAll(".node").transition().delay(gv.FadeOut+gv.NodeSlide).duration(gv.FadeIn).style("opacity", 1)
-		.each("start", transitions ++)
-		.each("end", function() {
-			if (transitions==gv.node.length) {
-				if (gv.origin) {
-					loadArtistInfo();
-				};
-				gv.clickable = true;
-			};
-		});
+	d3.selectAll(".node").transition().delay(gv.FadeOut+gv.NodeSlide).duration(gv.FadeIn).style("opacity", 1);
 	
-	setTimeout( function() {dehighlightLinks();}, gv.FadeOut+gv.FadeIn+gv.NodeSlide);
+	setTimeout( function() {
+		dehighlightLinks();
+		loadArtistInfo();
+		if (gv.playMode == 'radio') {
+			loadRadio();
+		};
+		gv.clickable = true;
+	}, gv.FadeOut+gv.FadeIn+gv.NodeSlide);
+
 	gv.FadeOut = 600;
 	gv.NodeSlide = 1000;
 };	
@@ -417,7 +415,8 @@ function unclickNode() {
 };
 
 function loadArtistInfo() {
-	gv.currentArtistName = 'asdfas';
+	gv.currentArtistName = gv.artist[gv.currentArtist].name;
+	console.log(gv.artist);
 	id  = gv.currentArtist;
 	$('#node-title').text(gv.currentArtistName);
 	d3.json("http://developer.echonest.com/api/v4/artist/biographies?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json&results=1&start=0&license=cc-by-sa", function(error, response) {
@@ -467,8 +466,8 @@ function loadArtistInfo() {
 			parsedTrack = {'id': track.id, 'name': track.name, 'artists': artistNames};
 			gv.requestTracks.push(parsedTrack);
 		};
-		c = 0; gv.tableData = [];
-		performRequests('node', c);
+		gv.tableData = [];
+		performRequests('node');
 	});
 };
 
@@ -506,7 +505,7 @@ function performRequests(mode) {
 			playbtn = playbtn.replace(/&&&/g, "");
 			gv.tableData.push( {
 				"artist": thisTrack.artists.join(", "), 
-				"title": thisTrack.name, 
+				"name": thisTrack.name, 
 				"id": ytresponse.items[0].id.videoId, 
 				"play": playbtn
 			});
@@ -515,7 +514,7 @@ function performRequests(mode) {
 			playbtn = playbtn.replace(/&&&/g, "disabled='disabled'");
 			gv.tableData.push( {
 				"artist": '<div class="disabled" style="color:grey;">'+thisTrack.artists.join(",")+'</div>', 
-				"title": '<div class="disabled" style="color:grey;">'+thisTrack.name+'</div>', 
+				"name": '<div class="disabled" style="color:grey;">'+thisTrack.name+'</div>', 
 				"id": null, 
 				"play": playbtn
 			});
@@ -523,6 +522,9 @@ function performRequests(mode) {
 
 		$('#'+mode+'YoutubeTable').bootstrapTable('load', gv.tableData);
 		$('#'+mode+'YoutubeTable').bootstrapTable('hideLoading');
+		$('.playNowButton').on('click', function() {
+			gv.playmode = 'playlist';
+		});
 		//console.log(gv.tableData)
 
 		if (gv.requestTracks.length != 0) { 
@@ -585,9 +587,13 @@ function performRadioRequests(mode) {
 				if (mode == 'nowPlaying') {	
 					if (!(gv.nowPlaying)) {
 						performRadioRequests('upNext')
+						if(gv.playMode == 'radio') {
+							phonograph();
+						};
 					}
 				}
-				console.log(gv.nowPlaying); console.log(gv.upNext);
+				$('#radio-now-playing').text(gv.nowPlaying.name);
+				$('#radio-up-next').text(gv.upNext.name);
 			} else {
 				gv.radioList.reverse().pop();
 				gv.radioList.reverse();
@@ -596,16 +602,6 @@ function performRadioRequests(mode) {
 			};
 		};
 	});
-	if(mode == "nowPlaying"){
-		$('#radio-now-playing').text(thisTrack.name);
-	}
-	else{
-		$('#radio-up-next').text(thisTrack.name);
-		if(gv.playMode =="radio"){
-			//STARTING THE PHONOGRAPH
-			phonograph();
-		}
-	};
 };
 
 function loadEdgeInfo(){
@@ -1296,7 +1292,7 @@ $('#playlistICON').on("click", function(e){
 	$('#playlistDropdown').toggleClass("open");
 	$('#radioDropdown').removeClass("open");
 	e.stopPropagation();
-})
+});
 ////////////
 
 //KEEP Radio OPEN UNLESS CLICKING ICON
@@ -1309,7 +1305,12 @@ $('#radioICON').on("click", function(e){
 	$('#radioDropdown').toggleClass("open");
 	$('#playlistDropdown').removeClass("open");
 	e.stopPropagation();
+	if (gv.playMode != 'radio') {
+		gv.playMode = 'radio'
+		loadRadio();
+	};
 })
+
 ////////////
 
 //var oldplaybutton = "<button class='btn-sm btn-sidebar playNowButton' type='button' value='"+ytresponse.items[0].id.videoId+"|"+thisTrack.name+"|" +thisTrack.artists.join("*")+"'><i class='el el-play'></i></button>";
