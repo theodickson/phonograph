@@ -46,7 +46,7 @@ function secondsToString(s){
 // 4. The API will call this function when the video player is ready.
 function onPlayerReady(event) {
 	if(gv.customPlaylist.length !=0){
-		player.cueVideoById(gv.customPlaylist[0].youtubeID);
+		player.cueVideoById(gv.customPlaylist[0].youtubeId);
 	};
 };
 
@@ -128,7 +128,7 @@ function playNextTrack(){
 			currentTrack=0;
 		};
 		refreshPlaylist();
-		player.cueVideoById(gv.customPlaylist[currentTrack].youtubeID);
+		player.cueVideoById(gv.customPlaylist[currentTrack].youtubeId);
 	};
 }
 
@@ -139,13 +139,13 @@ function playPreviousTrack(){
 	if(currentTrack>0) {
 		currentTrack -=1;
 		refreshPlaylist();
-		player.cueVideoById(gv.customPlaylist[currentTrack].youtubeIDid);
+		player.cueVideoById(gv.customPlaylist[currentTrack].youtubeId);
 		return true;
 	}
 	else{
 		currentTrack = gv.customPlaylist.length-1;
 		refreshPlaylist();
-		player.cueVideoById(gv.customPlaylist[currentTrack].youtubeID);
+		player.cueVideoById(gv.customPlaylist[currentTrack].youtubeId);
 		return false;
 	};
 };
@@ -155,8 +155,9 @@ function playNow(e){
 	playlistAlert();
 	$( "#scrubberSlider" ).slider( "option", "value", 0);	
 	var trackData = e.currentTarget.value.split("|");
+	console.log(trackData);
 	var track = {
-		"youtubeID" : trackData[0],
+		"youtubeId" : trackData[0],
 		"title" : trackData[1],
 		"artists" : trackData[2].split("*")
 	};
@@ -174,7 +175,7 @@ function playNow(e){
 		refreshPlaylist();
 	};
 	console.log(gv.customPlaylist[currentTrack]);
-	player.cueVideoById(gv.customPlaylist[currentTrack].youtubeID);
+	player.cueVideoById(gv.customPlaylist[currentTrack].youtubeId);
 };
 
 function addTrackToPlaylist(e){
@@ -183,7 +184,7 @@ function addTrackToPlaylist(e){
 	var artist = $('#sideBarTitle').text();
 	var trackName = $(e.currentTarget).parent().parent().find(">:first-child")[0].textContent;
 	var track = {
-		"youtubeID": ID,
+		"youtubeId": ID,
 		"title": trackName,
 		"artists": "ARTIST"
 	};
@@ -219,25 +220,12 @@ getPlaylist = function(){
 $('#playlistTable').bootstrapTable({
         data: getPlaylist()
     });
-$('#playlistPane').toggle();
-$('#subgraphPane').toggle();
 
-$('#playlistButton').on("click", function(){
-	$(this).toggleClass("selected");
-	$('#playlistPane').toggle();
-	$('#info').toggle();
-	if ($(this).hasClass("selected")) {
-			$('#playlistPane').show();
-			$('#info').hide();
-			$('#subgraphPane').hide();
-	    } else {
-	        $('#playlistPane').hide();
-	        $('#subgraphPane').hide();
-	        $('#info').show();
-	    }
-	refreshPlaylist();
-});
 
+//Subgraph not ready yet
+/*$('#subgraphPane').toggle();*/
+
+/* SUBGRAPH NOT READY YET
 $('#subgraphButton').on("click", function(){
 	$(this).toggleClass("selected");
 	$('#subgraphPane').toggle();
@@ -252,7 +240,7 @@ $('#subgraphButton').on("click", function(){
 	        $('#info').show();
 	    }
 	refreshPlaylist();
-});
+});*/
 /*
 $('#subgraphButton').on("click", function(){
 	$(this).toggleClass("selected");
@@ -292,10 +280,10 @@ function makePlaylistSortable(){
 	        	var rows = $('#playlistTable').find('tr[data-index]');
 	        	var newPlaylist = [];
 	        	console.log("BEFORE SLIDE CURRENT TRACK = "+currentTrack);
-	        	var currentID = gv.customPlaylist[currentTrack].youtubeID;
+	        	var currentID = gv.customPlaylist[currentTrack].youtubeId;
 	        	for(i=0; i<rows.length;i++){
 	        		oldPos = $(rows[i]).attr("data-index");
-	        		if(gv.customPlaylist[oldPos].youtubeID==currentID){
+	        		if(gv.customPlaylist[oldPos].youtubeId==currentID){
 	        			currentTrack = i;
 	        		};
 	        		newPlaylist[i] = gv.customPlaylist[oldPos];

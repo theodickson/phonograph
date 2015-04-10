@@ -487,18 +487,22 @@ function performRequests(mode) {
 		};
 		console.log(thisTrack.artists);
 		if (score > 0.3) {
+			var playbtn = playInTable.replace("???", ytresponse.items[0].id.videoId+"|"+thisTrack.name+"|" +thisTrack.artists.join("*"));
+			playbtn = playbtn.replace(/&&&/g, "");
 			gv.tableData.push( {
 				"artist": thisTrack.artists.join(", "), 
 				"title": thisTrack.name, 
 				"id": ytresponse.items[0].id.videoId, 
-				"play": "<button class='btn-sm btn-sidebar playNowButton' type='button' value='"+ytresponse.items[0].id.videoId+"|"+thisTrack.name+"|" +thisTrack.artists.join("*")+"'><i class='el el-play'></i></button>"
+				"play": playbtn
 			});
 		} else {
+			var playbtn = playInTable.replace("???", "");
+			playbtn = playbtn.replace(/&&&/g, "disabled='disabled'");
 			gv.tableData.push( {
 				"artist": '<div class="disabled" style="color:grey;">'+thisTrack.artists.join(",")+'</div>', 
 				"title": '<div class="disabled" style="color:grey;">'+thisTrack.name+'</div>', 
 				"id": null, 
-				"play": "<button disabled class='btn-sm btn-sidebar disabled playNowButton' type='button'><i class='el el-play'></i></button>"
+				"play": playbtn
 			});
 		};
 
@@ -805,22 +809,26 @@ function getName(id) {
 };
 
 function loadRadio() {
+	radioAlert();
 	fillRadioTitle();
 	if (gv.route != 'path') {
 		makeRadioList();
-	};
-	if (gv.currentService == 'youtube') {
+	}
+	else if (gv.currentService == 'youtube') {
 		gv.tableData = [];
 		gv.requestCounter = 0;
 		performRequests('radio');
-	};
-	if (gv.currentService == 'spotify') {
+	}
+	else if (gv.currentService == 'spotify') {
 		trackIds = [];
 		for (track of gv.radioList) {
 			trackIds.push(track.id);
 		};
 		loadSpotify(trackIds);
-	};
+	}
+	else{
+		alert("LOAD RADIO SHouNDT BE CALLED PLEASE REPORT ERROR");
+	}
 };
 
 function loadSpotify(tracks) {
@@ -846,11 +854,11 @@ function tabSwitch(pane) {
 	$('#artistSearch').val("");
 	$('#info').toggle(true);
 	$('#playlistPane').toggle(false);
-	$('#subgraphPane').toggle(false);
+	//$('#subgraphPane').toggle(false);
 
 	//console.log("switching to "+pane);
 	if (pane == "edge") {
-		for (elt of ["nodeTab", "nodePane", "radioTab", "radioPane"]) {
+		for (elt of ["nodeTab", "nodePane"]) {
 			d3.select('#'+elt).classed("active", false);
 		};
 		for (elt of ["nodeTab"]){
@@ -863,7 +871,7 @@ function tabSwitch(pane) {
 	}
 	
 	else if (pane == "node") {
-		for (elt of ["edgeTab", "edgePane", "radioTab", "radioPane"]) {
+		for (elt of ["edgeTab", "edgePane"]) {
 			d3.select('#'+elt).classed("active", false);
 		};
 		for (elt of ["edgeTab"]){
@@ -874,20 +882,9 @@ function tabSwitch(pane) {
 			$('#'+elt).show();
 		};
 	}
-	
-	else if (pane == "radio") {
-		for (elt of ["edgeTab", "edgePane", "nodeTab", "nodePane"]) {
-			d3.select('#'+elt).classed("active", false);
-		};
-
-		for (elt of ["radioTab", "radioPane"]) {
-			d3.select('#'+elt).classed("active", true);
-			$('#'+elt).show();
-		};
-	}
 
 	else{
-		//console.log("ERROR IN TAB SWITCHING FUNCTION");
+		console.log("ERROR IN TAB SWITCHING FUNCTION");
 	};
 
 };
@@ -990,7 +987,7 @@ $('#search-button').on("click", function(){
 });
 
 setAutocomplete();
-
+/* NO SUBGRAPH AT PRESENT TIME
 function checkForSubGraphRemoval(){
 	$('.removeFromSubGraph').on("click", function(){
 		var index = $(this).closest('tr').attr("data-index");
@@ -1029,7 +1026,7 @@ $( "#addtoSubgraph" ).autocomplete({
         results: function() {}
     },
 });
-
+*/
 //Youtube stuff.
 var tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api?wmode=transparent";
@@ -1278,8 +1275,9 @@ $('#radioICON').on("click", function(e){
 })
 ////////////
 
+//var oldplaybutton = "<button class='btn-sm btn-sidebar playNowButton' type='button' value='"+ytresponse.items[0].id.videoId+"|"+thisTrack.name+"|" +thisTrack.artists.join("*")+"'><i class='el el-play'></i></button>";
 
-
+var playInTable = "<div class='btn-group'> <button type='button' class='btn btn-info btn-play playNowButton' &&& value='???'><i class='fa fa-play-circle fa-lg'></i></button> <button type='button' class='btn btn-info btn-play dropdown-toggle' &&& data-toggle='dropdown' aria-expanded='false'> <span class='caret'></span> <span class='sr-only'>Toggle Play Dropdown</span> </button> <ul class='dropdown-menu pull-right' role='menu'> <li><a href='#'>Action</a></li> <li><a href='#'>Another action</a></li> <li><a href='#'>Something else here</a></li> <li class='divider'></li> <li><a href='#'>Separated link</a></li> </ul> </div>";
 
 
 
