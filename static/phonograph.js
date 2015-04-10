@@ -336,14 +336,15 @@ $('#artistOptions').on('click', function(){
 	$('#artistSearch').val(gv.currentArtistName);
 });
 
-/*var URL = document.URL.split("gv.route=");
-
+/*var URL = document.URL
+console.log(URL);
+/*
 if(URL.length !== 1){
 	initFromURL = true;
 	var gv.route = URL[1].split("&seed=")[0];
 	var seed = URL[1].split("&seed=")[1];	
-}*/
-
+}
+*/
 reload();
 
 //Supplementary functions:
@@ -550,6 +551,10 @@ function performRequests(mode) {
 				else{
 					playNowButton.trigger("click");
 				};
+			});
+			//Plays tracks on click of play now dropdown
+			$('.drop-down-play-now').on("click", function(){
+				$(this).closest('.btn-group').children('.playNowButton').trigger("click");
 			});
 		};
 	});
@@ -856,6 +861,7 @@ function compare(a,b) {
 function fillRadioTitle(){
 	gv.radioTitle = "";
 	if (gv.route == "zoom" || gv.route == "neighbourhood"){
+		console.log(gv.origin);
 		gv.radioTitle = getName(gv.origin) + ' Radio';
 	};
 	if (gv.route == "path") {
@@ -1250,12 +1256,9 @@ $('#ns').change(function(){
 	};
 });
 $('#urlShare').click(function(){
-	if (typeof location.gv.origin === 'undefined'){
-    	location.gv.origin = location.protocol + '//' + location.host;
-	}
-	//console.log(location.gv.origin);
-
-	d3.select('#URL').property({'value': location.gv.origin+'/?gv.route='+gv.route+'&seed='+seed});
+    var root = location.protocol + '//' + location.host;
+	console.log(root);
+	d3.select('#URL').property({'value': root+flaskURL()});
 });
 
 //CHECK FOR SearchType
@@ -1313,7 +1316,7 @@ $('#radioICON').on("click", function(e){
 
 //var oldplaybutton = "<button class='btn-sm btn-sidebar playNowButton' type='button' value='"+ytresponse.items[0].id.videoId+"|"+thisTrack.name+"|" +thisTrack.artists.join("*")+"'><i class='el el-play'></i></button>";
 
-var playInTable = "<div class='btn-group'> <button type='button' class='btn btn-info btn-play playNowButton' &&& value='???'><i class='fa fa-play-circle fa-lg'></i></button> <button type='button' class='btn btn-info btn-play dropdown-toggle' &&& data-toggle='dropdown' aria-expanded='false'> <span class='caret'></span> <span class='sr-only'>Toggle Play Dropdown</span> </button> <ul class='dropdown-menu pull-right' role='menu'> <li><a href='#'>Action</a></li> <li><a href='#'>Another action</a></li> <li><a href='#'>Something else here</a></li> <li class='divider'></li> <li><a href='#'>Separated link</a></li> </ul> </div>";
+var playInTable = "<div class='btn-group'> <button type='button' class='btn btn-info btn-play playNowButton' &&& value='???'><i class='fa fa-play-circle fa-lg'></i></button> <button type='button' class='btn btn-info btn-play dropdown-toggle' &&& data-toggle='dropdown' aria-expanded='false'> <span class='caret'></span> <span class='sr-only'>Toggle Play Dropdown</span> </button> <ul class='dropdown-menu pull-right' role='menu'> <li><a href='#' class='drop-down-play-now'>Play Now</a></li> <li><a href='#' class='drop-down-play-next'>Play Next</a></li> <li><a href='#' class='drop-down-add-to-playlist'>Add to Playlist</a></li></ul> </div>";
 
 
 
