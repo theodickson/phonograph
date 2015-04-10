@@ -19,6 +19,11 @@
 <script src="{{ url_for('static', filename='jquery/jquery-ui.js') }}"></script>
 <link href="{{ url_for('static', filename='bootstrap/elusive-icons-master/css/elusive-icons.min.css') }}" rel="stylesheet">
 <link href="{{ url_for('static', filename='bootstrap/font-awesome-4.3.0/css/font-awesome.min.css') }}" rel="stylesheet">
+
+<!-- ICOMOON FOR RADIO ICON -->
+<link rel="stylesheet" href="{{ url_for('static', filename='images/icomoon/icomoon.css') }}">
+
+<!--PHONOGRAPH CSS-->
 <link href="{{ url_for('static', filename='flat.css') }}" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <body>
@@ -140,7 +145,7 @@
 			<ul class="nav nav-pills sideBarTabs" id="sideBarTabs" role="tablist" data-tabs="tabs">
 				<li class="active" id="nodeTab"><a class="sidebar-icon" href="#nodePane" role="tab" data-toggle="tab"><i class="fa fa-info"></i></a></li>
 				<li style="display: none" id="edgeTab"><a class="sidebar-icon" href="#edgePane" role="tab" data-toggle="tab"><i class="fa fa-info"></i></a></li>
-				<li id="radioTab"><a class="sidebar-icon" href="#radioPane" role="tab" data-toggle="tab"><i class="fa fa-music"></i></a></li>
+				<li id="radioTab"><a class="sidebar-icon" href="#radioPane" role="tab" data-toggle="tab"><span class="icon-radio"></a></li>
 			</ul>
 			</div>
 
@@ -327,28 +332,30 @@
     		<li class="dropup" id="playlistDropdown">
     			<a class="dropdown-toggle" id="playlistICON" href="#" data-toggle="dropdown"><i class="el el-list"></i></a>
     			<div class='dropdown-menu top-dropdown-right' id='playlistDD'>
-    				<form onsubmit="return false">
-					<h4 style="text-align: center;">Playlist</h4>
-					<div class="tableWrapper noselect" > 
-			        	<table 
-			        			id="playlistTable" 								
-			        			class="youtube-table"
-			        			data-show-header="true"
-								data-toggle="table"
-								data-striped="true"
-							>
-			        	    <thead>
-			        	    <tr>
-			        	    	<th data-field="state" data-align="center" data-checkbox="true"></th>
-			        	    	<th data-field="artist">Artist</th>
-			        	    	<th data-field="title" data-sortable="true">Title</th>
-			        	    	<th data-field="play"></th>
-			        	    	<th data-field="id" data-visible="false"></th>
-			        	    </tr>
-			        	    </thead>
-			        	</table>
+    				<form class="form-horizonal">
+    					<div class="form-group">
+							<h4 style="text-align: center;">Playlist</h4>
+							<div class="tableWrapper noselect" > 
+					        	<table 
+					        			id="playlistTable" 								
+					        			class="youtube-table"
+					        			data-show-header="true"
+										data-toggle="table"
+										data-striped="true"
+									>
+					        	    <thead>
+					        	    <tr>
+					        	    	<th data-field="playing" data-valign="middle"></th>
+					        	    	<th data-field="artist">Artist</th>
+					        	    	<th data-field="title" data-sortable="true">Title</th>
+					        	    	<th data-field="remove"></th>
+					        	    	<th data-field="id" data-visible="false"></th>
+					        	    </tr>
+					        	    </thead>
+					        	</table>
+					        </div>
+						</div>
 		        	</form>
-		        	</div>
     			</div> 
     		</li>
     	  	<li id="consoleElement"><a id="previous" type="button" class="navbar"><span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span></a></li>

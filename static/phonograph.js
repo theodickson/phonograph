@@ -26,7 +26,7 @@ function start_Vis(graph) {
 
 	gv.wellHeight = window.innerHeight - nheight-170+"px";
 	$('#bio').css('height', gv.wellHeight);
-	$('.fixed-table-container').attr({"data-height": "100%", "data-width": "100%"});
+	$('.fixed-table-container').attr({"data-height": height+"px", "data-width": "100%"});
 	var radius = Math.min(width, height)/2;
 		
 	svg.attr("width", width).attr("height", height);
@@ -310,7 +310,7 @@ gv.wellWidth = $('#sidebar').width()-40;
 $('#bio').css('max-height', gv.wellHeight+"px");
 
 $('.fixed-table-container').attr("data-height", gv.wellHeight+"px");
-
+$('#playlistDD').css({"height": height/2 +"px"});
 
 $('#sidebar').css('min-height', window.innerHeight+"px");
 var heightOfZoom = $('#zoom').height();
@@ -1274,9 +1274,17 @@ $('.search-choice').on('click', function(){
 	setAutocomplete();
 });
 
+//KEEP PLAYLIST OPEN UNLESS CLICKING ICON
+$('#playlistDropdown').on('hide.bs.dropdown', function(e){
+	console.log(e);
+	return false;
+});
 
-
-
+$('#playlistICON').on("click", function(e){
+	$('#playlistDropdown').toggleClass("open");
+	e.stopPropagation();
+})
+////////////
 
 
 

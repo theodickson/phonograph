@@ -1,0 +1,752 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"ar",
+				"artist"
+			],
+			[
+				"artit",
+				"artists"
+			],
+			[
+				"art",
+				"artists"
+			],
+			[
+				"track",
+				"trackData"
+			],
+			[
+				"arti",
+				"artists"
+			],
+			[
+				"current",
+				"currentTarget"
+			],
+			[
+				"this",
+				"thisTrack"
+			],
+			[
+				"refresh",
+				"refreshPlaylist"
+			],
+			[
+				"sear",
+				"searchAutoComplete"
+			],
+			[
+				"path",
+				"pathOrder"
+			],
+			[
+				"se",
+				"searchType"
+			],
+			[
+				"search",
+				"searchAutoComplete"
+			],
+			[
+				"searc",
+				"searchAutoComplete"
+			],
+			[
+				"new",
+				"newGenre"
+			],
+			[
+				"newN",
+				"newNeighbourhoodSize"
+			],
+			[
+				"cur",
+				"currentTrack"
+			],
+			[
+				"heig",
+				"height"
+			],
+			[
+				"height",
+				"heightOfZoom"
+			],
+			[
+				"heigh",
+				"heightOfZoom"
+			],
+			[
+				"disab",
+				"disableZoom"
+			],
+			[
+				"zoom",
+				"zoomLevel"
+			],
+			[
+				"sub",
+				"subgraphTable"
+			],
+			[
+				"pau",
+				"pausesong"
+			],
+			[
+				"curr",
+				"currentService"
+			],
+			[
+				"well",
+				"wellWidth"
+			],
+			[
+				"min",
+				"min-width"
+			],
+			[
+				"remove",
+				"removeClass"
+			],
+			[
+				"data",
+				"data-index"
+			],
+			[
+				"refr",
+				"refreshPlaylist"
+			],
+			[
+				"ref",
+				"refreshPlaylist"
+			],
+			[
+				"cu",
+				"customPlaylist"
+			],
+			[
+				"curren",
+				"currentTrack"
+			],
+			[
+				"playlist",
+				"playlistTable"
+			],
+			[
+				"get",
+				"getTrackInfoFromButton"
+			],
+			[
+				"add",
+				"addToPlaylist"
+			],
+			[
+				"tex",
+				"textContent"
+			],
+			[
+				"in",
+				"inline-block"
+			],
+			[
+				"border-col",
+				"border-color"
+			],
+			[
+				"pause",
+				"pauseVideo"
+			],
+			[
+				"volume",
+				"volumeslider"
+			],
+			[
+				"playN",
+				"playNextTrack"
+			],
+			[
+				"tra",
+				"trackToRemove"
+			],
+			[
+				"re",
+				"refreshPlaylist"
+			],
+			[
+				"playl",
+				"playlistDropdown"
+			],
+			[
+				"bord",
+				"border-radius"
+			],
+			[
+				"load",
+				"loadPathInfo"
+			],
+			[
+				"init",
+				"initFromURL"
+			],
+			[
+				"spotify",
+				"spotifyWidth"
+			],
+			[
+				"sidebar",
+				"sidebarWidth"
+			],
+			[
+				"neigh",
+				"neighbourhoodSizeBTN"
+			],
+			[
+				"ne",
+				"neighbourhoodSize"
+			],
+			[
+				"font",
+				"font-weight"
+			],
+			[
+				"background",
+				"background-color"
+			],
+			[
+				"getLin",
+				"getLinkInfo"
+			],
+			[
+				"click",
+				"clickLink"
+			],
+			[
+				"name",
+				"nameLength"
+			],
+			[
+				"side",
+				"sideBarWidth"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "static/musicplaybar.js",
+			"settings":
+			{
+				"buffer_size": 14820,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "static/flat.css",
+			"settings":
+			{
+				"buffer_size": 1681,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "static/style.css",
+			"settings":
+			{
+				"buffer_size": 4521,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "static/phonograph.js",
+			"settings":
+			{
+				"buffer_size": 36101,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "templates/index.html",
+			"settings":
+			{
+				"buffer_size": 17218,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/C++/C++.sublime-build",
+	"command_palette":
+	{
+		"height": 47.0,
+		"selected_items":
+		[
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"jav",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"java",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"emmet go",
+				"Emmet: Go to Matching Pair"
+			],
+			[
+				"sort",
+				"Sort Lines"
+			],
+			[
+				"",
+				"Sort Lines (Case Sensitive)"
+			],
+			[
+				"gist",
+				"Gist: Insert Gist"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 375.0
+	},
+	"console":
+	{
+		"height": 125.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/Alex/Documents/phonograph/static/phonograph.js",
+		"/Users/Alex/Library/Application Support/Sublime Text 2/Packages/Default/Default (OSX).sublime-keymap",
+		"/Users/Alex/Library/Application Support/Sublime Text 2/Packages/User/Default (OSX).sublime-keymap",
+		"/Users/Alex/Dropbox/Phonograph/Phonograph/templates/flat.html",
+		"/Users/Alex/Dropbox/Phonograph/Phonograph/app.py",
+		"/Users/Alex/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/Users/Alex/Dropbox/Phonograph/Phonograph/templates/index.html",
+		"/Users/Alex/Dropbox/Phonograph/Phonograph/static/flat-style.css",
+		"/Users/Alex/Dropbox/Phonograph/Phonograph/static/bootstrap/css/bootstrap.css",
+		"/Users/Alex/Dropbox/Phonograph/Phonograph/static/phonograph.js",
+		"/Users/Alex/Dropbox/Phonograph/Phonograph/static/bootstrap/css/styles.css",
+		"/Users/Alex/Dropbox/Phonograph/Phonograph/static/style.css",
+		"/Users/Alex/Library/Application Support/Sublime Text 2/Packages/Emmet/Emmet.sublime-settings",
+		"/Users/Alex/Dropbox/appliance/project0/model/menu.xml",
+		"/Users/Alex/Library/Application Support/Sublime Text 2/Packages/User/node.sublime-build",
+		"/Users/Alex/Downloads/ci_sock-master/part_one/application/index.html",
+		"/Users/Alex/Google Drive/Project Euler/evenfib.c",
+		"/Users/Alex/Library/Application Support/Sublime Text 2/Packages/User/Node.sublime-build",
+		"/Users/Alex/Google Drive/JamesBallentime/textGame.js",
+		"/Users/Alex/Library/Application Support/Sublime Text 2/Packages/User/JSC.sublime-build",
+		"/Users/Alex/Google Drive/JamesBallentime/main.css",
+		"/Users/Alex/Google Drive/JamesBallentime/index.html",
+		"/Users/Alex/Library/Application Support/Sublime Text 2/Packages/View In Browser/View In Browser.sublime-settings"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"ref",
+			"playertrackInfo",
+			"playertrackinfo",
+			"play",
+			"playertrackinfo",
+			"playlist",
+			"addto",
+			"performreq",
+			"<table",
+			"data-align=\"left",
+			"click-to",
+			"<table",
+			"<th data-field=\"add",
+			"<th data-field=\"play",
+			"striped",
+			"performrequests",
+			"loadPath",
+			"tabSwitch",
+			"tabSwitch\\",
+			"gv.tabledata",
+			"table",
+			"radioyoutubetable",
+			"path",
+			"loadpathinfo",
+			"pathpositions",
+			"loadradio",
+			"path",
+			"nodeYoutubetable",
+			"<tr",
+			"tr",
+			"th",
+			"height",
+			"sidebarh",
+			"height",
+			"edge",
+			"sidebartitle",
+			"tabswitch",
+			"info",
+			"customPlaylist",
+			"width",
+			"playlist",
+			"play",
+			".autocomplete",
+			"autocomplete",
+			"autocomplte",
+			"autocomplete",
+			"autocom",
+			"autocomplete",
+			"\"search\"",
+			"artist",
+			"ns",
+			"numartists",
+			"travelTo",
+			"width",
+			"genresearch",
+			"dropdown",
+			"info",
+			"remove",
+			"zi",
+			"bio",
+			"song Name",
+			"artist NaME",
+			"player",
+			"height",
+			"player",
+			"zoom",
+			" spotify",
+			"alerttest",
+			"find_paths",
+			"get_graph",
+			"sub",
+			"subgraph",
+			"remove",
+			"bootstraptab",
+			"generate",
+			"subgraph",
+			"search",
+			"subgraph",
+			"navbar-right",
+			"playlistPane",
+			"playlist",
+			"height",
+			"});\n",
+			"data-show-header=\"true\"",
+			"thead",
+			"nheight",
+			"wellwidth",
+			"spotify",
+			"service-choice",
+			"youtube",
+			"spotify",
+			"spotiy",
+			"spotify",
+			"'top",
+			"zoom",
+			"position",
+			"append",
+			"apppend",
+			"navbar-right",
+			"data-show-header=\"false\"",
+			"navbar",
+			"twitter",
+			"back",
+			"playlist",
+			"bottom",
+			"back",
+			"nav-justified",
+			"tabs",
+			"border",
+			"height",
+			"dropdown",
+			"dropup",
+			"optio",
+			"travelTo",
+			"width",
+			"url",
+			"travelTo",
+			"unclick",
+			"'tr",
+			"svg",
+			"tableWrapper noselect",
+			"tableWrapper",
+			"'tr",
+			"tr",
+			"playNow",
+			"youtubeTable",
+			"youtubeTabe",
+			"data-index"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"data-align=\"center",
+			"radio",
+			"gv.customPlaylist",
+			"data-show-header=\"false\"",
+			"data-show-header=\"true\"",
+			"center-pills",
+			"pills",
+			"tableWrapper noselect",
+			"wellWidth",
+			"wellHeight"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "static/musicplaybar.js",
+					"settings":
+					{
+						"buffer_size": 14820,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2114,
+								2114
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 616.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "static/flat.css",
+					"settings":
+					{
+						"buffer_size": 1681,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1345,
+								1350
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 363.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "static/style.css",
+					"settings":
+					{
+						"buffer_size": 4521,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4520,
+								4520
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3333.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "static/phonograph.js",
+					"settings":
+					{
+						"buffer_size": 36101,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								15293,
+								15293
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 70.0,
+						"translation.y": 6843.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 4,
+					"file": "templates/index.html",
+					"settings":
+					{
+						"buffer_size": 17218,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								12112,
+								12112
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3858.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.659199426098,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 100.0
+	},
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true
+}

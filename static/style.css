@@ -229,7 +229,7 @@ text {
 
 .sidebar-title{
     text-align: center;
-    margin-top:-10px;
+    margin-top: 5px;
 }
 
 .tableWrapper{
@@ -281,7 +281,7 @@ text {
 
 }
 #bottomLeftNav{
-    width:80vw;
+    width:70vw;
 }
 
 .navbar-form .input-group > .form-control {
@@ -290,16 +290,40 @@ text {
 
 .nav-pills > li {
   float: right;
+  padding-top:4px;
+  padding-right:4px;
 }
+
 
 #sideBarTabs > li > a {
-    color: lightgrey;
+    width:24px;
+    height:24px;
+    border-radius: 20px;
+    color: grey;
     background-color:transparent;
-    padding-bottom: 15px;
-    padding-right: 5px;
-
+    border-style:solid;
+    border-width:1px;
+    border-color:lightgrey;
+    padding:1px;
+    text-align: center; 
+}
+#sideBarTabs > li > a > i{
+    padding: 0px;
 }
 
+#sideBartabs >li.active {
+    box-shadow: 5px 5px 5px 5px #888888;
+}
+#sideBarTabs > li.active >a {
+    border-color:grey;
+    color: black;
+
+}
 .fixed-table-body thead th .th-inner {
     display:none;
+}
+
+#playlistDD{
+    height: 300px;
+    overflow:auto;
 }
