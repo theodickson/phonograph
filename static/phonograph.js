@@ -321,9 +321,9 @@ $('#radioDD').css({
 
 
 $('#sidebar').css('min-height', window.innerHeight+"px");
-var heightOfZoom = $('#zoom').height();
+//var heightOfZoom = $('#zoom').height();
 
-$('#zoom').css({'left': '20px', 'top': height - heightOfZoom - 74 +'px'});
+//$('#zoom').css({'left': '20px', 'top': height - heightOfZoom - 74 +'px'});
 
 $('#subgraphTable').bootstrapTable({
         data: ""
@@ -664,7 +664,7 @@ function loadEdgeInfo(){
 		$('#edge-title').text(names);
 		if(gv.currentService == "youtube") {
 			gv.requestTracks = response.tracks;
-			c = 0; gv.tableData = [];
+			gv.tableData = [];
 			performRequests('edge');
 		};	
 	});
@@ -1202,7 +1202,7 @@ $('#sidebarForward').on('click', function() {
 });
 
 */
-function highlightZoomLevel(){
+/*function highlightZoomLevel(){
 	$('.zL').each(function(){
 		if($(this).attr('id').replace("zoomL","") == gv.zoomLevel){
 			$(this).addClass("btn-primary");
@@ -1271,7 +1271,7 @@ $('.zi').click(function() {
 		zoom();
 	}
 });
-
+*/
 $('#genre').change(function(){
 	var newGenre = $('#genre option:selected')[0].value;
 	//console.log(newGenre);
@@ -1348,7 +1348,6 @@ $('#radioICON').on("click", function(e){
 //var oldplaybutton = "<button class='btn-sm btn-sidebar playNowButton' type='button' value='"+ytresponse.items[0].id.videoId+"|"+thisTrack.name+"|" +thisTrack.artists.join("*")+"'><i class='el el-play'></i></button>";
 
 var playInTable = "<div class='btn-group'> <button type='button' class='btn btn-info btn-play playNowButton' &&& value='???'><i class='fa fa-play-circle fa-lg'></i></button> <button type='button' class='btn btn-info btn-play dropdown-toggle' &&& data-toggle='dropdown' aria-expanded='false'> <span class='caret'></span> <span class='sr-only'>Toggle Play Dropdown</span> </button> <ul class='dropdown-menu pull-right' role='menu'> <li><a href='#' class='drop-down-play-now'>Play Now</a></li> <li><a href='#' class='drop-down-play-next'>Play Next</a></li> <li><a href='#' class='drop-down-add-to-playlist'>Add to Playlist</a></li></ul> </div>";
-
 
 
 
