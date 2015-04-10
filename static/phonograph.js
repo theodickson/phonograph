@@ -905,7 +905,7 @@ function fillRadioTitle(){
 		gv.radioTitle = getName(gv.origin) + ' Radio';
 	};
 	if (gv.route == "path") {
-		gv.radioTitle = getName(gv.source)+' to '+getName(gv.destination) + " Radio";
+		gv.radioTitle = 'Directions from '+getName(gv.source)+' to '+getName(gv.destination);
 	}
 	if (gv.route == 'termsubgraph') {
 		gv.radioTitle = gv.termLabel + ' Radio'
@@ -944,17 +944,15 @@ function loadSpotify(tracks) {
 }
 
 function makeRadioList() {
-	if (gv.route!="path") {
-		gv.radioList = [];
-		gv.radioListIds = [];
-		for (l of gv.newGraph.links) {
-			if (gv.radioListIds.indexOf(l.track.id) == -1) {
-				gv.radioList.push(l.track);
-				gv.radioListIds.push(l.track.id);
-			}
-		};
-		gv.radioList.sort(compare)
+	gv.radioList = [];
+	gv.radioListIds = [];
+	for (l of gv.newGraph.links) {
+		if (gv.radioListIds.indexOf(l.track.id) == -1) {
+			gv.radioList.push(l.track);
+			gv.radioListIds.push(l.track.id);
+		}
 	};
+	gv.radioList.sort(compare)
 }
 
 function tabSwitch(pane) {
@@ -1328,7 +1326,10 @@ $('.search-choice').on('click', function(){
 });
 
 //KEEP PLAYLIST OPEN UNLESS CLICKING ICON
-
+$('#playlistDropdown').on('hide.bs.dropdown', function(e){
+	console.log(e);
+	return false;
+});
 
 $('#playlistICON').on("click", function(e){
 	$('#playlistDropdown').toggleClass("open");
@@ -1337,7 +1338,11 @@ $('#playlistICON').on("click", function(e){
 });
 ////////////
 
-$('')
+//KEEP Radio OPEN UNLESS CLICKING ICON
+$('#radioDropdown').on('hide.bs.dropdown', function(e){
+	console.log(e);
+	return false;
+});
 
 $('#radioICON').on("click", function(e){
 	$('#radioDropdown').toggleClass("open");
@@ -1345,6 +1350,9 @@ $('#radioICON').on("click", function(e){
 	e.stopPropagation();
 })
 
+svg.on("click", function(){
+	
+})
 ////////////
 
 //var oldplaybutton = "<button class='btn-sm btn-sidebar playNowButton' type='button' value='"+ytresponse.items[0].id.videoId+"|"+thisTrack.name+"|" +thisTrack.artists.join("*")+"'><i class='el el-play'></i></button>";
