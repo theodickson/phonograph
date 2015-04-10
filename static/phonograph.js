@@ -522,9 +522,6 @@ function performRequests(mode) {
 
 		$('#'+mode+'YoutubeTable').bootstrapTable('load', gv.tableData);
 		$('#'+mode+'YoutubeTable').bootstrapTable('hideLoading');
-		$('.playNowButton').on('click', function() {
-			gv.playmode = 'playlist';
-		});
 		//console.log(gv.tableData)
 
 		if (gv.requestTracks.length != 0) { 
@@ -1316,7 +1313,6 @@ $('#radioICON').on("click", function(e){
 //var oldplaybutton = "<button class='btn-sm btn-sidebar playNowButton' type='button' value='"+ytresponse.items[0].id.videoId+"|"+thisTrack.name+"|" +thisTrack.artists.join("*")+"'><i class='el el-play'></i></button>";
 
 var playInTable = "<div class='btn-group'> <button type='button' class='btn btn-info btn-play playNowButton' &&& value='???'><i class='fa fa-play-circle fa-lg'></i></button> <button type='button' class='btn btn-info btn-play dropdown-toggle' &&& data-toggle='dropdown' aria-expanded='false'> <span class='caret'></span> <span class='sr-only'>Toggle Play Dropdown</span> </button> <ul class='dropdown-menu pull-right' role='menu'> <li><a href='#'>Action</a></li> <li><a href='#'>Another action</a></li> <li><a href='#'>Something else here</a></li> <li class='divider'></li> <li><a href='#'>Separated link</a></li> </ul> </div>";
-
 
 
 

@@ -412,6 +412,7 @@ $('body').on('click','.addToPlaylist', function (e) {
 
 $('body').on('click','.playNowButton', function (e) {
 	gv.playMode = 'playlist';
+	$('#tuneIn').show();
 	playNow(e);
 });
 
@@ -586,7 +587,12 @@ function phonograph(){
 	player.cueVideoById(gv.nowPlaying.youtubeId);
 }
 
-
+//SWTICH TO RADIO MODE ON TUNE IN BUTTON
+$('#tuneIn').on("click", function(){
+	gv.playMode = "radio";
+	$('#tuneIn').hide();
+	player.cueVideoById(gv.upNext.youtubeId);
+});
 
 
 
