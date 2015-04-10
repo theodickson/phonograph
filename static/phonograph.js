@@ -323,7 +323,7 @@ $('#radioDD').css({
 $('#sidebar').css('min-height', window.innerHeight+"px");
 var heightOfZoom = $('#zoom').height();
 
-$('#zoom').css({'left': '20px', 'top': height - heightOfZoom - 55 +'px'});
+$('#zoom').css({'left': '20px', 'top': height - heightOfZoom - 74 +'px'});
 
 $('#subgraphTable').bootstrapTable({
         data: ""
@@ -1220,7 +1220,7 @@ function disableZoom(){
 		$('.zo').addClass('btn-default').removeClass('btn-disabled').prop("disabled", false);
 		$('.zi').addClass('btn-disabled').removeClass('btn-default').prop("disabled", true);
 	}
-	else if(gv.zoomLevel == 4){
+	else if(gv.zoomLevel == 3){
 		$('.zi').addClass('btn-default').removeClass('btn-disabled').prop("disabled", false);
 		$('.zo').addClass('btn-disabled').removeClass('btn-default').prop("disabled", true);
 	}
