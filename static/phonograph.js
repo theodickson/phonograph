@@ -466,7 +466,6 @@ function performRequests(mode) {
 		} else {
 			var score = 0;
 		};
-		console.log(thisTrack.artists);
 		if (score > 0.3) {
 			gv.tableData.push( {
 				"artist": thisTrack.artists.join(", "), 
