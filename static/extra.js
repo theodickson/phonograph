@@ -1,5 +1,4 @@
-//Extra functions don't need to be seen, and probably won't need to be modified.
-
+//Extra functions don't need to be seen, and probably won't need to
 //Rotation functions.
 function optimiseRotation(oldPos, newPos, graph) {
 	testVals = [];
@@ -147,15 +146,16 @@ function firstLabelHeight(d) {
 };
 
 function firstLabelFont(d) {
-	return gv.labelScale(d.value.popularity).toString() + "px";
+	return labelScale(d.value.popularity).toString() + "px";
 };
 
 function secondLabelFont(d) {
-	return (gv.labelScale(d.value.popularity)*0.85).toString() + "px";
+	return (labelScale(d.value.popularity)*0.85).toString() + "px";
 };
 
 //Shitty youtube functions:
 function performRequests(mode) {
+	//console.log(mode);
 	var thisTrack = gv.requestTracks[0];
 
 	var stNames = [];
@@ -274,6 +274,7 @@ function standardise(str) {
 };
 
 //Request string and HTML tag getters:
+
 
 function youtubeRequestString(trackName, artistNames) {
 	return "https://www.googleapis.com/youtube/v3/search?safeSearch=none&part=snippet&q="+artistNames+' '+trackName+"&type=video&maxResults=1&key=AIzaSyBbsBwHRX5Z5OCe-xk8A7CRm159C7rbK0Y";

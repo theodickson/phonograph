@@ -25,23 +25,12 @@ function start_Vis(graph) {
 	for (d of graph.links) { weights.push(d.weight); };
 	var linkCount = graph.links.length
 
-	var maxWidthScale = d3.scale.linear().domain([40,160]).range([0,1])
+	var maxWidthScale = d3.scale.linear().domain([40,200]).range([0,1])
 	linkAdjustment = maxWidthScale(linkCount) //adjust the range for the link widths according to total number of links - with many links we want them all to be thinner.
 	gv.widthScale = d3.scale.linear()
 						.domain([d3.min(weights), d3.max(weights)])	
-						.range([1-linkAdjustment/2, 2.5-linkAdjustment]);	
+						.range([1-linkAdjustment/2, 2-linkAdjustment]);	
 
-	var popularities = [];
-	for (d in graph.nodes) { popularities.push(graph.nodes[d].popularity)};
-	var popularityRange = [d3.max(popularities),d3.min(popularities)];
-
-	gv.nodeScale = d3.scale.log()
-			.domain(popularityRange)
-			.range([16, 24]);
-
-	gv.labelScale = d3.scale.log()
-				.domain(popularityRange)
-				.range([14, 18]);
 
 	//Determine which nodes were already present. 
 	toStay = [];
@@ -81,32 +70,12 @@ function start_Vis(graph) {
 	d3.selectAll(".link").attr('class', 'oldLink'); 
 	d3.selectAll(".oldLink").transition().duration(gv.fadeOut).style("stroke-width", 0).remove();
 
-	for (n of toStay) { //Move the already present nodes to their new positions and sizes. This is necessary as d3.data().enter() does not act on already present elements.
+	for (n of toStay) { //Move the already present nodes to their new positions. This is necessary as d3.data().enter() does not act on already present elements.
 		d3.select('#a'+n).transition().delay(gv.fadeOut).duration(gv.nodeSlide)
 			.attr("transform", "translate("+wScale(graph.nodes[n].pos[0])+","+hScale(graph.nodes[n].pos[1])+")")
-		d3.select('#a'+n).select("circle").transition().delay(gv.fadeOut).duration(gv.nodeSlide)
-			.attr("r", function(d) {
-				if (d.key == gv.origin) {
-					return 30;
-				};
-				console.log(d.value.popularity);
-				return gv.nodeScale(d.value.popularity);
-			});
-		d3.select('#a'+n).select('.firstLabel').transition().delay(gv.fadeOut).duration(gv.nodeSlide)
-			.style("font-size", function(d) {
-				if (d.key == gv.origin) {
-					return "22px";
-				};
-				return firstLabelFont(d);
-			});
-		d3.select('#a'+n).select('.secondLabel').transition().delay(gv.fadeOut).duration(gv.nodeSlide)
-			.style("font-size", function(d) {
-				if (d.key == gv.origin) {
-					return "22px";
-				};
-				return secondLabelFont(d);
-			});
 	};
+
+
 	/*Add the nodes and links. Note that graph.nodes is now an object of the form {id: {name, popularity, genre,pos}}. This means that the values are always
 	callable directly from an id, as opposed to messing around with indices.*/
 
@@ -122,18 +91,31 @@ function start_Vis(graph) {
 			.style("opacity",0)
 			.on("click", function(d) {
 				if (gv.clickable) {
-					clickNode(d);
+					if (gv.clickedNode == d.key) {
+						doubleClickNode(d);
+					} else {
+						clickNode(d);
+					};
 				};
 				d3.event.stopPropagation(); 
 			})
 			.on("dblclick", function(d) { 
 				d3.event.stopPropagation();
-				if ((d.key != gv.origin)&&(gv.clickable)) {
-					gv.origin = d.key;
-					gv.route = "neighbourhood"
-					reload();	
+				if (gv.clickable) {
+					doubleClickNode(d);
+				}
+			})
+			/*.on("mouseenter", function(d) {
+				if (gv.clickable) {
+					gv.nodeTimer = setTimeout(function() {clickNode(d);}, 100);
 				};
-			});
+			})
+			.on("mouseleave", function(d) {
+				clearTimeout(gv.nodeTimer);
+				if (gv.clickable) {
+					//unclickNode();
+				};
+			})*/
 
 	//Note that now when functions act on data bound to nodes, d is of the new form {key: id, value: {}} so d.id is now d.key, and d.name is now d.value.name, etc.
 
@@ -145,9 +127,14 @@ function start_Vis(graph) {
 			if (d.key == gv.origin) {
 					return 30;
 				};
-			return gv.nodeScale(d.value.popularity);
+			return nodeScale(d3.max([1,d.value.popularity]));
 		})
-		.attr("stroke-width", 3);
+		.attr("stroke-width", function(d) { 
+			if (d.key == gv.origin) {
+					return 4;
+				};
+			return strokeScale(d.value.popularity);
+		});
 	
 	gv.node.append("text")
 		.attr("class", "firstLabel")
@@ -200,18 +187,22 @@ function start_Vis(graph) {
 		.attr("y2", function(d) { return hScale(graph.nodes[d.target].pos[1]); })
 		.style("stroke-width", 0) //Start them with stroke width 0 so they only appear when we want them.
 		.on("mouseenter", function(d) {
-			if (clickedAdjacent(d)) {
-				d3.select(this).style("stroke-width", function(d) { return 8; })
-			} else {
-				d3.select(this).style("stroke-width", function(d) { return 5; })
-			}
+			if (gv.clickable) {
+				if (clickedAdjacent(d)) {
+					d3.select(this).style("stroke-width", function(d) { return 7; })
+				} else {
+					d3.select(this).style("stroke-width", function(d) { return 5; })
+				};
+			};
 		})
 		.on("mouseleave", function(d) {
-			if (clickedAdjacent(d)) { 
-				d3.select(this).style("stroke-width", function() { return gv.widthScale(d.weight)*2.5; });
-			} else {
-				d3.select(this).style("stroke-width", function() { return gv.widthScale(d.weight); });
-			};
+			if (gv.clickable) {
+				if (clickedAdjacent(d)) { 
+					d3.select(this).style("stroke-width", function() { return gv.widthScale(d.weight)*3.5; });
+				} else {
+					d3.select(this).style("stroke-width", function() { return gv.widthScale(d.weight); });
+				};
+			}
 		})
 		.on("click", function(d) {
 				if (gv.clickable) {
@@ -306,9 +297,7 @@ var svg = d3.select("#map").append("svg")
 	.attr("class", "svg")
 	.on("click", function() { 
 		if (gv.clickable) {
-			highlightNode(null);
-			gv.clickedNode = null;
-			dehighlightLinks();
+			unclickNode();
 		};
 		if ($('#playlistDropdown').hasClass("open")) {
 			$('#playlistICON').trigger("click");
@@ -343,7 +332,33 @@ reload();
 
 //Supplementary functions:
 
-//Node click, highlight and info load functions:
+//Special scales that cap node popularity at 60: (Looks better).
+function nodeScale(val) {
+	var nS = d3.scale.linear()
+			.domain([20, 60])
+			.range([10, 20]);
+	var toScale = d3.min([d3.max([val, 20]), 60]);
+	return nS(toScale);
+};
+
+function labelScale(val) { 
+	var lS = d3.scale.linear()
+			.domain([20, 60])
+			.range([14, 18]);
+	var toScale = d3.min([d3.max([val, 20]), 60]);
+	return lS(toScale);
+};
+
+function strokeScale(val) { 
+	var sS = d3.scale.linear()
+			.domain([20, 60])
+			.range([3, 3]);
+	var toScale = d3.min([d3.max([val, 20]), 60]);
+	return sS(toScale);
+};					
+
+
+//Node click and load functions:
 function clickNode(d) {
 	gv.currentLink = null;
 	highlightNode(d.key);
@@ -364,7 +379,10 @@ function highlightNode(node) {
 
 	previous.select('circle').transition().duration(500)
 		.attr('r', function(d) {
-			return gv.nodeScale(d.value.popularity); 
+			return nodeScale(d.value.popularity); 
+		})
+		.attr('stroke-width', function(d) {
+			return strokeScale(d.value.popularity); 
 		});
 
 	previous.select('.firstLabel').transition().duration(500)
@@ -384,6 +402,9 @@ function highlightNode(node) {
 	current.select('circle').transition().duration(500)
 		.attr('r', function(d) {
 			return gv.clickedRadius; 
+		})
+		.attr('stroke-width', function(d) {
+			return gv.clickedStrokeWidth; 
 		});
 
 	current.select('.firstLabel').transition().duration(500)
@@ -454,7 +475,20 @@ function loadArtistInfo() {
 	};
 };
 
-//Edge click, hightlight and info load functions:
+function doubleClickNode(d) {
+	if ((d.key != gv.origin)&&(gv.clickable)) {
+		gv.origin = d.key;
+		gv.route = "neighbourhood"
+		reload();	
+	};
+};
+
+function unclickNode() {
+	highlightNode(null);
+	gv.clickedNode = null;
+	dehighlightLinks();
+}
+//Edge click and load functions:
 function clickLink(d) {
 	d3.event.stopPropagation();
 	gv.currentArtist = null; //Current artist is now null since there is no artist displayed in the sidebar.
@@ -469,7 +503,7 @@ function highlightLinks() { //enlarges links adjacent to the clicked node and di
 	d3.selectAll(".link").transition().duration(500)
 		.style("stroke-width", function(d) { 
 			if (clickedAdjacent(d)) {
-				return gv.widthScale(d.weight)*2.5;
+				return gv.widthScale(d.weight)*3.5;
 			} else {return 0;};	
 		});
 	};

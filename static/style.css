@@ -198,7 +198,7 @@ border: none;
 
 
 #map{
-    cursor: defaults;
+    cursor: default;
     padding-right:0px;
     border-color:black;
     border-width: 1px;

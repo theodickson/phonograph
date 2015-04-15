@@ -7,7 +7,7 @@ import sys
 from redis import Redis
 from os import environ
 import itertools
-import numpy as np
+from math import log
 
 def igrapher(vertices, path=False,**kwargs):
 
@@ -55,8 +55,7 @@ def d3_dictify(g, origin=None, size=None,**kwargs):
 		bad_vertices = [i for i,v in sorted(enumerate(g.degree()), reverse=True, key=lambda x:x[1])[size:]]
 		g.delete_vertices(bad_vertices)
 	print len(g.vs())
-	layout_weights = [np.log(w+1) for w in g.es['weight']]
-	l = g.layout_fruchterman_reingold(maxiter=500,area=len(g.vs())**2.3,repulserad=len(g.vs())**2.8, weights=None)
+	l = g.layout_fruchterman_reingold(area=len(g.vs())**2.3,repulserad=len(g.vs())**2.8, weights=None)
 	d3_dict = {'nodes': {}, 'links':[]}
 	for i,v in enumerate(g.vs()):
 		info = r.hgetall('artist.info:'+v['name'])
@@ -64,9 +63,9 @@ def d3_dictify(g, origin=None, size=None,**kwargs):
 			genre = info['genre']
 		except:
 			genre = None
-		d3_dict['nodes'][v['name']] = {'name': info['name'], 'popularity': len(r.smembers('artist.neighbours:'+v['name']))*3+int(info['popularity']), 'genre': genre, 'pos': l[i]}
+		d3_dict['nodes'][v['name']] = {'name': info['name'], 'popularity': len(r.smembers('artist.neighbours:'+v['name']))*8+int(info['popularity']), 'genre': genre, 'pos': l[i]}
 	for i,e in enumerate(g.es()):
-		d3_dict['links'].append({'source': g.vs['name'][e.source], 'target': g.vs['name'][e.target], 'weight': np.log(e['weight']), 'track': e['track']})
+		d3_dict['links'].append({'source': g.vs['name'][e.source], 'target': g.vs['name'][e.target], 'weight': log(e['weight']), 'track': e['track']})
 	d3_dict['origin'] = origin
 	return d3_dict	
 
