@@ -7,17 +7,18 @@ import sys
 from redis import Redis
 from os import environ
 import itertools
+import numpy as np
 
-def igrapher(vertices, path=False, **kwargs):
+def igrapher(vertices, path=False,**kwargs):
 
 	def artistNames(artists, nameMap):
 		names = []
 		for artist in artists:
 			try:
-				names.append(nameMap[artist])
+				names.append(name_map[artist])
 			except:
-				nameMap[artist] = r.hget('artist.info:'+artist, 'name')
-				names.append(nameMap[artist])
+				name_map[artist] = r.hget('artist.info:'+artist, 'name')
+				names.append(name_map[artist])
 		return names
 
 	print path
@@ -27,10 +28,12 @@ def igrapher(vertices, path=False, **kwargs):
 	edges = []
 	weights = []
 	tracks = []
-	nameMap = {}
-	for pair in itertools.combinations(vertices, 2):
-		r.zinterstore('pair', ['artist.tracks:'+pair[0], 'artist.tracks:'+pair[1]])
-		edgetracks = r.zrevrange('pair',0,-1)
+	name_map = {}
+	track_map = {}
+	for v in vertices:
+		track_map[v] = set(r.zrange('artist.tracks:'+v, 0, -1))
+	for pair in itertools.combinations(vertices, 2): 
+		edgetracks = list(track_map[pair[0]].intersection(track_map[pair[1]]))
 		weight = len(edgetracks)
 		if weight > 0:
 			edges.append(pair)
@@ -40,43 +43,58 @@ def igrapher(vertices, path=False, **kwargs):
 					'id': edgetracks[0], 
 					'name': trackinfo['name'],
 					'popularity': trackinfo['popularity'],
-					'artists': artistNames( list(r.smembers('track.artists:'+edgetracks[0])), nameMap)
+					'artists': artistNames( list(r.smembers('track.artists:'+edgetracks[0])), name_map)
 				})
 	g.add_edges(edges)
 	g.es['weight'] = weights
 	g.es['track'] = tracks
 	return g
 	
-def d3_dictify(g, origin=None, **kwargs):
-	weights = []
-	for w in g.es['weight']:
-		if w <= 4:
-			weights.append(w)
-		else:
-			weights.append(4)
-	l = list(g.layout_fruchterman_reingold(repulserad = 2500, weights = weights))
-	d3_dict = {'nodes':[], 'links':[]}
+def d3_dictify(g, origin=None, size=None,**kwargs):
+	if size:
+		bad_vertices = [i for i,v in sorted(enumerate(g.degree()), reverse=True, key=lambda x:x[1])[size:]]
+		g.delete_vertices(bad_vertices)
+	print len(g.vs())
+	layout_weights = [np.log(w+1) for w in g.es['weight']]
+	l = g.layout_fruchterman_reingold(maxiter=500,area=len(g.vs())**2.3,repulserad=len(g.vs())**2.8, weights=None)
+	d3_dict = {'nodes': {}, 'links':[]}
 	for i,v in enumerate(g.vs()):
 		info = r.hgetall('artist.info:'+v['name'])
 		try:
 			genre = info['genre']
 		except:
 			genre = None
-		d3_dict['nodes'].append({'id': v['name'], 'name': info['name'], 'popularity': int(info['popularity'])+1, 'genre': genre, 'pos': l[i]})
-	for e in g.es():
-		d3_dict['links'].append({'source': e.source, 'target': e.target, 'weight': e['weight'], 'track': e['track']})
+		d3_dict['nodes'][v['name']] = {'name': info['name'], 'popularity': int(info['popularity'])+1, 'genre': genre, 'pos': l[i]}
+	for i,e in enumerate(g.es()):
+		d3_dict['links'].append({'source': g.vs['name'][e.source], 'target': g.vs['name'][e.target], 'weight': e['weight'], 'track': e['track']})
 	d3_dict['origin'] = origin
 	return d3_dict	
 
 def step(currentstep,neighbourhood,genre):
 	nextstep = {}
-	for n,score in currentstep.items():
-		for a in genre_neighbours(n, genre):
+	for n in currentstep.keys():
+		for a,score in genre_neighbours(n, genre).items():
 			try:
 				nextstep[a] += score
 			except:
 				nextstep[a] = score
 	return nextstep
+
+def genre_neighbours(artist, genre):
+	gn = {}
+	for t in r.zrevrange('artist.tracks:'+artist, 0, 100):
+		for a in r.smembers('track.artists:'+t):
+			try:
+				gn[a] += 1
+			except:
+				gn[a] = 1
+
+	if genre:
+		for a in gn.keys():
+			if r.hget('artist.info:'+a, 'genre') != genre:
+				del gn[a]
+
+	return gn
 
 def year_filter(tracks, **kwargs):
 	if kwargs['min_year']:
@@ -174,12 +192,6 @@ def genre_origin(genre):
 		origin = random.choice(top_artists)
 		gn = genre_neighbours(origin, genre)
 	return origin
-
-def genre_neighbours(origin, genre):
-	if genre:
-		return set([n for n in r.smembers('artist.neighbours:'+origin) if r.hget('artist.info:'+n, 'genre') == genre])
-	else:
-		return r.smembers('artist.neighbours:'+origin)
 	
 def pop_sorted(nodes):
 	return sorted(nodes, key = lambda x:r.hget('artist.info:'+x, 'popularity'), reverse=True)
@@ -219,12 +231,12 @@ stormpath_manager = StormpathManager(app)
 r = Redis()
 
 @app.route("/")
-#@login_required
+@login_required
 def index():
     return render_template("index.html")
 		
 @app.route("/path")
-#@login_required
+@login_required
 def path_finder():
 	i = request.args['source']
 	j = request.args['destination']
@@ -238,7 +250,7 @@ def path_finder():
 		return jsonify({"error": "No path found."})
 		
 @app.route("/neighbourhood")
-#@login_required
+@login_required
 def neighbourhood():
 	size = int(request.args['size'])
 	genre = request.args['genre']
@@ -253,26 +265,28 @@ def neighbourhood():
 	currentstep = {origin:1}
 	neighbourhood = set([origin])
 	visited = set([origin])
+	c = 0
 	while len(neighbourhood) < size:
+		c += 1
 		currentstep = step(currentstep,neighbourhood,genre)
+		if c == 1 and len(currentstep.keys()) > size - 2:
+			neighbourhood.update([k for k,v in sorted(currentstep.items(),reverse=True,key=lambda x:x[1])[0:size*2]])
+			break
 		n = size - len(neighbourhood)
 		to_consider = {k:v for k,v in currentstep.items() if k not in visited}
-		print len(to_consider.keys())
 		to_add = {k:v for k,v in sorted(to_consider.items(), key = lambda x:x[1], reverse=True)[0:n]}
-		print len(to_add.keys())
 		if len(to_add.keys()) == 0:
 			break
 		else:
 			neighbourhood.update(to_add.keys())
 			visited.update(currentstep.keys())
 			currentstep = to_add
-		print len(neighbourhood)
 	vertices = list(neighbourhood)
 	g = igrapher(vertices)
-	return jsonify(d3_dictify(g, origin=origin))
+	return jsonify(d3_dictify(g, origin=origin, size=size))
 
 @app.route("/zoom")
-#@login_required
+@login_required
 def zoom():
 	origin = request.args['origin']
 	size = int(request.args['size'])
@@ -320,7 +334,7 @@ def zoom():
 	return jsonify(d3_dictify(igrapher(list(chosen)), origin=origin))
 	
 @app.route("/custom")
-#@login_required
+@login_required
 def custom_subgraph():
 	size = int(request.args['size'])
 	core = request.args['core'].split(',')
@@ -358,7 +372,7 @@ def custom_subgraph():
 	return jsonify(d3_dictify(g))
 	
 @app.route("/edgeLookup")
-#@login_required
+@login_required
 def edge_lookup():
 	ids = request.args['seed'].split(',')
 	r.zinterstore('edgelookup', ['artist.tracks:'+ids[0], 'artist.tracks:'+ids[1]])
@@ -371,26 +385,38 @@ def edge_lookup():
 	return jsonify({"tracks": response})
 
 @app.route("/autocomplete")
+@login_required
 def autocomplete():
 	query = request.args['terms']
-	#print query
-	terms = [q.lower() for q in query.split(',')]
-	#print terms
-	r.zinterstore('artistsearch', terms)
-	values = r.zrevrange('artistsearch', 0, 20)
-	response = {'response': [{'value': value, 'label': r.hget('artist.info:'+value, 'name')} for value in values]}
+	artist_queries = [q.lower() for q in query.split(',') if q!='']
+	term_queries = ['term.matcher:'+q.lower() for q in query.split(',') if q!='']
+	r.zinterstore('artist_search', artist_queries)
+	r.zinterstore('term_search', term_queries)
+	terms = r.zrevrange('term_search', 0, 5)
+	artists = r.zrevrange('artist_search', 0, 50)
+	response = []
+	for term in terms:
+		response.append({'id': term, 'value': capitalise(term), 'type': 'term'})
+	for artist in artists:
+		response.append({'id': artist, 'value': r.hget('artist.info:'+artist, 'name'), 'type': 'artist'})
+	if len(response):
+		response = {'response': response}
+	else:
+		response = {'response': [{'id': 'null', 'value': 'No results found. Check back soon!'}]}
 	return jsonify(response)
 
 @app.route("/genresearch")
+@login_required
 def genre_search():
 	query = request.args['terms']
 	terms = ['term.matcher:'+q.lower() for q in query.split(',')]
 	r.zinterstore('genresearch', terms)
 	values = r.zrevrange('genresearch', 0, 20)
-	response = {'response': [{'value': value, 'label': capitalise(value)} for value in values]}
+	response = {'response': [{'term': value, 'label': capitalise(value)} for value in values]}
 	return jsonify(response)
 
 @app.route("/termsubgraph")
+@login_required
 def term_subgraph():
 	term = request.args['term']
 	size = int(request.args['size'])
@@ -400,6 +426,12 @@ def term_subgraph():
 	deg = sorted(enumerate(g.degree()), key = lambda x:x[1])
 	g.delete_vertices([x[0] for x in deg[0:n]])
 	return jsonify(d3_dictify(g))
-	
+
+@app.route("/comment")
+@login_required
+def comment():
+	comment = request.args['comment']
+	r.sadd('comment', comment)
+	return jsonify({'response': 'comment successful'})
 if __name__ == "__main__":
     app.run(debug=True)

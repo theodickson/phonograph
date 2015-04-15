@@ -6,6 +6,8 @@ body{
     /* Rules below not implemented in browsers yet */
     -o-user-select: none;
     user-select: none;
+    font: "Raleway";
+    font-weight: 400;
 }
 
 .link {
@@ -22,20 +24,6 @@ body{
 .row{
     position:relative;
 }
-.linkWrapper {
-	stroke: #999;
-	stroke-opacity: .6;
-}
-
-.oldLinkWrapper {
-	stroke: #999;
-	stroke-opacity: .6;
-}
-
-.oldLink {
-	stroke: #999;
-	stroke-opacity: .6;
-}
 
 .ncircle {
 	fill: white;
@@ -43,43 +31,43 @@ body{
 }
 
 .hip {
-    stroke: rgb(204, 214, 224);
+    stroke: rgb(178, 209, 240);
 }
 
 .pop {
-    stroke: rgb(224, 204, 224);
+    stroke: rgb(255, 194, 178);
 }
 
 .rock {
-    stroke: rgb(235, 214, 204)
+    stroke: rgb(240, 178, 178);
 }
 
 .electronic {
-    stroke: rgb(204, 214, 204);
+    stroke: rgb(209, 224, 178);
 }
 
 .classical {
-    stroke: rgb(204, 204, 224);
+    stroke: rgb(194, 194, 255);
 }
 
 .country {
-    stroke: rgb(224, 214, 204)
+    stroke: rgb(224, 209, 178);
 }
 
 .funk {
-    stroke: rgb(235, 214, 214) ;
+    stroke: rgb(245, 204, 245);
 }
 
 .jazz {
-    stroke: rgb(224, 204, 224);
+    stroke: rgb(235, 204, 214);
 }
 
 .latin {
-    stroke: rgb(245, 214, 204);
+    stroke: rgb(214, 173, 255);
 }
 
 .reggae {
-    stroke: rgb(214, 235, 224);
+    stroke: rgb(178, 224, 194);
 }
 
 .null {
@@ -210,6 +198,7 @@ border: none;
 
 
 #map{
+    cursor: defaults;
     padding-right:0px;
     border-color:black;
     border-width: 1px;
@@ -217,7 +206,8 @@ border: none;
 
 
 text {
-	font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font: "Raleway";
+	font-weight: 200;
 }
 
 #logo{
@@ -230,7 +220,8 @@ text {
 }
 #sidebar{
     border-left-style:solid;
-    border-width: 1px;
+    border-right-style:solid;
+    border-width: 2px;
     border-color:#e7e7e7;
     display:block;
     overflow:scroll;
@@ -239,6 +230,8 @@ text {
 
 .sidebar-title{
     text-align: center;
+    font-weight: 300;
+    padding-bottom: 22px;
 }
 
 .tableWrapper{
@@ -294,7 +287,7 @@ text {
 }
 
 .navbar-form .input-group > .form-control {
-    max-width: 160px;
+    width: 220px;
 }
 
 .nav-pills > li {
@@ -311,9 +304,9 @@ text {
     color: grey;
     background-color:transparent;
     border-style:solid;
-    border-width:1px;
+    border-width:2px;
     border-color:lightgrey;
-    padding:1px;
+    padding:0px;
     text-align: center; 
 }
 #sideBarTabs > li > a > i{

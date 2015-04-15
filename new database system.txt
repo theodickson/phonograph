@@ -1,0 +1,68 @@
+New database system:
+
+Primary DB (not redis?):
+1. Crawl Spotify for all collaborations.
+2. Only keep collaborations for which all artists are in MusicBrainz.
+3. The track objects are: SPID: title, album, duration, artists, popularity... ()
+4. The artist objects are: SPID: MBID, name, popularity, ... ()
+5. The album objects are: SPID: title, release date ... ()
+5. Additionally, Echonest is crawled for artist (and maybe track) terms. These are stored in full: artist: [{term1: weight, frequency}, {term2: weight, frequency}, ...]
+
+Filtered DB:
+1. Artist info objects are:
+	MBID: SPID, name, popularity.
+	When a MBID is associated to multiple SPIDs, take the SPID of the most popular, and take the shortest name.
+
+That completes the bulk of the artist filtering. It should be sufficient, but additional merges may be necesssary through fuzzy matching inside neighbourhoods.
+
+
+2. Next tracks are added, filtered on a multiedge basis, as follows:
+	First all the tracks are assigned to their multiedge, which is an unordered tuple of MBIDs. 
+	For each multiedge, tracks are grouped based on fuzzy matching of titles, and from each group, the most popular track is taken (but assigned the earliest year (taken from associated album objects.))
+
+	A note on integrating MusicBrainz data: Using MBIDs as primary keys allows easy integration of MB data as follows: A parallel network is built from MusicBrainz, likely using Echonest existence for artist verification, and very strict track filtering. Any MBIDs which do NOT already exist are added (provided that their SPID, if it exists, is not in the Primary DB). 
+	Then, all of the tracks from that network are added to the multiedges before filtering. They are assigned popularity -1 to force defaulting to a SPID if available, but their titles and years can be taken.
+
+	Hence the track info objects are:
+		IDSP:id: title, year, artists. 
+
+3. Now the relational entries can be created. These are sorted sets, preliminarily based on spotify popularity of artists and tracks:
+	track.artists
+	artist.tracks
+	artist.neighbours (if proven to speed up Dijkstra's).
+
+<!--4. Crawl for YouTube videos: For each track-->
+
+5. Set genres can be easily assigned from the primary DB.
+
+6. Building the search index:
+	i. All substrings need to be standardised. (and likewise in-browser before passing to Flask.)
+	ii. 
+
+
+Phonograph module (for use in Flask)
+
+Class track(SPID):
+	track.artists(sort={popularity, degree, ...})
+	track.album
+	track.album_artist
+	track.year
+	track.title
+	track.duration
+	track.popularity
+	track.genre - if track terms dont exist, assigns a genre from the intersection of the artists terms.
+
+Class artist(SPID):
+	artist.neighbours(sort={popularity, degree, weight})
+	artist.tracks(sort={popularity, year})
+	artist.start_year
+	artist.finish_year
+
+
+<--Smart DB Ideas-->
+Artist intrigue index: Every time an artist is called to be displayed, increment artist.displaycount. Every time an artist is clicked, increment artist.clickcount. On doubleclick or search - increment artist.origincount.
+Then artist.clickcount/artist.displaycount and artist.origincount/artist.displaycount are ratios which measure the intriguingness of the artist.
+
+
+
+

@@ -33,7 +33,7 @@ function radioMode(){
 
 function playlistMode(){
 	$('#previous').disabled=false;
-	$('#playlistICON').trigger("click");
+	//$('#playlistICON').trigger("click");
 	$("#tuneIn").show(500);
 	$("#upNext").hide(500);
 	$("#track1").text("Up Next: ");
@@ -147,12 +147,13 @@ function playNextTrack(){
 		else{
 			if(currentTrack+1<gv.customPlaylist.length ){
 				currentTrack +=1;
+				refreshPlaylist();
+				player.cueVideoById(gv.customPlaylist[currentTrack].youtubeId);
 			}
 			else{
-				currentTrack=0;
+				currentTrack=null;
 			};
-			refreshPlaylist();
-			player.cueVideoById(gv.customPlaylist[currentTrack].youtubeId);
+			
 		};	
 	}
 	else if(gv.playMode == "radio"){
@@ -195,6 +196,7 @@ function playNextFromDropdown(track){
 		refreshPlaylist();
 	};
 	refreshPlaylist();
+	playlistAlert();
 }
 function addTrackToPlaylist(track){
 	if(currentTrack == null){
@@ -204,10 +206,10 @@ function addTrackToPlaylist(track){
 		gv.customPlaylist.push(track);
 	};
 	refreshPlaylist();
+	playlistAlert();
 };
 
 function playNext(e){
-	playlistAlert();
 	var trackData = e.currentTarget.value.split("|");
 	console.log(trackData);
 	if(typeof trackData[2] === 'undefined'){
@@ -447,7 +449,8 @@ $('#previous').click(function(){
 });
 
 $('body').on('click','.addToPlaylist', function (e) {
-	addTrackToPlaylist(e);    
+	addTrackToPlaylist(e);  
+	d3.event.stopPropagation();  
 });
 
 $('body').on('click','.playNowButton', function (e) {

@@ -15,4 +15,5 @@ for email in sys.argv[1:]:
 		'email': email,
 		'password': password
 	})
+	application.send_password_reset_email(email)
 	
