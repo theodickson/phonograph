@@ -64,9 +64,9 @@ def d3_dictify(g, origin=None, size=None,**kwargs):
 			genre = info['genre']
 		except:
 			genre = None
-		d3_dict['nodes'][v['name']] = {'name': info['name'], 'popularity': int(info['popularity'])+1, 'genre': genre, 'pos': l[i]}
+		d3_dict['nodes'][v['name']] = {'name': info['name'], 'popularity': len(r.smembers('artist.neighbours:'+v['name']))*3+int(info['popularity']), 'genre': genre, 'pos': l[i]}
 	for i,e in enumerate(g.es()):
-		d3_dict['links'].append({'source': g.vs['name'][e.source], 'target': g.vs['name'][e.target], 'weight': e['weight'], 'track': e['track']})
+		d3_dict['links'].append({'source': g.vs['name'][e.source], 'target': g.vs['name'][e.target], 'weight': np.log(e['weight']), 'track': e['track']})
 	d3_dict['origin'] = origin
 	return d3_dict	
 

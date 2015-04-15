@@ -1,4 +1,5 @@
-//Extra functions don't need to be seen, and probably won't need to
+//Extra functions don't need to be seen, and probably won't need to be modified.
+
 //Rotation functions.
 function optimiseRotation(oldPos, newPos, graph) {
 	testVals = [];
@@ -146,16 +147,15 @@ function firstLabelHeight(d) {
 };
 
 function firstLabelFont(d) {
-	return labelScale(d.value.popularity).toString() + "px";
+	return gv.labelScale(d.value.popularity).toString() + "px";
 };
 
 function secondLabelFont(d) {
-	return (labelScale(d.value.popularity)*0.85).toString() + "px";
+	return (gv.labelScale(d.value.popularity)*0.85).toString() + "px";
 };
 
 //Shitty youtube functions:
 function performRequests(mode) {
-	//console.log(mode);
 	var thisTrack = gv.requestTracks[0];
 
 	var stNames = [];
