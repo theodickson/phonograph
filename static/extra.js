@@ -145,12 +145,8 @@ function firstLabelHeight(d) {
 	};
 };
 
-function firstLabelFont(d) {
-	return labelScale(d.value.popularity).toString() + "px";
-};
-
-function secondLabelFont(d) {
-	return (labelScale(d.value.popularity)*0.85).toString() + "px";
+function labelFontSize(d,c) {
+	return (labelScale(d.value.popularity)*c).toString() + "px";
 };
 
 //Shitty youtube functions:
@@ -289,7 +285,7 @@ function bioRequestString(id) {
 };
 
 function imageRequestString(id) {
-	return "http://developer.echonest.com/api/v4/artist/images?api_key=X4WQEZFHWSIJ7OHWF&id=spotify:artist:"+id+"&format=json&results=1&start=0";
+	return "https://api.spotify.com/v1/artists/"+id;
 };
 
 function twitterRequestString(id) {

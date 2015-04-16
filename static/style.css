@@ -15,6 +15,11 @@ body{
 	stroke-opacity: 0.6;
 }
 
+.linkWrapper {
+    stroke: #999;
+    stroke-opacity: 0;
+}
+
 #zoom{
     position:absolute;
     float:right;
@@ -31,7 +36,7 @@ body{
 }
 
 .hip {
-    stroke: rgb(178, 209, 240);
+    stroke: rgb(160, 188, 216);
 }
 
 .pop {
@@ -39,27 +44,27 @@ body{
 }
 
 .rock {
-    stroke: rgb(240, 178, 178);
+    stroke: rgb(216, 160, 160);
 }
 
 .electronic {
-    stroke: rgb(209, 224, 178);
+    stroke: rgb(188, 202, 160);
 }
 
 .classical {
-    stroke: rgb(194, 194, 255);
+    stroke: rgb(175, 175, 230);
 }
 
 .country {
-    stroke: rgb(224, 209, 178);
+    stroke: rgb(202, 188, 160);
 }
 
 .funk {
-    stroke: rgb(245, 204, 245);
+    stroke: rgb(220, 184, 220);
 }
 
 .jazz {
-    stroke: rgb(235, 204, 214);
+    stroke: rgb(255, 214, 173);
 }
 
 .latin {
@@ -67,7 +72,7 @@ body{
 }
 
 .reggae {
-    stroke: rgb(178, 224, 194);
+    stroke: rgb(160, 202, 175);
 }
 
 .null {
@@ -221,7 +226,7 @@ text {
 #sidebar{
     border-left-style:solid;
     border-right-style:solid;
-    border-width: 2px;
+    border-width: 1px;
     border-color:#e7e7e7;
     display:block;
     overflow:scroll;

@@ -174,19 +174,20 @@ def capitalise(phrase):
 def random_origin():
 	genres = ['rock', 'pop', 'classical', 'hip hop', 'latin', 'reggae', 'electronic', 'country', 'jazz', 'funk']
 	tempgenre = random.choice(genres)
-	origin = random.choice(r.zrevrange('term.artists:'+tempgenre,0,500))
+	top_artists = r.zrevrange('term.artists:'+tempgenre,0,-1)
+	origin = random.choice(top_artists)
 	while True:
-		if len(r.smembers('artist.neighbours:'+origin)) > 5 and int(r.hget('artist.info:'+origin, 'popularity')) > 25:
+		if len(r.smembers('artist.neighbours:'+origin)) >= 5 and int(r.hget('artist.info:'+origin, 'popularity')) > 10:
 			break
-		origin = random.choice(r.zrevrange('term.artists:'+tempgenre,0,500))
+		origin = random.choice(top_artists)
 	return origin
 
 def genre_origin(genre):
-	top_artists = r.zrevrange('term.artists:'+genre,0,500)
+	top_artists = r.zrevrange('term.artists:'+genre,0,-1)
 	origin = random.choice(top_artists)
 	gn = genre_neighbours(origin, genre)
 	while True:
-		if len(gn) >= 10 and r.hget('artist.info:'+origin, 'genre') == genre and int(r.hget('artist.info:'+origin, 'popularity')) > 25:
+		if len(gn) >= 5 and r.hget('artist.info:'+origin, 'genre') == genre and int(r.hget('artist.info:'+origin, 'popularity')) > 10:
 			break
 		origin = random.choice(top_artists)
 		gn = genre_neighbours(origin, genre)
@@ -373,7 +374,7 @@ def custom_subgraph():
 @app.route("/edgeLookup")
 @login_required
 def edge_lookup():
-	ids = request.args['seed'].split(',')
+	ids = request.args['seed'].split('-')
 	r.zinterstore('edgelookup', ['artist.tracks:'+ids[0], 'artist.tracks:'+ids[1]])
 	trackIds = r.zrevrange('edgelookup', 0, -1)
 	response = []

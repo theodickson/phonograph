@@ -25,7 +25,7 @@ function start_Vis(graph) {
 	for (d of graph.links) { weights.push(d.weight); };
 	var linkCount = graph.links.length
 
-	var maxWidthScale = d3.scale.linear().domain([40,200]).range([0,1])
+	var maxWidthScale = d3.scale.linear().domain([40,120]).range([0,1])
 	linkAdjustment = maxWidthScale(linkCount) //adjust the range for the link widths according to total number of links - with many links we want them all to be thinner.
 	gv.widthScale = d3.scale.linear()
 						.domain([d3.min(weights), d3.max(weights)])	
@@ -66,13 +66,22 @@ function start_Vis(graph) {
 	gv.newGraph = graph; //Make the graph a global for use in other functions.
 
 	/*If we don't assign the current links a new class before removing them, sometimes it removes the new links as the transitions and those 
-	links being appended are basically concurrent. There is no benefit to only removing links which disappear its easier to just remove them all*/
-	d3.selectAll(".link").attr('class', 'oldLink'); 
+	links being appended are basically concurrent. There is no benefit to only removing links which disappear its easier to just remove them all.
+	Note: Fade out isn't happening, can't figure out why.*/
+	d3.selectAll("line").attr('class', 'oldLink'); 
 	d3.selectAll(".oldLink").transition().duration(gv.fadeOut).style("stroke-width", 0).remove();
 
 	for (n of toStay) { //Move the already present nodes to their new positions. This is necessary as d3.data().enter() does not act on already present elements.
 		d3.select('#a'+n).transition().delay(gv.fadeOut).duration(gv.nodeSlide)
 			.attr("transform", "translate("+wScale(graph.nodes[n].pos[0])+","+hScale(graph.nodes[n].pos[1])+")")
+		d3.select('#a'+n).select('circle').transition().delay(gv.fadeOut).duration(gv.nodeSlide)
+			.attr("r", function(d) { return nodeScale(d.value.popularity)});
+		d3.select('#a'+n).select('.firstLabel').transition().delay(gv.fadeOut).duration(gv.nodeSlide)
+			.style("font-size", function(d) { return labelFontSize(d,1); });
+		d3.select('#a'+n).select('.secondLabel').transition().delay(gv.fadeOut).duration(gv.nodeSlide)
+			.style("font-size", function(d) { return labelFontSize(d,1); });
+
+
 	};
 
 
@@ -105,17 +114,30 @@ function start_Vis(graph) {
 					doubleClickNode(d);
 				}
 			})
-			/*.on("mouseenter", function(d) {
-				if (gv.clickable) {
-					gv.nodeTimer = setTimeout(function() {clickNode(d);}, 100);
+			.on("mouseenter", function(d) {
+				if ((gv.clickable)&&(gv.clickedNode!=d.key)) {
+					d3.select('#a'+d.key).select('.firstLabel').transition().delay(750).duration(500)
+						.style('font-size', function(d) {
+							return labelFontSize(d,1.05)
+					})
+					d3.select('#a'+d.key).select('.secondLabel').transition().delay(750).duration(500)
+						.style('font-size', function(d) {
+							return labelFontSize(d,1.05)
+					})
 				};
 			})
 			.on("mouseleave", function(d) {
-				clearTimeout(gv.nodeTimer);
-				if (gv.clickable) {
-					//unclickNode();
+				if ((gv.clickable)&&(gv.clickedNode!=d.key)) {
+					d3.select('#a'+d.key).select('.firstLabel').transition().duration(100)
+						.style('font-size', function(d) {
+							return labelFontSize(d,1)
+					})
+					d3.select('#a'+d.key).select('.secondLabel').transition().duration(100)
+						.style('font-size', function(d) {
+							return labelFontSize(d,1)
+					})
 				};
-			})*/
+			})
 
 	//Note that now when functions act on data bound to nodes, d is of the new form {key: id, value: {}} so d.id is now d.key, and d.name is now d.value.name, etc.
 
@@ -124,27 +146,22 @@ function start_Vis(graph) {
 			return "ncircle "+d.value.genre;
 		})
 		.attr("r", function(d) {
-			if (d.key == gv.origin) {
+			/*if (d.key == gv.origin) {
 					return 30;
-				};
+				};*/
 			return nodeScale(d3.max([1,d.value.popularity]));
 		})
-		.attr("stroke-width", function(d) { 
-			if (d.key == gv.origin) {
-					return 4;
-				};
-			return strokeScale(d.value.popularity);
-		});
+		.attr("stroke-width", 2);
 	
 	gv.node.append("text")
 		.attr("class", "firstLabel")
 		.attr("dy", function(d) {return firstLabelHeight(d); })
 		.attr("text-anchor", "middle")
 		.style("font-size", function(d) {
-			if (d.key == gv.origin) {
+			/*if (d.key == gv.origin) {
 				return "22px";
-			};
-			return firstLabelFont(d); })
+			};*/
+			return labelFontSize(d,1); })
 		.text(function(d) {
 			return firstLabel(d);
 		});	
@@ -154,10 +171,10 @@ function start_Vis(graph) {
 		.attr("dy", function(d) { return "0.8em"; })
 		.attr("text-anchor", "middle")
 		.style("font-size", function(d) {
-			if (d.key == gv.origin) {
+			/*if (d.key == gv.origin) {
 				return "22px";
-			};
-			return secondLabelFont(d); })
+			};*/
+			return labelFontSize(d,1); })
 		.text(function(d) {
 			return secondLabel(d);
 		});	
@@ -171,7 +188,7 @@ function start_Vis(graph) {
 			.exit()
 			.transition().duration(gv.fadeOut).style("opacity", 0).remove();
 
-	//Add the links. 
+	//Add the links. They don't need any event handlers, all the events happen on the link wrappers placed over them.
 	gv.link = gv.linkLayer.selectAll(".link")
 		.data(graph.links).enter().append("line")
 		.attr("class", "link")
@@ -179,28 +196,46 @@ function start_Vis(graph) {
 		.attr("id", function(d) {
 			var link_ids = [d.source, d.target];
 			link_ids.sort()
-			return link_ids.join(',');
+			return 'L'+link_ids.join('-');
 		})
 		.attr("x1", function(d) { return wScale(graph.nodes[d.source].pos[0]); })
 		.attr("y1", function(d) { return hScale(graph.nodes[d.source].pos[1]); })
 		.attr("x2", function(d) { return wScale(graph.nodes[d.target].pos[0]); })
 		.attr("y2", function(d) { return hScale(graph.nodes[d.target].pos[1]); })
-		.style("stroke-width", 0) //Start them with stroke width 0 so they only appear when we want them.
+		.style("stroke-width", 0); //Start them with stroke width 0 so they only appear when we want them.
+
+	//Now we add link wrappers. They are much wider but invisible, and contain the link event handlers, so that hovering and selecting links is easier.
+	gv.linkWrapper = gv.linkLayer.selectAll(".linkWrapper")
+		.data(graph.links).enter().append("line")
+		.attr("class", "linkWrapper")
+		//Give them a unique ID: (will be useful for acting on the link(s) corresponding to the currently playing track.)
+		.attr("id", function(d) {
+			var link_ids = [d.source, d.target];
+			link_ids.sort()
+			return 'LW'+link_ids.join('-');
+		})
+		.attr("x1", function(d) { return wScale(graph.nodes[d.source].pos[0]); })
+		.attr("y1", function(d) { return hScale(graph.nodes[d.source].pos[1]); })
+		.attr("x2", function(d) { return wScale(graph.nodes[d.target].pos[0]); })
+		.attr("y2", function(d) { return hScale(graph.nodes[d.target].pos[1]); })
+		.style("stroke-width", 15)
 		.on("mouseenter", function(d) {
+			var linkId = '#L'+[d.source,d.target].sort().join('-')
 			if (gv.clickable) {
 				if (clickedAdjacent(d)) {
-					d3.select(this).style("stroke-width", function(d) { return 7; })
+					d3.select(linkId).transition().delay(60).duration(30).style("stroke-width", function(d) { return gv.widthScale(d.weight)*4; })
 				} else {
-					d3.select(this).style("stroke-width", function(d) { return 5; })
+					d3.select(linkId).transition().delay(60).duration(30).style("stroke-width", function(d) { return gv.widthScale(d.weight)*3;; })
 				};
 			};
 		})
 		.on("mouseleave", function(d) {
+			var linkId = '#L'+[d.source,d.target].sort().join('-')
 			if (gv.clickable) {
 				if (clickedAdjacent(d)) { 
-					d3.select(this).style("stroke-width", function() { return gv.widthScale(d.weight)*3.5; });
+					d3.select(linkId).transition().duration(20).style("stroke-width", function() { return gv.widthScale(d.weight)*2; });
 				} else {
-					d3.select(this).style("stroke-width", function() { return gv.widthScale(d.weight); });
+					d3.select(linkId).transition().duration(20).style("stroke-width", function() { return gv.widthScale(d.weight); });
 				};
 			}
 		})
@@ -210,7 +245,7 @@ function start_Vis(graph) {
 				};
 			});
 
-	gv.oldGraph = graph; //Assign this graph to oldGraph, for use in the next time startVis is called.
+	gv.oldGraph = graph; //Assign this graph to oldGraph, for use the next time startVis is called.
 	
 	//Set a timer for the code we want to execute only after the node animations have finished.
 	setTimeout( function() {
@@ -218,7 +253,9 @@ function start_Vis(graph) {
 		if (gv.currentArtist) {
 			loadArtistInfo();
 		};
-		gv.clickable = true; //re-enable clicking.
+		gv.clickable = true;
+		gv.clickedNode = null; 
+		//clickNode(gv.origin);
 	}, gv.fadeOut+gv.fadeIn+gv.nodeSlide);
 
 	//Return the animation variables to their defaults, in case this was the first time or a resize.
@@ -241,9 +278,8 @@ function reload() {
 		if (graph.origin) {
 			gv.origin = graph.origin; 
 			gv.currentArtist = graph.origin;
-			gv.clickedNode = graph.origin; //ensures the origin is initially enlarged, but not actually clicked since clickNode is not called - other links stay visible.
 		} else {
-			gv.origin = null;
+			gv.origin = graph.origin;
 			gv.currentArtist = null; //ensures loadArtist is not called, since there is no origin.
 		}
 		if (!(graph.error)) {
@@ -285,7 +321,7 @@ gv.rotate = true;
 
 //initalise animation variables. These start with different values from the default as there is no fading out or sliding to be done the first time.
 gv.fadeOut = 0;
-gv.fadeIn = 1500;
+gv.fadeIn = 1200;
 gv.nodeSlide = 0;
 gv.linkFadeIn = 400;
 
@@ -344,28 +380,21 @@ function nodeScale(val) {
 function labelScale(val) { 
 	var lS = d3.scale.linear()
 			.domain([20, 60])
-			.range([14, 18]);
+			.range([14, 17]);
 	var toScale = d3.min([d3.max([val, 20]), 60]);
 	return lS(toScale);
 };
 
-function strokeScale(val) { 
-	var sS = d3.scale.linear()
-			.domain([20, 60])
-			.range([3, 3]);
-	var toScale = d3.min([d3.max([val, 20]), 60]);
-	return sS(toScale);
-};					
-
 
 //Node click and load functions:
 function clickNode(d) {
+	if (typeof(d.key)=="undefined") { id = d;} else {id = d.key;}
 	gv.currentLink = null;
-	highlightNode(d.key);
-	gv.clickedNode = d.key;
+	highlightNode(id);
+	gv.clickedNode = id;
 	highlightLinks();
-	if (gv.currentArtist != d.key) {
-		gv.currentArtist = d.key;
+	if (gv.currentArtist != id) {
+		gv.currentArtist = id;
 		loadArtistInfo();
 		tabSwitch('node');
 	}
@@ -380,19 +409,16 @@ function highlightNode(node) {
 	previous.select('circle').transition().duration(500)
 		.attr('r', function(d) {
 			return nodeScale(d.value.popularity); 
-		})
-		.attr('stroke-width', function(d) {
-			return strokeScale(d.value.popularity); 
 		});
 
 	previous.select('.firstLabel').transition().duration(500)
 		.style('font-size', function(d) {
-			return firstLabelFont(d);
+			return labelFontSize(d,1);
 		});
 
 	previous.select('.secondLabel').transition().duration(500)
 		.style('font-size', function(d) {
-			return secondLabelFont(d); 
+			return labelFontSize(d,1); 
 		})
 		.attr("dy", "0.8em");
 
@@ -402,9 +428,6 @@ function highlightNode(node) {
 	current.select('circle').transition().duration(500)
 		.attr('r', function(d) {
 			return gv.clickedRadius; 
-		})
-		.attr('stroke-width', function(d) {
-			return gv.clickedStrokeWidth; 
 		});
 
 	current.select('.firstLabel').transition().duration(500)
@@ -421,27 +444,36 @@ function highlightNode(node) {
 }
 
 function loadArtistInfo() {
+	d3.select('#artistImage').html("");
+	d3.select('#bioText').text("");
 	$('#node-title').text(gv.newGraph.nodes[gv.currentArtist].name);
-	id = gv.currentArtist;
-	d3.json(bioRequestString(id), function(error, response) {
-		if(error){
-			d3.select('#bioText').text("Biography not found in database");
-		}
-		else{
-			var bio = response.response.biographies[0].text;
-			d3.select('#bioText').text(bio);
-		}
-	});
+	var id = gv.currentArtist;
 
 	d3.json(imageRequestString(id), function(error, response) {
-		if(error){
+		var images = response.images;
+		if ( (error)||(images.length==0)||(typeof(images)=="undefined") ){
 			d3.select('#artistImage').html( function() { return imageTag(null); });
 		}
 		else{
-			var image = response.response.images[0].url;
+			console.log(images);
+			var image = response.images[0].url;
 			d3.select('#artistImage').html( function() { return imageTag(image); });
 
 		};
+
+		setTimeout(function() {
+				d3.json(bioRequestString(id), function(error, response) {
+					var bios = response.response.biographies;
+					if( (error)||(bios.length==0)||(typeof(bios)=="undefined") ) {
+						d3.select('#bioText').text("Biography not found.");
+					}
+					else{
+						var bio = response.response.biographies[0].text;
+						d3.select('#bioText').text(bio);
+					}
+
+				});
+			}, 500);
 	});
 
 	d3.json(twitterRequestString(id), function(error, response) {
@@ -492,25 +524,34 @@ function unclickNode() {
 function clickLink(d) {
 	d3.event.stopPropagation();
 	gv.currentArtist = null; //Current artist is now null since there is no artist displayed in the sidebar.
-	if (gv.currentLink != d) { //Only do something if the link isn't already clicked.
-		gv.currentLink = d;
+	var linkId = [d.source,d.target].sort().join('-')
+	if (gv.currentLink != linkId) { //Only do something if the link isn't already clicked.
+		gv.currentLink = linkId;
 		loadEdgeInfo();
 		tabSwitch('edge');
 	}
 };	
 
-function highlightLinks() { //enlarges links adjacent to the clicked node and disappears the rest.
+function highlightLinks() { //enlarges links adjacent to the clicked node and disappears the rest. also disappears linkwrappers not adjacent to the clicked node.
 	d3.selectAll(".link").transition().duration(500)
 		.style("stroke-width", function(d) { 
 			if (clickedAdjacent(d)) {
-				return gv.widthScale(d.weight)*3.5;
+				return gv.widthScale(d.weight)*2;
 			} else {return 0;};	
 		});
-	};
+	d3.selectAll(".linkWrapper")
+		.style("stroke-width", function(d) { 
+			if (clickedAdjacent(d)) {
+				return 15;
+			} else {return 0;};	
+		});
+}
 
 function dehighlightLinks() { //Restores all link widths to their normal state.
 	d3.selectAll(".link").transition().duration(gv.linkFadeIn)
 		.style("stroke-width", function(d) { return gv.widthScale(d.weight); });
+	d3.selectAll(".linkWrapper")
+		.style("stroke-width", 15);
 };
 
 
@@ -519,11 +560,16 @@ function clickedAdjacent(d) { //Determines if the source or target of the link i
 };
 
 function loadEdgeInfo(){
-	d = gv.currentLink;
-	var linkId = [d.source, d.target].join(','); 
-	var names = gv.newGraph.nodes[d.source].name +" & "+gv.newGraph.nodes[d.target].name;
 
-	d3.json("/edgeLookup?seed="+linkId, function(error, response) {
+	var currentLinkIds = gv.currentLink.split('-')
+
+	console.log(currentLinkIds);
+
+	var names = gv.newGraph.nodes[currentLinkIds[0]].name +" & "+gv.newGraph.nodes[currentLinkIds[1]].name;
+
+	console.log(names);
+
+	d3.json("/edgeLookup?seed="+gv.currentLink, function(error, response) {
 		if(gv.currentService=="spotify") {
 			trackIds = [];
 			for (track of response.tracks) {
@@ -664,3 +710,13 @@ $('#playlistICON').on("click", function(e){
 $('#playlistDropdown').on('hide.bs.dropdown', function (e) {
 	e.preventDefault();
 });
+
+$('#shuffle').on('click', function() {
+	gv.route = "neighbourhood"
+	gv.origin = null;
+	gv.term = null;
+	gv.source = null;
+	gv.destination = null;
+	gv.rotate = true;
+	reload();
+})
