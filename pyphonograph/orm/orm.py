@@ -1,16 +1,12 @@
 import sys
-import os
-from contextlib import contextmanager
-
 import json
 
 from sqlalchemy import Table, Column, String, Boolean, Integer, ForeignKey
-from sqlalchemy import create_engine
-from sqlalchemy.orm import relationship, backref, sessionmaker
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects import postgresql
 
-import configparser
+from .utils import *
 
 Base = declarative_base()
 
@@ -39,7 +35,6 @@ class Artist(Base):
 
     albums = relationship('Album', secondary=artist_album_map, back_populates='artists')
     tracks = relationship('Track', secondary=artist_track_map, back_populates='artists')
-    #images = relationship('Image', back_populates='artist')
 
     @property
     def uri(self):
@@ -85,7 +80,6 @@ class Album(Base):
 
     artists = relationship('Artist', secondary=artist_album_map, back_populates='albums')
     tracks = relationship('Track', back_populates='album')
-    #images = relationship('Image', back_populates='album')
 
     @property
     def uri(self):
@@ -118,7 +112,6 @@ class Album(Base):
     @classmethod
     def from_json_simplified(cls, blob):
         artists = [Artist.from_json_simplified(x) for x in blob['artists']]
-        #images = [Image.from_json(x) for x in blob['images']]
 
         return cls(
             id_=blob['id'],
@@ -179,67 +172,6 @@ class Track(Base):
         )
 
 
-# class Image(Base):
-#     __tablename__ = 'image'
-#     url = Column(String, primary_key=True)
-#     height = Column(Integer, nullable=True)
-#     width = Column(Integer, nullable=True)
-#     artist_id = Column(String, ForeignKey('artist.id'))
-#     album_id = Column(String, ForeignKey('album.id'))
-#     artist = relationship('Artist', back_populates='images')
-#     album = relationship('Album', back_populates='images')
-
-#     @classmethod
-#     def from_json(cls, blob, artist_id=None, album_id=None):
-#         return cls(
-#             url=blob['url'],
-#             height=blob['height'],
-#             width,
-#             preview_url=blob['preview_url'],
-#             duration_ms=blob['duration_ms'],
-#             external_urls=json.dumps(blob['external_urls'])
-#         )
-
-
-class SessionContextMaker(object):
-
-    def __init__(self, sessionmaker):
-        self._sessionmaker = sessionmaker
-
-    @contextmanager
-    def __call__(self):
-        session = self._sessionmaker()
-        try:
-            yield session
-            session.commit()
-        except KeyboardInterrupt:
-            session.commit()
-        except:
-            session.rollback()
-            raise
-        finally:
-            session.close()
-
-def get_config():
-    conf = configparser.ConfigParser()
-    conf_path = os.path.join(os.path.dirname(__file__), 'config.ini')
-    conf.read(conf_path)
-    return conf
-
-def get_engine():
-    conf = get_config()
-    engine_str = 'postgresql+psycopg2://{user}:{password}@/{dbname}'.format(**conf['database'])
-    return create_engine(engine_str)
-
-def get_session():
-    engine = get_engine()
-    Session = sessionmaker(bind=engine)
-    return Session
-
-def get_new_session():
-    Session = get_session()
-    return SessionContextMaker(Session)
-
 if __name__ == '__main__':
 
     engine = get_engine()
@@ -247,11 +179,3 @@ if __name__ == '__main__':
     if sys.argv[1] == 'recreate_all':
         Base.metadata.drop_all(engine)
         Base.metadata.create_all(engine)
-
-        
-
-# engine_str = 'postgresql+psycopg2://{user}:{password}@/{dbname}'.format(**conf['database'])
-# engine = create_engine(engine_str)
-# Base.metadata.create_all(engine)
-# Session = sessionmaker(bind=engine)
-# new_session = SessionContextMaker(Session)

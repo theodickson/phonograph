@@ -1,1 +1,2 @@
-from .orm import Artist,Album,Track,get_new_session
+from .orm import Artist,Album,Track
+from .utils import get_new_session,get_session
