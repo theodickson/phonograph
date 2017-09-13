@@ -1,0 +1,10 @@
+Processing stage:
+
+Remove:
+1. Extremely unpopular artists and tracks
+2. Duplicate artists and tracks
+3. Stupid artists and tracks (Baby Sleep Sounds, various artists, unofficial remixes, mashups etc)
+
+Calculate:
+1. Genres for artists (PCA)
+2. Actual release dates

@@ -1,0 +1,35 @@
+The fundamental principle is that if you have artists or albums which you haven't 'checked' (artists to get their full list of albums, albums to get their track listings) then there may be collaborations you haven't found. Further, collaborations are a way to find new artists, in fact we know that if you start at a semi-popular artist, you can discover most of popular music only via these collaborations.
+
+Therefore we need a spider routine which: Checks every unchecked artist, then every unchecked album, then repeats, until no unchecked artists or albums remain.
+
+We also need routines to discover seeds - such as:
+    1. Get the first 100000 artists
+    2. Get the first 100000 albums from each year.
+    3. Get the most recent albums.
+
+
+Then we can run an update routine by tagging all the artists as 'unchecked' and then running the spider routine.
+
+Spanner in the works - previously, we discounted any spotify artist which was not in MusicBrainz - this limited the artists to about 200,000. Unfortunately there are 3.2m artists and 6m albums in the Spotify database. Crawling the whole database therefore requires at ~10m requests i.e. 1m seconds i.e. a few weeks.
+
+However, we know this follows a very clear long-tail pattern, for example by using the tag 'hipster' in search we know that only 500k of these artists have a popularity of 10 or above. For reference, 10k monthly listeners gives you about 30 popularity, 1k gives you about 15.
+
+So, we need to make one change to the spider algorithm, and accept that we are never going to be 'done', we can just stop it when we've reached a sufficient level of completion.
+
+We instead choose an n, say 1000, and then the algorithm works as follows:
+Check the first 1000 unchecked artists, in descending order of popularity, then do the same for albums, then repeat.
+
+We should also have a table of 'goal stats' that hold: Current total artists, current total albums, current total tracks.
+And finally a view giving us:
+    current total found and checked artists, albums and tracks.
+    current least popular checked album.
+    current least popular checked artist.
+
+
+Data consistency/correctness checks:
+
+All 'checked' artists must have extra attributes
+All 'unchecked' artists must NOT have extra attributes
+All 'scraped' artists must have albums
+(Unscraped artists may have albums)
+
