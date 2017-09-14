@@ -3,7 +3,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 from tqdm import tqdm
 
-from pyphonograph.orm import Artist,Album,Track,get_new_session
+from pyphonograph.orms.spotify_raw import Artist,Album,Track,get_new_session
 
 def chunker(iterable, chunk_size):
   output = []
