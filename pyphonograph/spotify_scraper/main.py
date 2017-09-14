@@ -12,6 +12,17 @@ def chunker(iterable, chunk_size):
     iterable = iterable[chunk_size:]
   return output
 
+def inject_session(method):
+
+  def inner(self, *args, **kwargs):
+    if kwargs.get('session'):
+      method(self, *args, **kwargs)
+    else:
+      with self._new_session() as session:
+        method(self, *args, session=session, **kwargs)
+
+  return inner
+
 class SpotifyScraper(object):
 
   def __init__(self):
