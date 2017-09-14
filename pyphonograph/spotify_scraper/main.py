@@ -49,7 +49,7 @@ class SpotifyScraper(object):
           break
 
   def artist_albums(self, artist, session):
-    initial_query= self._sp.artist_albums(artist.id_, limit=50)
+    initial_query= self._sp.artist_albums(artist.id_, album_type="album,single,compilation", limit=50)
     return tqdm(self._generate_all(initial_query, 'albums'))
 
   def scrape_artist(self, artist, session):
@@ -120,17 +120,21 @@ class SpotifyScraper(object):
         for artist in tqdm(artists_to_scrape):
           self.scrape_artist(artist, session)
         session.commit()
-        albums_to_check = session.query(Album).filter(Album.checked==False).all()
-        print("Album scrape complete. There are now {} unchecked albums. Checking albums...\n".format(len(albums_to_check)))
-        with tqdm(total=len(albums_to_check)) as pbar:
-          c = 0
-          for chunk in chunker(albums_to_check, 20):
-            self.check_albums(chunk, session, pbar=pbar)
-            c += 20
-            if c % 1000 == 0:
-              session.commit()
+        self.check_all_unchecked_albums(session=session)
         print("Done checking albums. Returning to artist check...")
-        session.commit()
+
+  @inject_session
+  def check_all_unchecked_albums(self, session=None, limit=None):
+    albums_to_check = session.query(Album).filter(Album.checked==False).limit(limit).all()
+    print("Album scrape complete. There are now {} unchecked albums. Checking albums...\n".format(len(albums_to_check)))
+    with tqdm(total=len(albums_to_check)) as pbar:
+      c = 0
+      for chunk in chunker(albums_to_check, 20):
+        self.check_albums(chunk, session, pbar=pbar)
+        c += 20
+        if c % 1000 == 0:
+          session.commit()
+      session.commit()
 
   def _generate_all(self, initial_query, result_type=None):
     current = initial_query.get(result_type, initial_query)
