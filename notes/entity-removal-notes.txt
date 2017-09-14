@@ -1,0 +1,37 @@
+Artist removal reasons:
+    unpopular
+    invalid_name
+    group_
+    duplicate
+
+So we need a table for removal reasons, and a table for further info, i.e. why it was illegal
+We also need a duplicates table, i.e. 'removed,kept'
+
+Album removal reasons:
+    unpopular
+    invalid_name
+    too_many_artists
+    compilation
+    duplicate
+    artist_removed
+
+Track removal reasons:
+    unpopular
+    invalid_name
+    album_removed
+    all_artists_removed
+    all_but_one_artist_removed
+    duplicate
+
+
+Possible algorithm:
+
+Add unpopular and invalid artists to artist removals.
+Add unpopular, invalid, artist_removed and duplicate albums to album removals.
+Add unpopular, invalid, album_removed, artist_removed tracks to track removals.
+
+Index tracks by their artist groups.
+
+For each group, 
+
+

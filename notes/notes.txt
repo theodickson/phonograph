@@ -33,3 +33,5 @@ All 'unchecked' artists must NOT have extra attributes
 All 'scraped' artists must have albums
 (Unscraped artists may have albums)
 
+Also do accuracy checks against the API.
+

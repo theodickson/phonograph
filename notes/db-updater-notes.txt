@@ -1,0 +1,35 @@
+For each track:
+    GET_GROUP
+    REDUCE_GROUP (want to consider removing all tracks from groups which can be reduced - there's probably a better version)
+    DO_PREVIOUS_ARTIST_MERGES
+    Case 1 - No new artists:
+        MERGE_TRACK
+
+    Case 2 - At least one new artist.
+        While merge:
+            FIND_ARTIST_MERGES in existing neighbourhood
+        For each new artist:
+            MERGE_ARTIST for each new artist with the existing neighbourhood
+        Store the new artists (which weren't merged)
+        MERGE_TRACK
+
+Complexity:
+    GET_GROUP - O(1)
+
+    REDUCE_GROUP - O(n^2 * k) where
+        n is the number of artists in the group
+        k is the avg number of sub names
+
+    MERGE_TRACK - O(a + n + m^2) where
+        a is the retrieval complexity for the group's tracks,
+        n is the number of existing tracks in the group
+        m is the size of the group
+
+    FIND_ARTIST_MERGES - O(n^2) in size of neighbourhood
+
+
+Inefficiences:
+    performs REDUCE_GROUP multiple times per track
+
+Other issues:
+    

@@ -8,3 +8,32 @@ Remove:
 Calculate:
 1. Genres for artists (PCA)
 2. Actual release dates
+
+Notes on removing duplicates:
+    Relatively straightforward for tracks - once you've found one just keep the most popular.
+    The complicating situation is duplicates with non-matching groups. Though this is mitigated greatly by the REDUCE_GROUP procedure iirc.
+
+    More tricky for artists - you have to decide whether to merge or just remove the duplicate.
+
+
+The key for ongoing maintenance is having full transparency in the duplicate removal process.
+This will allow for calculation of quality metrics later on.
+
+This is especially true as the data will be much messier than before due to no referencing of MusicBrainz for removing shit artists.
+
+Therefore the cleanup model should at least start straightforwardly, and be relatively brutal.
+
+On balance, merging artists is just too complicated and probably a bit pointless. It also destroys the elegance of the processing stage as a mere filter (with extra info calculated for existing entities)
+
+Ideally, then, we could:
+    Filter our unpopular artists and tracks
+    Remove obviously shit artists (what to do with an artist's albums if the artist is removed?)
+    Remove obviously shit albums (compilations etc)
+    Remove obviously shit tracks
+
+    Remove other duplicate tracks group-by-group
+    Then maybe perform neighbourhood-based duplicate artist removal
+
+    Add proper release dates
+    Add artist genres
+
