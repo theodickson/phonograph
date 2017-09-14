@@ -11,13 +11,13 @@ from .utils import *
 Base = declarative_base()
 
 artist_track_map = Table('artist_track_map', Base.metadata,
-    Column('artist', String, ForeignKey('artist.id')),
-    Column('track', String, ForeignKey('track.id'))
+    Column('artist', String, ForeignKey('artist.id'), index=True),
+    Column('track', String, ForeignKey('track.id'), index=True)
 )
 
 artist_album_map = Table('artist_album_map', Base.metadata,
-    Column('artist', String, ForeignKey('artist.id')),
-    Column('album', String, ForeignKey('album.id'))
+    Column('artist', String, ForeignKey('artist.id'), index=True),
+    Column('album', String, ForeignKey('album.id'), index=True)
 )
 
 
@@ -126,7 +126,7 @@ class Album(Base):
 class Track(Base):
     __tablename__ = 'track'
     id_ = Column('id', String, primary_key=True)
-    album_id = Column(String, ForeignKey('album.id'))
+    album_id = Column(String, ForeignKey('album.id'), index=True)
     name = Column(String, nullable=False)
     popularity = Column(Integer, nullable=True)
     preview_url = Column(String, nullable=True)
