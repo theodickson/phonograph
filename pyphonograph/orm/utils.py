@@ -25,6 +25,20 @@ class SessionContextMaker(object):
             session.close()
 
 
+class ConnectionContextMaker(object):
+
+    def __init__(self, engine):
+        self._engine = engine
+
+    @contextmanager
+    def __call__(self, *args, **kwargs):
+        conn = self._engine.connect(*args, **kwargs)
+        try:
+            yield conn
+        finally:
+            conn.close()
+
+
 def get_config():
     conf = configparser.ConfigParser()
     conf_path = os.path.join(os.path.dirname(__file__), 'config.ini')
