@@ -11,8 +11,8 @@ class SessionContextMaker(object):
         self._sessionmaker = sessionmaker
 
     @contextmanager
-    def __call__(self):
-        session = self._sessionmaker()
+    def __call__(self, *args, **kwargs):
+        session = self._sessionmaker(*args, **kwargs)
         try:
             yield session
             session.commit()
