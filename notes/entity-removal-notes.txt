@@ -1,28 +1,30 @@
 Artist removal reasons:
     unpopular
     invalid_name
-    group_
-    duplicate
-
-So we need a table for removal reasons, and a table for further info, i.e. why it was illegal
-We also need a duplicates table, i.e. 'removed,kept'
+    amalgamation (link to group where this was discovered)
+    duplicate (link to kept artist)
 
 Album removal reasons:
-    unpopular
+    unpopular 
     invalid_name
     too_many_artists
     compilation
-    duplicate
-    artist_removed
+    duplicate (link to kept album)
+    artist_removed (link to removed artist)
+    invalid_artist_group
+
 
 Track removal reasons:
     unpopular
     invalid_name
     album_removed
-    all_artists_removed
-    all_but_one_artist_removed
-    duplicate
+    artist_removed
+    invalid_artist_group
+    duplicate (link to kept track)
 
+Note that although an entity can be removed for several reasons, for efficiency we will only record the first one encountered, so that
+a) we don't even test further down the line, by filtering out of all queries those entities which have already been removed.
+b) we can use batch adds of the removal records rather than merges
 
 Possible algorithm:
 
@@ -30,8 +32,62 @@ Add unpopular and invalid artists to artist removals.
 Add unpopular, invalid, artist_removed and duplicate albums to album removals.
 Add unpopular, invalid, album_removed, artist_removed tracks to track removals.
 
-Index tracks by their artist groups.
+Index tracks by their artist groups
 
-For each group, 
+For each group, perform reduction, (add removed artists to artist removals and add removed tracks to track removals) OR add duplicate tracks to track removals
 
+Now that we've removed some more artists, go back and re-run album removals and standard track removals.
+(No need to re-run track de-dupe)
+
+Routines:
+REMOVE_UNPOPULAR_ARTISTS
+REMOVE_INVALID_ARTISTS
+
+REMOVE_UNPOPULAR_ALBUMS
+REMOVE_INVALID_ALBUMS
+REMOVE_ARTIST_REMOVED_ALBUMS - remove any albums which have had any of their artists removed
+
+INDEX_ALBUMS_BY_ARTIST_GROUP - create a mapping from artist group to album (ignore removed albums)
+REMOVE_INVALID_ARTIST_GROUPS_ALBUM - check all these artist groups for ones which are overlapping. if a group is, remove the relevant artists and also all the albums in the group. (and tag group as removed)
+
+REMOVE_DUPLICATE_ALBUMS_BY_ARTIST_GROUP - remove duplicate albums within each group (ignoring the removed groups)
+
+REMOVE_UNPOPULAR_TRACKS
+REMOVE_INVALID_TRACKS
+REMOVE_ALBUM_REMOVED_TRACKS
+REMOVE_ARTIST_REMOVED_TRACKS
+
+INDEX_TRACKS_BY_ARTIST_GROUP - create a mapping from artist group to track (ignore removed tracks)
+REMOVE_INVALID_ARTIST_GROUPS_ARTIST - check all these artist groups for ones which are overlapping. if a group is, remove the relevant artists and also all the tracks in the group. (and tag group as removed)
+REMOVE_DUPLICATE_TRACKS_BY_ARTIST_GROUP - remove duplicate tracks within each group (ignoring the removed groups)
+
+
+Algorithm:
+    REMOVE_UNPOPULAR_ARTISTS
+    REMOVE_INVALID_ARTISTS
+
+    REMOVE_UNPOPULAR_ALBUMS
+    REMOVE_INVALID_ALBUMS
+    REMOVE_ARTIST_REMOVED_ALBUMS
+
+    INDEX_ALBUMS_BY_ARTIST_GROUP
+    REMOVE_INVALID_ARTIST_GROUPS
+    REMOVE_DUPLICATE_ALBUMS_BY_ARTIST_GROUP
+
+    REMOVE_UNPOPULAR_TRACKS
+    REMOVE_INVALID_TRACKS
+    REMOVE_ARTIST_REMOVED_TRACKS
+    REMOVE_ALBUM_REMOVED_TRACKS
+
+    INDEX_TRACKS_BY_ARTIST_GROUP
+    REMOVE_INVALID_ARTIST_GROUPS_TRACK
+    REMOVE_DUPLICATE_TRACKS_BY_ARTIST_GROUP
+
+    REMOVE_ARTIST_REMOVED_ALBUMS
+    REMOVE_ARTIST_REMOVED_TRACKS
+    REMOVE_ALBUM_REMOVED_TRACKS
+
+The clean database can be created by simply iterating through all not-removed tracks, initialising the processed track and all processed artists and merging these into the clean database. Genres can be done separately.
+
+Ideally the ORM would have been set up to include relationships to the removed entities, but I think I will try to implement these routines with SQLAlchemy core.
 
