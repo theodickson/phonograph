@@ -1,14 +1,13 @@
 import sys
 import json
 
-from sqlalchemy import Table, Column, String, Boolean, Integer, ForeignKey
+from sqlalchemy import Table, Column, String, Boolean, Integer, SmallInteger, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects import postgresql
 
 from .utils import *
-
-Base = declarative_base()
+from .base import Base
 
 artist_track_map = Table('artist_track_map', Base.metadata,
     Column('artist', String, ForeignKey('artist.id'), index=True),
@@ -35,6 +34,8 @@ class Artist(Base):
 
     albums = relationship('Album', secondary=artist_album_map, back_populates='artists')
     tracks = relationship('Track', secondary=artist_track_map, back_populates='artists')
+
+    removed = Column(SmallInteger, ForeignKey('entity_removal_info.id'), default=0, index=True)
 
     @property
     def uri(self):
@@ -80,6 +81,8 @@ class Album(Base):
 
     artists = relationship('Artist', secondary=artist_album_map, back_populates='albums')
     tracks = relationship('Track', back_populates='album')
+
+    removed = Column(SmallInteger, ForeignKey('entity_removal_info.id'), default=0, index=True)
 
     @property
     def uri(self):
@@ -138,6 +141,8 @@ class Track(Base):
     artists = relationship('Artist', secondary=artist_track_map, back_populates='tracks')
     album = relationship('Album', back_populates='tracks')
 
+    removed = Column(SmallInteger, ForeignKey('entity_removal_info.id'), default=0, index=True)
+
     @property
     def uri(self):
         return "spotify:track:{}".format(self.id_)
@@ -172,10 +177,26 @@ class Track(Base):
         )
 
 
-if __name__ == '__main__':
+class EntityRemovalInfo(Base):
+    __tablename__ = 'entity_removal_info'
+    id_ = Column('id', SmallInteger, primary_key=True)
+    info = Column('info', String, nullable=False)
 
-    engine = get_engine()
-
-    if sys.argv[1] == 'recreate_all':
-        Base.metadata.drop_all(engine)
-        Base.metadata.create_all(engine)
+    @classmethod
+    def populate(cls, session):
+        data = [
+            (0, 'not_removed'),
+            (1, 'unpopular'),
+            (2, 'invalid_name'),
+            (3, 'duplicate'),
+            (4, 'too_many_artists'),
+            (5, 'artist_removed'),
+            (6, 'invalid_artist_group'),
+            (7, 'album_removed'),
+            (8, 'multi_artist'),
+            (9, 'compilation'),
+        ]
+        for id_,info in data:
+            obj = cls(id_=id_, info=info)
+            session.merge(obj)
+        session.commit()

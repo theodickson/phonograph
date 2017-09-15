@@ -1,1 +1,1 @@
-from .main import SpotifyScraper
+from .spotify_scraper import SpotifyScraper
