@@ -7,16 +7,15 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects import postgresql
 
 from .utils import *
+from .base import Base
 
-Base = declarative_base()
-
-artist_track_map = Table('artist_track_map', Base.metadata,
-    Column('artist', String, ForeignKey('artist.id'), index=True),
-    Column('track', String, ForeignKey('track.id'), index=True)
+processed_artist_track_map = Table('processed_artist_track_map', Base.metadata,
+    Column('processed_artist', String, ForeignKey('processed_artist.id'), index=True),
+    Column('processed_track', String, ForeignKey('processed_track.id'), index=True)
 )
 
-class Artist(Base):
-    __tablename__ = 'artist'
+class ProcessedArtist(Base):
+    __tablename__ = 'processed_artist'
     id_ = Column('id', String, primary_key=True)
     name = Column(String, nullable=False)
     popularity = Column(Integer, nullable=True)
@@ -24,28 +23,19 @@ class Artist(Base):
     _genre = Column(String, nullable=True)
     images = Column(postgresql.JSON, nullable=True)
 
-    tracks = relationship('Track', secondary=artist_track_map, back_populates='artists')
+    tracks = relationship('ProcessedTrack', secondary=processed_artist_track_map, back_populates='artists')
 
     @property
     def uri(self):
         return "spotify:artist:{}".format(self.id_)
     
 
-class Track(Base):
-    __tablename__ = 'track'
+class ProcessedTrack(Base):
+    __tablename__ = 'processed_track'
     id_ = Column('id', String, primary_key=True)
     name = Column(String, nullable=False)
     popularity = Column(Integer, nullable=True)
     preview_url = Column(String, nullable=True)
     duration_ms = Column(Integer, nullable=False)
     release_year = Column(Integer, nullable=False)
-    artists = relationship('Artist', secondary=artist_track_map, back_populates='tracks')
-
-
-if __name__ == '__main__':
-
-    engine = get_engine()
-
-    if sys.argv[1] == 'recreate_all':
-        Base.metadata.drop_all(engine)
-        Base.metadata.create_all(engine)
+    artists = relationship('ProcessedArtist', secondary=processed_artist_track_map, back_populates='tracks')
