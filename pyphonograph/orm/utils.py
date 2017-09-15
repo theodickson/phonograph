@@ -58,3 +58,7 @@ def get_sessionmaker():
 def get_new_session():
     Session = get_sessionmaker()
     return SessionContextMaker(Session)
+
+def get_new_connection():
+    engine = get_engine()
+    return ConnectionContextMaker(engine)
