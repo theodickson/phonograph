@@ -19,6 +19,11 @@ artist_album_map = Table('artist_album_map', Base.metadata,
     Column('album', String, ForeignKey('album.id'), index=True)
 )
 
+artist_group_map = Table('artist_group_map', Base.metadata,
+    Column('artist', String, ForeignKey('artist.id'), index=True),
+    Column('artist_group', String, ForeignKey('artist_group.id'), index=True)
+)
+
 
 class Artist(Base):
     __tablename__ = 'artist'
@@ -34,6 +39,7 @@ class Artist(Base):
 
     albums = relationship('Album', secondary=artist_album_map, back_populates='artists')
     tracks = relationship('Track', secondary=artist_track_map, back_populates='artists')
+    groups = relationship('Group', secondary=artist_group_map, back_populates='artists')
 
     removed = Column(SmallInteger, ForeignKey('entity_removal_info.id'), default=0, index=True)
 
@@ -62,11 +68,26 @@ class Artist(Base):
             external_urls=json.dumps(blob['external_urls'])
         )
     
+class Group(Base):
+    __tablename__ = 'artist_group'
+    id_ = Column('id', String, primary_key=True)
+    removed = Column(SmallInteger, ForeignKey('entity_removal_info.id'), default=0, index=True)
+
+    artists = relationship('Artist', secondary=artist_group_map, back_populates='groups')
+    albums = relationship('Album', back_populates='group')
+    tracks = relationship('Track', back_populates='group')
+
+    @classmethod
+    def from_artists(cls, artists, add_artists=True):
+        sorted_ids = sorted([a.id_ for a in artists])
+        group_id = '%'.join(sorted_ids)
+        return cls(id_=group_id, artists=artists if add_artists else [])
 
 class Album(Base):
     __tablename__ = 'album'
     id_ = Column('id', String, primary_key=True)
     name = Column(String, nullable=False)
+    group_id = Column('artist_group', String, ForeignKey('artist_group.id'), nullable=False, index=True)
     album_type = Column(String, nullable=False)
     popularity = Column(Integer, nullable=True)
     release_date = Column(String, nullable=True)
@@ -81,6 +102,7 @@ class Album(Base):
 
     artists = relationship('Artist', secondary=artist_album_map, back_populates='albums')
     tracks = relationship('Track', back_populates='album')
+    group = relationship('Group', back_populates='albums')
 
     removed = Column(SmallInteger, ForeignKey('entity_removal_info.id'), default=0, index=True)
 
@@ -93,6 +115,7 @@ class Album(Base):
         id_ = blob['id']
         artists = [Artist.from_json_simplified(x) for x in blob['artists']]
         tracks = [Track.from_json_simplified(x, id_) for x in blob['tracks']['items'] if len(x['artists']) > 1]
+        group = Group.from_artists(artists)
 
         return cls(
             id_=id_,
@@ -109,12 +132,14 @@ class Album(Base):
             images=json.dumps(blob['images']),
             checked=True,
             artists=artists,
-            tracks=tracks
+            tracks=tracks,
+            group=group
         )
 
     @classmethod
     def from_json_simplified(cls, blob):
         artists = [Artist.from_json_simplified(x) for x in blob['artists']]
+        group = Group.from_artists(artists)
 
         return cls(
             id_=blob['id'],
@@ -124,6 +149,7 @@ class Album(Base):
             external_urls=json.dumps(blob['external_urls']),
             images=json.dumps(blob['images']),
             artists=artists,
+            group=group
         )
 
 class Track(Base):
@@ -131,6 +157,7 @@ class Track(Base):
     id_ = Column('id', String, primary_key=True)
     album_id = Column(String, ForeignKey('album.id'), index=True)
     name = Column(String, nullable=False)
+    group_id = Column('artist_group', String, ForeignKey('artist_group.id'), nullable=False, index=True)
     popularity = Column(Integer, nullable=True)
     preview_url = Column(String, nullable=True)
     duration_ms = Column(Integer, nullable=False)
@@ -140,6 +167,7 @@ class Track(Base):
 
     artists = relationship('Artist', secondary=artist_track_map, back_populates='tracks')
     album = relationship('Album', back_populates='tracks')
+    group = relationship('Group', back_populates='tracks')
 
     removed = Column(SmallInteger, ForeignKey('entity_removal_info.id'), default=0, index=True)
 
@@ -150,6 +178,8 @@ class Track(Base):
     @classmethod
     def from_json_simplified(cls, blob, album_id):
         artists = [Artist.from_json_simplified(x) for x in blob['artists']]
+        group = Group.from_artists(artists)
+
         return cls(
             id_=blob['id'],
             album_id=album_id,
@@ -157,12 +187,15 @@ class Track(Base):
             preview_url=blob['preview_url'],
             duration_ms=blob['duration_ms'],
             external_urls=json.dumps(blob['external_urls']),
-            artists=artists
+            artists=artists,
+            group=group
         )
 
     @classmethod
     def from_json(cls, blob, album_id):
         artists = [Artist.from_json_simplified(x) for x in blob['artists']]
+        group = Group.from_artists(artists)
+
         return cls(
             id_=blob['id'],
             album_id=album_id,
@@ -173,7 +206,8 @@ class Track(Base):
             external_ids=json.dumps(blob['external_ids']),
             external_urls=json.dumps(blob['external_urls']),
             checked=True,
-            artists=artists
+            artists=artists,
+            group=group
         )
 
 
