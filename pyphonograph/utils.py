@@ -1,6 +1,13 @@
 import argparse
 import cProfile, pstats, io
 
+def chunker(iterable, chunk_size):
+  output = []
+  while iterable:
+    output.append(iterable[:chunk_size])
+    iterable = iterable[chunk_size:]
+  return output
+
 class MargumentParser(object):
 
     def __init__(self, **kwargs):

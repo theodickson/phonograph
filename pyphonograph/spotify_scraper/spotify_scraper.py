@@ -3,14 +3,9 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 from tqdm import tqdm
 
-from pyphonograph.orm.spotify_raw import Artist,Album,Track,get_new_session
+from ..orm.raw import Artist,Album,Track,get_new_session
+from ..utils import *
 
-def chunker(iterable, chunk_size):
-  output = []
-  while iterable:
-    output.append(iterable[:chunk_size])
-    iterable = iterable[chunk_size:]
-  return output
 
 def inject_session(method):
 
@@ -22,7 +17,7 @@ def inject_session(method):
         method(self, *args, session=session, **kwargs)
 
   return inner
-
+  
 class SpotifyScraper(object):
 
   def __init__(self):
