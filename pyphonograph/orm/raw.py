@@ -78,16 +78,17 @@ class Group(Base):
     tracks = relationship('Track', back_populates='group')
 
     @classmethod
-    def from_artists(cls, artists, add_artists=True):
+    def from_artists(cls, artists):
         sorted_ids = sorted([a.id_ for a in artists])
         group_id = '%'.join(sorted_ids)
-        return cls(id_=group_id, artists=artists if add_artists else [])
+        return cls(id_=group_id, artists=artists)
+
 
 class Album(Base):
     __tablename__ = 'album'
     id_ = Column('id', String, primary_key=True)
     name = Column(String, nullable=False)
-    group_id = Column('artist_group', String, ForeignKey('artist_group.id'), nullable=False, index=True)
+    group_id = Column('artist_group', String, ForeignKey('artist_group.id'), nullable=True, index=True)
     album_type = Column(String, nullable=False)
     popularity = Column(Integer, nullable=True)
     release_date = Column(String, nullable=True)
@@ -115,7 +116,7 @@ class Album(Base):
         id_ = blob['id']
         artists = [Artist.from_json_simplified(x) for x in blob['artists']]
         tracks = [Track.from_json_simplified(x, id_) for x in blob['tracks']['items'] if len(x['artists']) > 1]
-        group = Group.from_artists(artists)
+        #group = Group.from_artists(artists)
 
         return cls(
             id_=id_,
@@ -133,7 +134,8 @@ class Album(Base):
             checked=True,
             artists=artists,
             tracks=tracks,
-            group=group
+            #group=group,
+            #group_id=group.id_
         )
 
     @classmethod
@@ -149,7 +151,8 @@ class Album(Base):
             external_urls=json.dumps(blob['external_urls']),
             images=json.dumps(blob['images']),
             artists=artists,
-            group=group
+            #group=group,
+            group_id=group.id_
         )
 
 class Track(Base):
@@ -157,7 +160,7 @@ class Track(Base):
     id_ = Column('id', String, primary_key=True)
     album_id = Column(String, ForeignKey('album.id'), index=True)
     name = Column(String, nullable=False)
-    group_id = Column('artist_group', String, ForeignKey('artist_group.id'), nullable=False, index=True)
+    group_id = Column('artist_group', String, ForeignKey('artist_group.id'), nullable=True, index=True)
     popularity = Column(Integer, nullable=True)
     preview_url = Column(String, nullable=True)
     duration_ms = Column(Integer, nullable=False)
@@ -178,7 +181,7 @@ class Track(Base):
     @classmethod
     def from_json_simplified(cls, blob, album_id):
         artists = [Artist.from_json_simplified(x) for x in blob['artists']]
-        group = Group.from_artists(artists)
+        #group = Group.from_artists(artists)
 
         return cls(
             id_=blob['id'],
@@ -188,13 +191,14 @@ class Track(Base):
             duration_ms=blob['duration_ms'],
             external_urls=json.dumps(blob['external_urls']),
             artists=artists,
-            group=group
+            #group=group,
+            #group_id=group.id_
         )
 
     @classmethod
     def from_json(cls, blob, album_id):
         artists = [Artist.from_json_simplified(x) for x in blob['artists']]
-        group = Group.from_artists(artists)
+        #group = Group.from_artists(artists)
 
         return cls(
             id_=blob['id'],
@@ -207,7 +211,8 @@ class Track(Base):
             external_urls=json.dumps(blob['external_urls']),
             checked=True,
             artists=artists,
-            group=group
+            #group=group,
+            #group_id=group.id_
         )
 
 
@@ -221,14 +226,15 @@ class EntityRemovalInfo(Base):
         data = [
             (0, 'not_removed'),
             (1, 'unpopular'),
-            (2, 'invalid_name'),
-            (3, 'duplicate'),
-            (4, 'too_many_artists'),
-            (5, 'artist_removed'),
-            (6, 'invalid_artist_group'),
-            (7, 'album_removed'),
-            (8, 'multi_artist'),
-            (9, 'compilation'),
+            (2, 'invalid_name'), #name of entity makes it inherently invalid
+            (3, 'duplicate'), 
+            (4, 'too_many_artists'), #albums or tracks attributed to too many artists are assumed to be crap    
+            (5, 'artist_removed'), #albums or tracks which have had any of their artists removed are removed
+            (6, 'invalid_artist_group'), #used for a group which is overlapping
+            (7, 'album_removed'), #tracks whose albums have been removed are removed
+            (8, 'multi_artist'), #artists of the form 'x feat y' are removed
+            (9, 'compilation'), #compilation albums are removed
+            (10, 'artist_group_removed'), #artists or tracks whose artist group has been removed are removed
         ]
         for id_,info in data:
             obj = cls(id_=id_, info=info)
