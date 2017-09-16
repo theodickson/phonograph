@@ -47,8 +47,7 @@ REMOVE_UNPOPULAR_ALBUMS
 REMOVE_INVALID_ALBUMS
 REMOVE_ARTIST_REMOVED_ALBUMS - remove any albums which have had any of their artists removed
 
-INDEX_ALBUMS_BY_ARTIST_GROUP - create a mapping from artist group to album (ignore removed albums)
-REMOVE_INVALID_ARTIST_GROUPS_ALBUM - check all these artist groups for ones which are overlapping. if a group is, remove the relevant artists and also all the albums in the group. (and tag group as removed)
+REMOVE_INVALID_ARTIST_GROUPS - check all these artist groups for ones which are overlapping or have had artists removed. if a group is, remove the relevant artists and also all the albums and tracks in the group. (and tag group as removed)
 
 REMOVE_DUPLICATE_ALBUMS_BY_ARTIST_GROUP - remove duplicate albums within each group (ignoring the removed groups)
 
@@ -57,35 +56,33 @@ REMOVE_INVALID_TRACKS
 REMOVE_ALBUM_REMOVED_TRACKS
 REMOVE_ARTIST_REMOVED_TRACKS
 
-INDEX_TRACKS_BY_ARTIST_GROUP - create a mapping from artist group to track (ignore removed tracks)
-REMOVE_INVALID_ARTIST_GROUPS_ARTIST - check all these artist groups for ones which are overlapping. if a group is, remove the relevant artists and also all the tracks in the group. (and tag group as removed)
 REMOVE_DUPLICATE_TRACKS_BY_ARTIST_GROUP - remove duplicate tracks within each group (ignoring the removed groups)
 
 
 Algorithm:
-    REMOVE_UNPOPULAR_ARTISTS
-    REMOVE_INVALID_ARTISTS
+    REMOVE_UNPOPULAR_ARTISTS (--> artist removed tracks,albums,groups) OK
+    REMOVE_INVALID_ARTISTS (--> artist removed tracks,albums,groups) OK
 
-    REMOVE_UNPOPULAR_ALBUMS
-    REMOVE_INVALID_ALBUMS
-    REMOVE_ARTIST_REMOVED_ALBUMS
+    REMOVE_UNPOPULAR_ALBUMS (--> album removed tracks) OK
+    REMOVE_INVALID_ALBUMS (--> album removed tracks) OK
+    REMOVE_ARTIST_REMOVED_ALBUMS (--> album removed tracks) OK
 
-    INDEX_ALBUMS_BY_ARTIST_GROUP
-    REMOVE_INVALID_ARTIST_GROUPS
-    REMOVE_DUPLICATE_ALBUMS_BY_ARTIST_GROUP
+    REMOVE_ARTIST_REMOVED_GROUPS (--> remove artist group removed track,albums) OK
+    REMOVE_OVERLAPPING_GROUPS (--> remove artist group removed tracks,albums) OK
+    REMOVE_ARTIST_GROUP_REMOVED_ALBUMS (--> remove album removed tracks) OK
+    REMOVE_ARTIST_GROUP_REMOVED_TRACKS  OK
+    REMOVE_DUPLICATE_ALBUMS_BY_ARTIST_GROUP (--> remove album removed tracks) OK
 
     REMOVE_UNPOPULAR_TRACKS
     REMOVE_INVALID_TRACKS
     REMOVE_ARTIST_REMOVED_TRACKS
     REMOVE_ALBUM_REMOVED_TRACKS
 
-    INDEX_TRACKS_BY_ARTIST_GROUP
-    REMOVE_INVALID_ARTIST_GROUPS_TRACK
     REMOVE_DUPLICATE_TRACKS_BY_ARTIST_GROUP
 
-    REMOVE_ARTIST_REMOVED_ALBUMS
-    REMOVE_ARTIST_REMOVED_TRACKS
-    REMOVE_ALBUM_REMOVED_TRACKS
+    REMOVE_ARTIST_REMOVED_ALBUMS (--> album removed tracks) OK
+    REMOVE_ARTIST_REMOVED_TRACKS 
+    REMOVE_ALBUM_REMOVED_TRACKS 
 
 The clean database can be created by simply iterating through all not-removed tracks, initialising the processed track and all processed artists and merging these into the clean database. Genres can be done separately.
 
