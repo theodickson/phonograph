@@ -3,7 +3,8 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 from tqdm import tqdm
 
-from ..orm.raw import Artist,Album,Track,get_new_session
+from ..orm.raw import Artist,Album,Track
+from ..orm.utils import get_sessionmaker
 from ..utils import *
 
 
@@ -20,12 +21,12 @@ def inject_session(method):
   
 class SpotifyScraper(object):
 
-  def __init__(self):
+  def __init__(self, db="main_db"):
     #configure Spotify Web API connection
     self._client_credentials_manager = SpotifyClientCredentials()
     self._sp = spotipy.Spotify(client_credentials_manager = self._client_credentials_manager)
     #configure postgresql connection via SQLAlchemy:
-    self._new_session = get_new_session()
+    self._new_session = get_sessionmaker(db=db)
   
   def store_first_100k_artists(self, limit=None):
     """Store the first 100k artists in the all artists search.
@@ -43,13 +44,16 @@ class SpotifyScraper(object):
         if c == limit:
           break
 
-  def artist_albums(self, artist, session):
-    initial_query= self._sp.artist_albums(artist.id_, album_type="album,single,compilation", limit=50)
+  def artist_albums(self, artist, session, appears_on=False):
+    album_type = "album,single,compilation"
+    if appears_on:
+        album_type += ",appears_on"
+    initial_query= self._sp.artist_albums(artist.id_, album_type=album_type, limit=50)
     return tqdm(self._generate_all(initial_query, 'albums'))
 
-  def scrape_artist(self, artist, session):
+  def scrape_artist(self, artist, session, appears_on=False, max_albums=None):
     #Note that no commit occurs in this routine, thus an artist will have scraped=True if and only if all albums have been scraped.
-    for album_blob in self.artist_albums(artist, session):
+    for album_blob in self.artist_albums(artist, session, appears_on=appears_on):
       session.merge(Album.from_json_simplified(album_blob))
     artist.scraped = True
 
@@ -69,6 +73,7 @@ class SpotifyScraper(object):
       pbar.update(1)
 
   def check_all_unchecked_artists(self, session):
+    print("Checking all unchecked artists...\n")
     c = 0
     artists = session.query(Artist).filter(Artist.checked==False).all()
     print("Found {} unchecked artists. Starting check...".format(len(artists)))
@@ -100,23 +105,34 @@ class SpotifyScraper(object):
       .order_by(order_by) \
       .limit(limit)
 
-  def crawl(self, n=100):
+  def scrape_top_n_artists_by_popularity(self, session, n=100, appears_on=False):
+      print("Getting top {} artists by popularity which remain unscraped...\n".format(n))
+      artists_to_scrape = self.unscraped_artists(session, limit=n, order_by=Artist.popularity.desc()).all()
+      max_popularity = artists_to_scrape[0].popularity
+      print("Max unscraped popularity on this iteration: {}. Starting album scrape...\n".format(max_popularity))
+      for artist in tqdm(artists_to_scrape):
+          self.scrape_artist(artist, session, appears_on=appears_on)
+
+  def crawl(self, n=100, appears_on=False):
     with self._new_session() as session:
       unscraped_artists = self.unscraped_artists(session, limit=None).count()
       print("Initial unscraped artists: {}".format(unscraped_artists))
       print("Starting crawl...\n")
       while unscraped_artists:
-        print("Checking all unchecked artists (so we can scrape artists' albums in descending order of popularity)...\n")
         self.check_all_unchecked_artists(session)
-        print("Getting top {} artists by popularity which remain unscraped...\n".format(n))
-        artists_to_scrape = self.unscraped_artists(session, limit=n, order_by=Artist.popularity.desc()).all()
-        max_popularity = artists_to_scrape[0].popularity
-        print("Max unscraped popularity on this iteration: {}. Starting album scrape...\n".format(max_popularity))
-        for artist in tqdm(artists_to_scrape):
-          self.scrape_artist(artist, session)
-        session.commit()
+        self.scrape_top_n_artists_by_popularity(session, n=n, appears_on=appears_on)
         self.check_all_unchecked_albums(session=session)
-        print("Done checking albums. Returning to artist check...")
+        session.commit()
+
+  def sample_crawl(self, seed="29XOeO6KIWxGthejQqn793", n_iter=3, max_artists_per_iter=100):
+      with self._new_session() as session:
+          seed_artist = self._sp.artist(seed)
+          session.merge(Artist.from_json(seed_artist))
+
+          for _ in range(n_iter):
+              self.scrape_top_n_artists_by_popularity(session, n=max_artists_per_iter)
+              self.check_all_unchecked_albums(session=session)
+              self.check_all_unchecked_artists(session)
 
   @inject_session
   def check_all_unchecked_albums(self, session=None, limit=None):
@@ -141,10 +157,10 @@ class SpotifyScraper(object):
         for item in current['items']:
             yield item
 
-  def check_one_artist(self):
-    with self._new_session() as session:
-      artist = session.query(Artist).first()
-      self.check_artist(artist, session)
+  # def check_one_artist(self):
+  #   with self._new_session() as session:
+  #     artist = session.query(Artist).first()
+  #     self.check_artist(artist, session)
 
   def delete_all_artists(self):
     with self._new_session() as session:
