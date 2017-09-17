@@ -18,8 +18,8 @@ def detect_overlapping_artists(artists):
     split_names = {}
     for artist,std_name in std_names.items():
         for s in splitters:
-            name = name.replace(s, '§')
-        split_name = name.split('§')
+            std_name = std_name.replace(s, '§')
+        split_name = std_name.split('§')
         if len(split_name) > 1:
             split_names[artist] = split_name
 
@@ -28,7 +28,7 @@ def detect_overlapping_artists(artists):
     #match another artists name in the group
     for artist,split_name in split_names.items():
         for component in split_name:
-            if any(fuzz.ratio(component,othername) > 95 for std_name in std_names.values()):
+            if any(fuzz.ratio(component,std_name) > 95 for std_name in std_names.values()):
                 bad_artists.add(artist)
 
     return bad_artists
