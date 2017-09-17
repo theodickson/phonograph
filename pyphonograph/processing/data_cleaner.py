@@ -2,10 +2,9 @@ import itertools
 
 from tqdm import tqdm
 
-from sqlalchemy.sql.expression import update,and_,any_
+from sqlalchemy.sql.expression import update,and_
 
-from ..orm.utils import get_new_session,get_new_connection
-from ..orm import Artist,Album,Track
+from ..orm.utils import get_sessionmaker,get_connectionmaker
 from ..orm.tables import *
 
 from .funclib import detect_overlapping_artists
