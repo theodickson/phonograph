@@ -5,14 +5,15 @@ from contextlib import contextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-class SessionContextMaker(object):
 
-    def __init__(self, sessionmaker):
-        self._sessionmaker = sessionmaker
+class SessionManager(object):
+
+    def __init__(self, Session):
+        self._Session = Session
 
     @contextmanager
     def __call__(self, *args, **kwargs):
-        session = self._sessionmaker(*args, **kwargs)
+        session = self._Session(*args, **kwargs)
         try:
             yield session
             session.commit()
@@ -24,8 +25,11 @@ class SessionContextMaker(object):
         finally:
             session.close()
 
+    def unmanaged(self, *args, **kwargs):
+        return self._Session(*args, **kwargs)
 
-class ConnectionContextMaker(object):
+
+class ConnectionManager(object):
 
     def __init__(self, engine):
         self._engine = engine
@@ -38,6 +42,9 @@ class ConnectionContextMaker(object):
         finally:
             conn.close()
 
+    def unmanaged(self, *args, **kwargs):
+        return self._engine(*args, **kwargs)
+
 
 def get_config():
     conf = configparser.ConfigParser()
@@ -45,20 +52,16 @@ def get_config():
     conf.read(conf_path)
     return conf
 
-def get_engine():
+def get_engine(db="main_db"):
     conf = get_config()
-    engine_str = 'postgresql+psycopg2://{user}:{password}@/{dbname}'.format(**conf['database'])
+    engine_str = 'postgresql+psycopg2://{user}:{password}@/{dbname}'.format(**conf[db])
     return create_engine(engine_str)
 
-def get_sessionmaker():
-    engine = get_engine()
+def get_sessionmaker(db="main_db"):
+    engine = get_engine(db=db)
     Session = sessionmaker(bind=engine)
-    return Session
+    return SessionManager(Session)
 
-def get_new_session():
-    Session = get_sessionmaker()
-    return SessionContextMaker(Session)
-
-def get_new_connection():
-    engine = get_engine()
-    return ConnectionContextMaker(engine)
+def get_connectionmaker(db="main_db"):
+    engine = get_engine(db=db)
+    return ConnectionManager(engine)
