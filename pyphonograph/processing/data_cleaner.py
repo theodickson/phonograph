@@ -35,17 +35,20 @@ def inject_session(method):
 
 class DataCleaner(object):
     
-    def __init__(self):
-        self._new_connection = get_new_connection()
-        self._new_session = get_new_session()
+    def __init__(self, db="main_db"):
+        self._new_connection = get_connectionmaker(db=db)
+        self._new_session = get_sessionmaker(db=db)
 
-    def reset_removals(self, table, conn=None):
+    @inject_connection
+    def reset_removals(self, conn=None):
         self._reset_removals(artist_table, conn=conn)
-        self._reset_removals(artist_group_table, conn=conn)
+        self._reset_removals(group_table, conn=conn)
         self._reset_removals(album_table, conn=conn)
         self._reset_removals(track_table, conn=conn)
 
-    def run(self):
+    def run(self, reset=False):
+        if reset:
+            self.reset_removals()
         #need to make sure all codes are used
         self.index_artist_groups()
 
@@ -67,20 +70,23 @@ class DataCleaner(object):
         self.remove_artist_removed_tracks()
         self.remove_album_removed_tracks()
 
-        self.remove_duplicate_tracks_by_artist_group()
+        self.remove_duplicate_tracks_by_group()
 
         self.remove_artist_removed_albums()
         self.remove_artist_removed_tracks()
         self.remove_album_removed_tracks()
 
+    @inject_connection
     def remove_unpopular_artists(self, conn=None, threshold=1):
-        self._remove_unpopular(artist_table, conn=conn, threshold=threshold)
+        self._remove_unpopular(artist_table, conn, threshold=threshold)
 
+    @inject_connection
     def remove_unpopular_albums(self, conn=None, threshold=1):
-        self._remove_unpopular(album_table, conn=conn, threshold=threshold)
+        self._remove_unpopular(album_table, conn, threshold=threshold)
 
+    @inject_connection
     def remove_unpopular_tracks(self, conn=None, threshold=1):
-        self._remove_unpopular(track_table, conn=conn, threshold=threshold)
+        self._remove_unpopular(track_table, conn, threshold=threshold)
 
     def remove_invalid_artists(self):
         pass
@@ -101,27 +107,27 @@ class DataCleaner(object):
 
     @inject_session
     def remove_artist_removed_albums(self, session=None):
-        self._remove_rel_removed(Album, 'artists', Artist, session=session)
+        self._remove_rel_removed_m2m(Album, 'artists', Artist, session=session)
 
     @inject_session
     def remove_artist_removed_groups(self, session=None):
-        self._remove_rel_removed(Group, 'artists', Artist, session=session)
+        self._remove_rel_removed_m2m(Group, 'artists', Artist, session=session)
 
     @inject_session
     def remove_artist_removed_tracks(self, session=None):
-        self._remove_rel_removed(Track, 'artists', Artist, session=session)
+        self._remove_rel_removed_m2m(Track, 'artists', Artist, session=session)
 
     @inject_session
     def remove_album_removed_tracks(self, session=None):
-        self._remove_rel_removed(Track, 'album', Album, rel_type="m2o", reason=7, session=session)
+        self._remove_rel_removed_m2o(Track, 'album', Album, reason=7, session=session)
 
     @inject_session
     def remove_artist_group_removed_tracks(self, session=None):
-        self._remove_rel_removed(Track, 'group', Group, rel_type="m2o", reason=10, session=session)
+        self._remove_rel_removed_m2o(Track,  'group', Group, reason=10, session=session)
 
     @inject_session
     def remove_artist_group_removed_albums(self, session=None):
-        self._remove_rel_removed(Album, 'group', Group, rel_type="m2o", reason=10, session=session)
+        self._remove_rel_removed_m2o(Album, 'group', Group, reason=10, session=session)
 
     @inject_session
     def remove_overlapping_groups(self, session=None):
@@ -137,11 +143,11 @@ class DataCleaner(object):
 
     @inject_session
     def remove_duplicate_albums_by_group(self, session=None):
-        self._remove_exact_duplicates_by_group(self, lambda x:x.albums, session=session)
+        self._remove_exact_duplicates_by_group(lambda x:x.albums, session=session)
 
     @inject_session
     def remove_duplicate_tracks_by_group(self, session=None):
-        self._remove_exact_duplicates_by_group(self, lambda x:x.tracks, session=session)
+        self._remove_exact_duplicates_by_group(lambda x:x.tracks, session=session)
 
     def _remaining_artists(self, session=None):
         return session.query(Artist).filter(Artist.removed != 0)
@@ -152,11 +158,10 @@ class DataCleaner(object):
     def _remaining_albums(self, session=None):
         return session.query(Album).filter(Album.removed != 0)
 
-    def _remaining_artists(self, session=None):
+    def _remaining_tracks(self, session=None):
         return session.query(Track).filter(Track.removed != 0)
 
-    @inject_connection
-    def _remove_unpopular(self, table, conn=None, threshold=1):
+    def _remove_unpopular(self, table, conn, threshold=1):
         #filter to just those which have not already been removed and whose popularity is
         #below the threshold
         #set the value of removed to 1 which indicates "unpopular"
@@ -177,22 +182,25 @@ class DataCleaner(object):
         conn.execute(stmt)
 
 
-    def _remove_rel_removed(self, cls, attr, other_cls, rel_type, reason=5, session=None):
-        if rel_type = "m2m":
-            pred = getattr(cls, attr).any(other_class.removed != 0)
-        elif rel_type = "m2o"
-            pred = getattr(cls, attr).removed != 0
-        else:
-            raise ValueError
-
+    def _remove_rel_removed_m2m(self, cls, rel_attr, other_cls, reason=5, session=None):
         session.query(cls)\
             .filter(
                 and_(
                     cls.removed == 0,
-                    pred
+                    getattr(cls, rel_attr).any(other_cls.removed != 0)
                 )
             )\
-            .update({cls.removed: 5}, synchronize_session='fetch')
+            .update({cls.removed: reason}, synchronize_session='fetch')
+
+    def _remove_rel_removed_m2o(self, cls, rel_attr, other_cls, reason=5, session=None):
+        session.query(cls)\
+            .filter(
+                and_(
+                    cls.removed == 0,
+                    getattr(cls, rel_attr).has(other_cls.removed != 0)
+                )
+            )\
+            .update({cls.removed: reason}, synchronize_session='fetch')
 
     def _remove_exact_duplicates_by_group(self, getter, session=None):
         #TODO - periodic commits
@@ -200,7 +208,7 @@ class DataCleaner(object):
         for group in tqdm(self._remaining_groups(session=session), total=total):
             sorted_entities = sorted(getter(group), key=lambda x:x.name)
             for name,group in itertools.groupby(sorted_entities, lambda x:x.name):
-                entities_by_popularity = sorted(group, lambda x:x.popularity, reverse=True)
+                entities_by_popularity = sorted(group, key=lambda x:x.popularity, reverse=True)
                 for entity in entities_by_popularity[1:]:
                     entity.removed = 3
 
