@@ -1,12 +1,9 @@
-import sys
 import json
 
 from sqlalchemy import Table, Column, String, Boolean, Integer, SmallInteger, ForeignKey
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 from sqlalchemy.dialects import postgresql
 
-from .utils import *
 from .base import Base
 
 artist_track_map = Table('artist_track_map', Base.metadata,
