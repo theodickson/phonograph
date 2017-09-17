@@ -113,7 +113,6 @@ class Album(Base):
         id_ = blob['id']
         artists = [Artist.from_json_simplified(x) for x in blob['artists']]
         tracks = [Track.from_json_simplified(x, id_) for x in blob['tracks']['items'] if len(x['artists']) > 1]
-        #group = Group.from_artists(artists)
 
         return cls(
             id_=id_,
@@ -131,8 +130,6 @@ class Album(Base):
             checked=True,
             artists=artists,
             tracks=tracks,
-            #group=group,
-            #group_id=group.id_
         )
 
     @classmethod
@@ -148,7 +145,6 @@ class Album(Base):
             external_urls=json.dumps(blob['external_urls']),
             images=json.dumps(blob['images']),
             artists=artists,
-            #group=group,
             group_id=group.id_
         )
 
@@ -178,7 +174,6 @@ class Track(Base):
     @classmethod
     def from_json_simplified(cls, blob, album_id):
         artists = [Artist.from_json_simplified(x) for x in blob['artists']]
-        #group = Group.from_artists(artists)
 
         return cls(
             id_=blob['id'],
@@ -187,15 +182,12 @@ class Track(Base):
             preview_url=blob['preview_url'],
             duration_ms=blob['duration_ms'],
             external_urls=json.dumps(blob['external_urls']),
-            artists=artists,
-            #group=group,
-            #group_id=group.id_
+            artists=artists
         )
 
     @classmethod
     def from_json(cls, blob, album_id):
         artists = [Artist.from_json_simplified(x) for x in blob['artists']]
-        #group = Group.from_artists(artists)
 
         return cls(
             id_=blob['id'],
@@ -207,9 +199,7 @@ class Track(Base):
             external_ids=json.dumps(blob['external_ids']),
             external_urls=json.dumps(blob['external_urls']),
             checked=True,
-            artists=artists,
-            #group=group,
-            #group_id=group.id_
+            artists=artists
         )
 
 
